@@ -188,7 +188,7 @@ services:
     container_name: peer0.canton2.example.com
     extends:
       file:  base/docker-compose-base.yaml
-      service: peer0.canton.example.com
+      service: peer0.canton2.example.com
     networks:
       - byfn
 
@@ -196,7 +196,7 @@ services:
     container_name: peer1.canton2.example.com
     extends:
       file:  base/docker-compose-base.yaml
-      service: peer1.canton.example.com
+      service: peer1.canton2.example.com
     networks:
       - byfn
 
@@ -236,7 +236,7 @@ services:
     container_name: peer0.municipality3.example.com
     extends:
       file:  base/docker-compose-base.yaml
-      service: peer0.municipality2.example.com
+      service: peer0.municipality3.example.com
     networks:
       - byfn
 
