@@ -15,7 +15,7 @@ echo "---- Generate Genesis Block----"
 
 #create channel configuration transactions for each participant
 echo "---- Generate Channel Configuration Transactions----"
-export CHANNEL_NAME=ertestchannel  && ../bin/configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+export CHANNEL_NAME=federalchannel  && ../bin/configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ConfederationMSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchors.tx -channelID $CHANNEL_NAME -asOrg CantonMSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Canton2MSP

@@ -12,7 +12,7 @@ volumes:
   orderer5.example.com:
 
 networks:
-  byfn:
+  ern:
 
 services:
 
@@ -22,7 +22,7 @@ services:
       service: orderer-base
     container_name: orderer2.example.com
     networks:
-    - byfn
+    - ern
     volumes:
         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
@@ -37,7 +37,7 @@ services:
       service: orderer-base
     container_name: orderer3.example.com
     networks:
-    - byfn
+    - ern
     volumes:
         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp:/var/hyperledger/orderer/msp
@@ -52,7 +52,7 @@ services:
       service: orderer-base
     container_name: orderer4.example.com
     networks:
-    - byfn
+    - ern
     volumes:
         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/example.com/orderers/orderer4.example.com/msp:/var/hyperledger/orderer/msp
@@ -67,7 +67,7 @@ services:
       service: orderer-base
     container_name: orderer5.example.com
     networks:
-    - byfn
+    - ern
     volumes:
         - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ./crypto-config/ordererOrganizations/example.com/orderers/orderer5.example.com/msp:/var/hyperledger/orderer/msp

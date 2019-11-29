@@ -23,7 +23,7 @@ volumes:
   peer1.esp.example.com:
 
 networks:
-  byfn:
+  ern:
 services:
   ca0:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -40,7 +40,7 @@ services:
       - ./crypto-config/peerOrganizations/confederation.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerConfederation
     networks:
-      - byfn
+      - ern
 
   ca1:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -57,7 +57,7 @@ services:
       - ./crypto-config/peerOrganizations/canton.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerCanton
     networks:
-      - byfn
+      - ern
 
   ca2:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -74,7 +74,7 @@ services:
       - ./crypto-config/peerOrganizations/canton2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerCanton2
     networks:
-      - byfn
+      - ern
 
   ca3:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -91,7 +91,7 @@ services:
       - ./crypto-config/peerOrganizations/municipality.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerMunicipality
     networks:
-      - byfn
+      - ern
 
   ca4:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -108,7 +108,7 @@ services:
       - ./crypto-config/peerOrganizations/municipality2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerMunicipality2
     networks:
-      - byfn
+      - ern
 
   ca5:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -125,7 +125,7 @@ services:
       - ./crypto-config/peerOrganizations/municipality3.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerMunicipality3
     networks:
-      - byfn
+      - ern
 
   ca6:
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -142,7 +142,7 @@ services:
       - ./crypto-config/peerOrganizations/esp.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerESP
     networks:
-      - byfn
+      - ern
 
   orderer.example.com:
     extends:
@@ -150,7 +150,7 @@ services:
       service: orderer.example.com
     container_name: orderer.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.confederation.example.com:
     container_name: peer0.confederation.example.com
@@ -158,7 +158,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.confederation.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.confederation.example.com:
     container_name: peer1.confederation.example.com
@@ -166,7 +166,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.confederation.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.canton.example.com:
     container_name: peer0.canton.example.com
@@ -174,7 +174,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.canton.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.canton.example.com:
     container_name: peer1.canton.example.com
@@ -182,7 +182,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.canton.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.canton2.example.com:
     container_name: peer0.canton2.example.com
@@ -190,7 +190,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.canton2.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.canton2.example.com:
     container_name: peer1.canton2.example.com
@@ -198,7 +198,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.canton2.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.municipality.example.com:
     container_name: peer0.municipality.example.com
@@ -206,7 +206,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.municipality.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.municipality.example.com:
     container_name: peer1.municipality.example.com
@@ -214,7 +214,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.municipality.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.municipality2.example.com:
     container_name: peer0.municipality2.example.com
@@ -222,7 +222,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.municipality2.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.municipality2.example.com:
     container_name: peer1.municipality2.example.com
@@ -230,7 +230,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.municipality2.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.municipality3.example.com:
     container_name: peer0.municipality3.example.com
@@ -238,7 +238,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.municipality3.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.municipality3.example.com:
     container_name: peer1.municipality3.example.com
@@ -246,7 +246,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.municipality3.example.com
     networks:
-      - byfn
+      - ern
 
   peer0.esp.example.com:
     container_name: peer0.esp.example.com
@@ -254,7 +254,7 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer0.esp.example.com
     networks:
-      - byfn
+      - ern
 
   peer1.esp.example.com:
     container_name: peer1.esp.example.com
@@ -262,4 +262,4 @@ services:
       file:  base/docker-compose-base.yaml
       service: peer1.esp.example.com
     networks:
-      - byfn
+      - ern

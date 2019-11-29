@@ -6,7 +6,7 @@
 version: '2'
 
 networks:
-  byfn:
+  ern:
 
 services:
   couchdb0:
@@ -22,7 +22,7 @@ services:
     ports:
       - "5984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.confederation.example.com:
     environment:
@@ -49,7 +49,7 @@ services:
     ports:
       - "6984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.confederation.example.com:
     environment:
@@ -76,7 +76,7 @@ services:
     ports:
       - "7984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.canton.example.com:
     environment:
@@ -103,7 +103,7 @@ services:
     ports:
       - "8984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.canton.example.com:
     environment:
@@ -130,7 +130,7 @@ services:
     ports:
       - "9984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.municipality.example.com:
     environment:
@@ -157,7 +157,7 @@ services:
     ports:
       - "10984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.municipality.example.com:
     environment:
@@ -184,7 +184,7 @@ services:
     ports:
       - "11984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.municipality2.example.com:
     environment:
@@ -211,7 +211,7 @@ services:
     ports:
       - "12984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.municipality2.example.com:
     environment:
@@ -238,7 +238,7 @@ services:
     ports:
       - "13984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.municipality3.example.com:
     environment:
@@ -265,7 +265,7 @@ services:
     ports:
       - "14984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.municipality3.example.com:
     environment:
@@ -292,7 +292,7 @@ services:
     ports:
       - "15984:5984"
     networks:
-      - byfn
+      - ern
 
   peer0.esp.example.com:
     environment:
@@ -319,7 +319,7 @@ services:
     ports:
       - "16984:5984"
     networks:
-      - byfn
+      - ern
 
   peer1.esp.example.com:
     environment:
