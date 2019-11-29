@@ -1,5 +1,5 @@
 {
-    "name": "ER-network-${ORG}",
+    "name": "er-network-${ORG}",
     "version": "1.0.0",
     "client": {
         "organization": "${ORG}",

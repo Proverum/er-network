@@ -1,19 +1,21 @@
 #!/bin/bash
 #
+sudo chmod 666 /var/run/docker.sock
+
 echo "---- Generate Crypto Material----"
 ../bin/cryptogen generate --config=./crypto-config.yaml     # create cryptgraphic material for network participants
 
- export FABRIC_CFG_PATH=$PWD					# set path for the configtx.yaml file
+export FABRIC_CFG_PATH=$PWD					# set path for the configtx.yaml file
 
 echo "---- Generate Connection Artifacts----"
 ./ccp-generate.sh                     # create connection artificats
 
 echo "---- Generate Genesis Block----"
-../bin/configtxgen -profile ErOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block  		#create genesis block
+../bin/configtxgen -profile ErOrdererGenesis -channelID er-sys-channel -outputBlock ./channel-artifacts/genesis.block  		#create genesis block
 
 #create channel configuration transactions for each participant
 echo "---- Generate Channel Configuration Transactions----"
-export CHANNEL_NAME=erchannel  && ../bin/configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+export CHANNEL_NAME=ertestchannel  && ../bin/configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ConfederationMSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchors.tx -channelID $CHANNEL_NAME -asOrg CantonMSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Canton2MSP
