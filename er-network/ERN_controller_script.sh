@@ -35,14 +35,13 @@ export VERBOSE=false
 # Print the usage message
 function printHelp() {
   echo "Usage: "
-  echo "  byfn.sh <mode> [-c <channel name>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>] [-s <dbtype>] [-l <language>] [-o <consensus-type>] [-i <imagetag>] [-a] [-n] [-v]"
+  echo "  ERN_controller_script.sh <mode> [-c <channel name>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>] [-s <dbtype>] [-l <language>] [-o <consensus-type>] [-i <imagetag>] [-a] [-n] [-v]"
   echo "    <mode> - one of 'up', 'down', 'restart', 'generate' or 'upgrade'"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
   echo "      - 'restart' - restart the network"
   echo "      - 'generate' - generate required certificates and genesis block"
-  echo "      - 'upgrade'  - upgrade the network from version 1.3.x to 1.4.0"
-  echo "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
+  echo "    -c <channel name> - channel name to use (defaults to \"ertestchannel\")"
   echo "    -t <timeout> - CLI timeout duration in seconds (defaults to 10)"
   echo "    -d <delay> - delay duration in seconds (defaults to 3)"
   echo "    -f <docker-compose-file> - specify which docker-compose file use (defaults to docker-compose-cli.yaml)"
@@ -155,15 +154,11 @@ function networkUp() {
   # generate artifacts if they don't exist
   if [ ! -d "crypto-config" ]; then
     generateCerts
-    replacePrivateKey
+    #replacePrivateKey
     generateChannelArtifacts
+    export IMAGE_TAG=latest
   fi
   COMPOSE_FILES="-f ${COMPOSE_FILE}"
-  if [ "${CERTIFICATE_AUTHORITIES}" == "true" ]; then
-    COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_CA}"
-    export BYFN_CA1_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk)
-    export BYFN_CA2_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk)
-  fi
   if [ "${CONSENSUS_TYPE}" == "kafka" ]; then
     COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_KAFKA}"
   elif [ "${CONSENSUS_TYPE}" == "etcdraft" ]; then
@@ -177,6 +172,30 @@ function networkUp() {
   if [ $? -ne 0 ]; then
     echo "ERROR !!!! Unable to start network"
     exit 1
+  else
+    echo "network containers started and ready to battle with fabric channel setup and chaincode installation"
+    echo -n $'\E[31m'
+    echo $''
+    echo $'      _,.'
+    echo $'    ,` -.)'
+    echo $'   \'( _/\'-\\\\-.'
+    echo $'  /,|`--._,-^|          ,'
+    echo $'  \\_| |`-._/||          ,\'|'
+    echo $'    |  `-, / |         /  /'
+    echo $'    |     || |        /  /'
+    echo $'     `r-._||/   __   /  /'
+    echo $' __,-<_     )`-/  `./  /'
+    echo $'\'  \\   `---\'   \\   /  /'
+    echo $'    |           |./  /'
+    echo $'    /           //  /'
+    echo $'\\_/\' \\         |/  /'
+    echo $' |    |   _,^-\'/  /'
+    echo $' |    , ``  (\\/  /_'
+    echo $'  \\,.->._    \\X-=/^'
+    echo $'  (  /   `-._//^`'
+    echo $'   `Y-.____(__}'
+    echo $'    |     {__)'
+    echo $'          ()`'
   fi
 
   if [ "$CONSENSUS_TYPE" == "kafka" ]; then
@@ -192,90 +211,18 @@ function networkUp() {
   fi
 
   # now run the end to end script
-  docker exec cli scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE $NO_CHAINCODE
-  if [ $? -ne 0 ]; then
-    echo "ERROR !!!! Test failed"
-    exit 1
-  fi
+  # docker exec cli scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE $NO_CHAINCODE
+  # if [ $? -ne 0 ]; then
+    # echo "ERROR !!!! Test failed"
+    # exit 1
+  # fi
 }
 
-# Upgrade the network components which are at version 1.3.x to 1.4.x
-# Stop the orderer and peers, backup the ledger for orderer and peers, cleanup chaincode containers and images
-# and relaunch the orderer and peers with latest tag
-function upgradeNetwork() {
-  if [[ "$IMAGETAG" == *"1.4"* ]] || [[ $IMAGETAG == "latest" ]]; then
-    docker inspect -f '{{.Config.Volumes}}' orderer.example.com | grep -q '/var/hyperledger/production/orderer'
-    if [ $? -ne 0 ]; then
-      echo "ERROR !!!! This network does not appear to start with fabric-samples >= v1.3.x?"
-      exit 1
-    fi
-
-    LEDGERS_BACKUP=./ledgers-backup
-
-    # create ledger-backup directory
-    mkdir -p $LEDGERS_BACKUP
-
-    export IMAGE_TAG=$IMAGETAG
-    COMPOSE_FILES="-f ${COMPOSE_FILE}"
-    if [ "${CERTIFICATE_AUTHORITIES}" == "true" ]; then
-      COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_CA}"
-      export BYFN_CA1_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk)
-      export BYFN_CA2_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk)
-    fi
-    if [ "${CONSENSUS_TYPE}" == "kafka" ]; then
-      COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_KAFKA}"
-    elif [ "${CONSENSUS_TYPE}" == "etcdraft" ]; then
-      COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_RAFT2}"
-    fi
-    if [ "${IF_COUCHDB}" == "couchdb" ]; then
-      COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_COUCH}"
-    fi
-
-    # removing the cli container
-    docker-compose $COMPOSE_FILES stop cli
-    docker-compose $COMPOSE_FILES up -d --no-deps cli
-
-    echo "Upgrading orderer"
-    docker-compose $COMPOSE_FILES stop orderer.example.com
-    docker cp -a orderer.example.com:/var/hyperledger/production/orderer $LEDGERS_BACKUP/orderer.example.com
-    docker-compose $COMPOSE_FILES up -d --no-deps orderer.example.com
-
-    for PEER in peer0.org1.example.com peer1.org1.example.com peer0.org2.example.com peer1.org2.example.com; do
-      echo "Upgrading peer $PEER"
-
-      # Stop the peer and backup its ledger
-      docker-compose $COMPOSE_FILES stop $PEER
-      docker cp -a $PEER:/var/hyperledger/production $LEDGERS_BACKUP/$PEER/
-
-      # Remove any old containers and images for this peer
-      CC_CONTAINERS=$(docker ps | grep dev-$PEER | awk '{print $1}')
-      if [ -n "$CC_CONTAINERS" ]; then
-        docker rm -f $CC_CONTAINERS
-      fi
-      CC_IMAGES=$(docker images | grep dev-$PEER | awk '{print $1}')
-      if [ -n "$CC_IMAGES" ]; then
-        docker rmi -f $CC_IMAGES
-      fi
-
-      # Start the peer again
-      docker-compose $COMPOSE_FILES up -d --no-deps $PEER
-    done
-
-    docker exec cli sh -c "SYS_CHANNEL=$CH_NAME && scripts/upgrade_to_v14.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE"    
-    if [ $? -ne 0 ]; then
-      echo "ERROR !!!! Test failed"
-      exit 1
-    fi
-  else
-    echo "ERROR !!!! Pass the v1.4.x image tag"
-  fi
-}
 
 # Tear down running network
 function networkDown() {
-  # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
   # stop kafka and zookeeper containers in case we're running with kafka consensus-type
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_CA -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_CA down --volumes --remove-orphans
 
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
@@ -287,7 +234,7 @@ function networkDown() {
     #Cleanup images
     removeUnwantedImages
     # remove orderer block and other channel configuration transactions and certs
-    rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config ./org3-artifacts/crypto-config/ channel-artifacts/org3.json
+    rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config
     # remove the docker-compose yaml file that was customized to the example
     rm -f docker-compose-e2e.yaml
   fi
@@ -367,7 +314,7 @@ function generateCerts() {
     exit 1
   fi
   echo
-  echo "Generate CCP files for Org1 and Org2"
+  echo "Generate CCP files for organizations"
   ./ccp-generate.sh
 }
 
@@ -424,7 +371,7 @@ function generateChannelArtifacts() {
   echo "CONSENSUS_TYPE="$CONSENSUS_TYPE
   set -x
   if [ "$CONSENSUS_TYPE" == "solo" ]; then
-    configtxgen -profile TwoOrgsOrdererGenesis -channelID $SYS_CHANNEL -outputBlock ./channel-artifacts/genesis.block
+    configtxgen -profile ErOrdererGenesis -channelID $SYS_CHANNEL -outputBlock ./channel-artifacts/genesis.block
   elif [ "$CONSENSUS_TYPE" == "kafka" ]; then
     configtxgen -profile SampleDevModeKafka -channelID $SYS_CHANNEL -outputBlock ./channel-artifacts/genesis.block
   elif [ "$CONSENSUS_TYPE" == "etcdraft" ]; then
@@ -445,7 +392,7 @@ function generateChannelArtifacts() {
   echo "### Generating channel configuration transaction 'channel.tx' ###"
   echo "#################################################################"
   set -x
-  configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+  configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -455,31 +402,95 @@ function generateChannelArtifacts() {
 
   echo
   echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org1MSP   ##########"
+  echo "#######    Generating anchor peer update for ConfederationMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ConfederationMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org1MSP..."
+    echo "Failed to generate anchor peer update for ConfederationMSP..."
     exit 1
   fi
 
   echo
   echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org2MSP   ##########"
+  echo "#######    Generating anchor peer update for CantonMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
-    ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchors.tx -channelID $CHANNEL_NAME -asOrg CantonMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org2MSP..."
+    echo "Failed to generate anchor peer update for CantonMSP..."
     exit 1
   fi
+
   echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for Canton2MSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Canton2MSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for Canton2MSP..."
+    exit 1
+  fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for MunicipalityMSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/MunicipalityMSPanchors.tx -channelID $CHANNEL_NAME -asOrg MunicipalityMSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for MunicipalityMSP..."
+    exit 1
+  fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for Municipality2MSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality2MSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for Municipality2MSP..."
+    exit 1
+  fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for Municipality3MSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality3MSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for Municipality3MSP..."
+    exit 1
+  fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for ESPMSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ESPMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ESPMSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for ESPMSP..."
+    exit 1
+  fi
+
 }
 
 # Obtain the OS and Architecture string that will be used to select the correct
@@ -491,9 +502,9 @@ CLI_TIMEOUT=10
 # default for delay between commands
 CLI_DELAY=3
 # system channel name defaults to "byfn-sys-channel"
-SYS_CHANNEL="byfn-sys-channel"
+SYS_CHANNEL="er-sys-channel"
 # channel name defaults to "mychannel"
-CHANNEL_NAME="mychannel"
+CHANNEL_NAME="federalchannel"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE=docker-compose-cli.yaml
 #
@@ -528,8 +539,6 @@ elif [ "$MODE" == "restart" ]; then
   EXPMODE="Restarting"
 elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
-elif [ "$MODE" == "upgrade" ]; then
-  EXPMODE="Upgrading the network"
 else
   printHelp
   exit 1
@@ -596,13 +605,11 @@ elif [ "${MODE}" == "down" ]; then ## Clear the network
   networkDown
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
-  replacePrivateKey
+  # replacePrivateKey
   generateChannelArtifacts
 elif [ "${MODE}" == "restart" ]; then ## Restart the network
   networkDown
   networkUp
-elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
-  upgradeNetwork
 else
   printHelp
   exit 1
