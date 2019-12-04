@@ -1,0 +1,1 @@
+./scripts/setup_scenario.sh: line 46: peer: command not found

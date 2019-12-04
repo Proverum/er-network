@@ -15,9 +15,9 @@ LANGUAGE="$3"
 TIMEOUT="$4"
 VERBOSE="$5"
 NO_CHAINCODE="$6"
-: ${CHANNEL_NAME:="erchannel"}
+: ${CHANNEL_NAME:="federalchannel"}
 : ${DELAY:="3"}
-: ${LANGUAGE:="golang"}
+: ${LANGUAGE:="node"}
 : ${TIMEOUT:="10"}
 : ${VERBOSE:="false"}
 : ${NO_CHAINCODE:="false"}
@@ -25,16 +25,13 @@ LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
 COUNTER=1
 MAX_RETRY=10
 
-orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3")
+declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "esp")
 
-CC_SRC_PATH="github.com/chaincode/chaincode_example02/go/"
+CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/testcc"
 if [ "$LANGUAGE" = "node" ]; then
-	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/node/"
+	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/testcc"
 fi
 
-if [ "$LANGUAGE" = "java" ]; then
-	CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/chaincode_example02/java/"
-fi
 
 echo "Channel name : "$CHANNEL_NAME
 
@@ -42,7 +39,7 @@ echo "Channel name : "$CHANNEL_NAME
 . scripts/utils.sh
 
 createChannel() {
-	setGlobals 0 1
+	setGlobals 0 "confederation"
 
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
@@ -62,10 +59,11 @@ createChannel() {
 }
 
 joinChannel () {
-	for org in orgs; do
+	for org in "${orgs[@]}"; do
 	    for peer in 0 1; do
-		joinChannelWithRetry $peer $org
-		echo "===================== peer${peer}.org${org} joined channel '$CHANNEL_NAME' ===================== "
+		echo $peer "$org"
+		joinChannelWithRetry $peer "$org"
+		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME' ===================== "
 		sleep $DELAY
 		echo
 	    done
@@ -81,43 +79,76 @@ echo "Having all peers join the channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
-echo "Updating anchor peers for org1..."
-updateAnchorPeers 0 1
-echo "Updating anchor peers for org2..."
-updateAnchorPeers 0 2
+echo "Updating anchor peers for confederation..."
+updateAnchorPeers 0 "confederation"
+echo "Updating anchor peers for canton..."
+updateAnchorPeers 0 "canton"
+echo "Updating anchor peers for canton2..."
+updateAnchorPeers 0 "canton2"
+echo "Updating anchor peers for municipality..."
+updateAnchorPeers 0 "municipality"
+echo "Updating anchor peers for municipality2..."
+updateAnchorPeers 0 "municipality2"
+echo "Updating anchor peers for municipality3..."
+updateAnchorPeers 0 "municipality3"
+echo "Updating anchor peers for esp..."
+updateAnchorPeers 0 "esp"
 
 if [ "${NO_CHAINCODE}" != "true" ]; then
 
-	## Install chaincode on peer0.org1 and peer0.org2
-	echo "Installing chaincode on peer0.org1..."
-	installChaincode 0 1
-	echo "Install chaincode on peer0.org2..."
-	installChaincode 0 2
+	## Install chaincode on all peers of all organizations
+	echo "Installing chaincode on peer0.confederation..."
+	installChaincode 0 "confederation"
+	echo "Install chaincode on peer0.canton..."
+	installChaincode 0 "canton"
+	echo "Install chaincode on peer0.canton2..."
+	installChaincode 0 "canton2"
+	echo "Install chaincode on peer0.municipality..."
+	installChaincode 0 "municipality"
+	echo "Install chaincode on peer0.municipality2..."
+	installChaincode 0 "municipality2"
+	echo "Install chaincode on peer0.municipality3..."
+	installChaincode 0 "municipality3"
+	echo "Install chaincode on peer0.esp..."
+	installChaincode 0 "esp"
+	echo "Installing chaincode on peer1.confederation..."
+	installChaincode 1 "confederation"
+	echo "Install chaincode on peer1.canton..."
+	installChaincode 1 "canton"
+	echo "Install chaincode on peer1.canton2..."
+	installChaincode 1 "canton2"
+	echo "Install chaincode on peer1.municipality..."
+	installChaincode 1 "municipality"
+	echo "Install chaincode on peer1.municipality2..."
+	installChaincode 1 "municipality2"
+	echo "Install chaincode on peer1.municipality3..."
+	installChaincode 1 "municipality3"
+	echo "Install chaincode on peer1.esp..."
+	installChaincode 1 "esp"
 
 	# Instantiate chaincode on peer0.org2
-	echo "Instantiating chaincode on peer0.org2..."
-	instantiateChaincode 0 2
+	echo "Instantiating chaincode on peer0.confederation..."
+	instantiateChaincode 0 "confederation"
 
-	# Query chaincode on peer0.org1
-	echo "Querying chaincode on peer0.org1..."
-	chaincodeQuery 0 1 100
+	# Invoke chaincode on peer0.confederation
+	echo "Sending invoke transaction on peer0.confederation"
+	invokeChaincode 0 "confederation"
 
-	# Invoke chaincode on peer0.org1 and peer0.org2
-	echo "Sending invoke transaction on peer0.org1 peer0.org2..."
-	chaincodeInvoke 0 1 0 2
 
-	## Install chaincode on peer1.org2
-	echo "Installing chaincode on peer1.org2..."
-	installChaincode 1 2
-
-	# Query on chaincode on peer1.org2, check if the result is 90
-	echo "Querying chaincode on peer1.org2..."
-	chaincodeQuery 1 2 90
+	# Query chaincode on all peers and all organizations
+	echo "Querying chaincode on peer0.confederation..."
+	chaincodeQuery 0 "confederation"
+	echo "Querying chaincode on peer1.confederation..."
+	chaincodeQuery 1 "confederation"
+	echo "Querying chaincode on peer0.canton..."
+	chaincodeQuery 0 "canton"
+	echo "Querying chaincode on peer1.canton..."
+	chaincodeQuery 1 "canton"
 
 fi
 
 echo
-echo "========= All GOOD, BYFN execution completed =========== "
+echo "========= All GOOD, setup execution completed =========== "
 echo
 
 echo
