@@ -28,7 +28,7 @@ function yaml_ccp {
         ccp-template.yaml | sed -e $'s/\\\\n/\\\n        /g'
 }
 
-ORG="Confederation"
+ORG="confederation"
 P0PORT=7051
 P1PORT=8051
 CAPORT=7054
@@ -38,7 +38,7 @@ CAPEM=crypto-config/peerOrganizations/confederation.example.com/ca/ca.confederat
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-confederation.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-confederation.yaml
 
-ORG="Canton"
+ORG="canton"
 P0PORT=9051
 P1PORT=10051
 CAPORT=9054
@@ -48,7 +48,7 @@ CAPEM=crypto-config/peerOrganizations/canton.example.com/ca/ca.canton.example.co
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-canton.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-canton.yaml
 
-ORG="Canton2"
+ORG="canton2"
 P0PORT=11051
 P1PORT=12051
 CAPORT=11054
@@ -58,7 +58,7 @@ CAPEM=crypto-config/peerOrganizations/canton2.example.com/ca/ca.canton2.example.
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-canton2.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-canton2.yaml
 
-ORG="Municipality"
+ORG="municipality"
 P0PORT=13051
 P1PORT=14051
 CAPORT=13054
@@ -68,7 +68,7 @@ CAPEM=crypto-config/peerOrganizations/municipality.example.com/ca/ca.municipalit
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality.yaml
 
-ORG="Municipality2"
+ORG="municipality2"
 P0PORT=15051
 P1PORT=16051
 CAPORT=15054
@@ -78,7 +78,7 @@ CAPEM=crypto-config/peerOrganizations/municipality2.example.com/ca/ca.municipali
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality2.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality2.yaml
 
-ORG="Municipality3"
+ORG="municipality3"
 P0PORT=17051
 P1PORT=18051
 CAPORT=17054
@@ -88,7 +88,7 @@ CAPEM=crypto-config/peerOrganizations/municipality3.example.com/ca/ca.municipali
 echo "$(json_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality3.json
 echo "$(yaml_ccp $ORG $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality3.yaml
 
-ORG="ESP"
+ORG="esp"
 P0PORT=19051
 P1PORT=20051
 CAPORT=19054

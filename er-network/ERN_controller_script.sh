@@ -39,7 +39,7 @@ function printHelp() {
   echo "    <mode> - one of 'up', 'down', 'restart', 'generate' or 'upgrade'"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
-  echo "      - 'restart' - restart the network"
+  echo "      - 'test' - run the test script for the network"
   echo "      - 'generate' - generate required certificates and genesis block"
   echo "    -c <channel name> - channel name to use (defaults to \"ertestchannel\")"
   echo "    -t <timeout> - CLI timeout duration in seconds (defaults to 10)"
@@ -154,11 +154,21 @@ function networkUp() {
   # generate artifacts if they don't exist
   if [ ! -d "crypto-config" ]; then
     generateCerts
-    #replacePrivateKey
+    replacePrivateKey
     generateChannelArtifacts
     export IMAGE_TAG=latest
   fi
   COMPOSE_FILES="-f ${COMPOSE_FILE}"
+  if [ "${CERTIFICATE_AUTHORITIES}" == "true" ]; then
+    COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_CA}"
+    export ERN_CA1_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/confederation.example.com/ca && ls *_sk)
+    export ERN_CA2_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/canton.example.com/ca && ls *_sk)
+    export ERN_CA3_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/canton2.example.com/ca && ls *_sk)
+    export ERN_CA4_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/municipality.example.com/ca && ls *_sk)
+    export ERN_CA5_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/municipality2.example.com/ca && ls *_sk)
+    export ERN_CA6_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/municipality3.example.com/ca && ls *_sk)
+    export ERN_CA7_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/esp.example.com/ca && ls *_sk)
+  fi
   if [ "${CONSENSUS_TYPE}" == "kafka" ]; then
     COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_KAFKA}"
   elif [ "${CONSENSUS_TYPE}" == "etcdraft" ]; then
@@ -259,14 +269,40 @@ function replacePrivateKey() {
   # The next steps will replace the template's contents with the
   # actual values of the private key file names for the two CAs.
   CURRENT_DIR=$PWD
-  cd crypto-config/peerOrganizations/org1.example.com/ca/
+  cd crypto-config/peerOrganizations/confederation.example.com/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-  cd crypto-config/peerOrganizations/org2.example.com/ca/
+
+  cd crypto-config/peerOrganizations/canton.example.com/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/canton2.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/municipality.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA4_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/municipality2.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA5_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/municipality3.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA6_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/esp.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA7_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
     rm docker-compose-e2e.yamlt
@@ -614,7 +650,7 @@ elif [ "${MODE}" == "test" ]; then ## Clear the network
   runTest
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
-  # replacePrivateKey
+  replacePrivateKey
   generateChannelArtifacts
 elif [ "${MODE}" == "restart" ]; then ## Restart the network
   networkDown

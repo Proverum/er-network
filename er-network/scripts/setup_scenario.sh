@@ -143,8 +143,7 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	echo "Querying chaincode on peer0.canton..."
 	chaincodeQuery 0 "canton"
 	echo "Querying chaincode on peer1.canton..."
-	chaincodeQuery 1 "canton"
-
+	chaincodeQuery 1 "canton"s
 fi
 
 echo
