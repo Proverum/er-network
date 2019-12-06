@@ -18,7 +18,7 @@ services:
         - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
         - orderer.example.com:/var/hyperledger/production/orderer
     ports:
-      - 7050
+      - 7050:7050
 
   peer0.confederation.example.com:
     container_name: peer0.confederation.example.com
@@ -40,7 +40,7 @@ services:
         - ../crypto-config/peerOrganizations/confederation.example.com/peers/peer0.confederation.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.confederation.example.com:/var/hyperledger/production
     ports:
-      - 7051
+      - 7051:7051
 
   peer1.confederation.example.com:
     container_name: peer1.confederation.example.com
@@ -62,7 +62,7 @@ services:
         - ../crypto-config/peerOrganizations/confederation.example.com/peers/peer1.confederation.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.confederation.example.com:/var/hyperledger/production
     ports:
-      - 8051
+      - 8051:8051
 
   peer0.canton.example.com:
     container_name: peer0.canton.example.com
@@ -84,7 +84,7 @@ services:
         - ../crypto-config/peerOrganizations/canton.example.com/peers/peer0.canton.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.canton.example.com:/var/hyperledger/production
     ports:
-      - 9051
+      - 9051:9051
 
   peer1.canton.example.com:
     container_name: peer1.canton.example.com
@@ -106,7 +106,7 @@ services:
         - ../crypto-config/peerOrganizations/canton.example.com/peers/peer1.canton.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.canton.example.com:/var/hyperledger/production
     ports:
-      - 10051
+      - 10051:10051
 
   peer0.canton2.example.com:
     container_name: peer0.canton2.example.com
@@ -128,7 +128,7 @@ services:
         - ../crypto-config/peerOrganizations/canton2.example.com/peers/peer0.canton2.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.canton2.example.com:/var/hyperledger/production
     ports:
-      - 11051
+      - 11051:11051
 
   peer1.canton2.example.com:
     container_name: peer1.canton2.example.com
@@ -150,7 +150,7 @@ services:
         - ../crypto-config/peerOrganizations/canton2.example.com/peers/peer1.canton2.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.canton2.example.com:/var/hyperledger/production
     ports:
-      - 12051
+      - 12051:12051
 
   peer0.municipality.example.com:
     container_name: peer0.municipality.example.com
@@ -172,7 +172,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality.example.com/peers/peer0.municipality.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.municipality.example.com:/var/hyperledger/production
     ports:
-      - 13051
+      - 13051:13051
 
   peer1.municipality.example.com:
     container_name: peer1.municipality.example.com
@@ -194,7 +194,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality.example.com/peers/peer1.municipality.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.municipality.example.com:/var/hyperledger/production
     ports:
-      - 14051
+      - 14051:14051
 
   peer0.municipality2.example.com:
     container_name: peer0.municipality2.example.com
@@ -216,7 +216,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality2.example.com/peers/peer0.municipality2.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.municipality2.example.com:/var/hyperledger/production
     ports:
-      - 15051
+      - 15051:15051
 
   peer1.municipality2.example.com:
     container_name: peer1.municipality2.example.com
@@ -238,7 +238,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality2.example.com/peers/peer1.municipality2.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.municipality2.example.com:/var/hyperledger/production
     ports:
-      - 16051
+      - 16051:16051
 
   peer0.municipality3.example.com:
     container_name: peer0.municipality3.example.com
@@ -260,7 +260,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality3.example.com/peers/peer0.municipality3.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.municipality3.example.com:/var/hyperledger/production
     ports:
-      - 17051
+      - 17051:17051
 
   peer1.municipality3.example.com:
     container_name: peer1.municipality3.example.com
@@ -282,7 +282,7 @@ services:
         - ../crypto-config/peerOrganizations/municipality3.example.com/peers/peer1.municipality3.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.municipality3.example.com:/var/hyperledger/production
     ports:
-      - 18051
+      - 18051:18051
 
   peer0.esp.example.com:
     container_name: peer0.esp.example.com
@@ -304,7 +304,7 @@ services:
         - ../crypto-config/peerOrganizations/esp.example.com/peers/peer0.esp.example.com/tls:/etc/hyperledger/fabric/tls
         - peer0.esp.example.com:/var/hyperledger/production
     ports:
-      - 19051
+      - 19051:19051
 
   peer1.esp.example.com:
     container_name: peer1.esp.example.com
@@ -326,4 +326,4 @@ services:
         - ../crypto-config/peerOrganizations/esp.example.com/peers/peer1.esp.example.com/tls:/etc/hyperledger/fabric/tls
         - peer1.esp.example.com:/var/hyperledger/production
     ports:
-      - 20051
+      - 20051:20051

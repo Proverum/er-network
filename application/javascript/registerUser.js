@@ -6,7 +6,6 @@
 
 const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
 const path = require('path');
-
 const ccpPath = path.resolve(__dirname, '..', '..', 'er-network', 'connection-confederation.json');
 
 async function main() {
@@ -18,7 +17,7 @@ async function main() {
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the user.
-        const userExists = await wallet.exists('clerk3');
+        const userExists = await wallet.exists('clerk1');
         if (userExists) {
             console.log('An identity for the user "clerk1" already exists in the wallet');
             return;
@@ -42,15 +41,15 @@ async function main() {
         console.log("this is the ca pulled via the gateway", ca);
 
         // Register the user, enroll the user, and import the new identity into the wallet.
-        const secret = await ca.register({ affiliation: 'confederation.bundesamtZ', enrollmentID: 'clerk3', role: 'client' }, adminIdentity);
-        const enrollment = await ca.enroll({ enrollmentID: 'clerk3', enrollmentSecret: secret });
+        const secret = await ca.register({ affiliation: 'confederation.bundesamtX', enrollmentID: 'clerk1', role: 'client' }, adminIdentity);
+        const enrollment = await ca.enroll({ enrollmentID: 'clerk1', enrollmentSecret: secret });
         const userIdentity = X509WalletMixin.createIdentity('ConfederationMSP', enrollment.certificate, enrollment.key.toBytes());
         console.log("this is the newly enrolled user identity object", userIdentity);
-        await wallet.import('clerk3', userIdentity);
-        console.log('Successfully registered and enrolled admin user "clerk3" and imported it into the wallet');
+        await wallet.import('clerk1', userIdentity);
+        console.log('Successfully registered and enrolled admin user "clerk1" and imported it into the wallet');
 
     } catch (error) {
-        console.error(`Failed to register user "clerk3": ${error}`);
+        console.error(`Failed to register user "clerk1": ${error}`);
         process.exit(1);
     }
 }

@@ -2,7 +2,7 @@
     "name": "er-network-${ORG}",
     "version": "1.0.0",
     "client": {
-        "organization": "${ORG}",
+        "organization": "${ORGCAP}",
         "connection": {
             "timeout": {
                 "peer": {
@@ -12,8 +12,8 @@
         }
     },
     "organizations": {
-        "${ORG}": {
-            "mspid": "${ORG}MSP",
+        "${ORGCAP}": {
+            "mspid": "${ORGCAP}MSP",
             "peers": [
                 "peer0.${ORG}.example.com",
                 "peer1.${ORG}.example.com"
