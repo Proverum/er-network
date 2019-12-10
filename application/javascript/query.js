@@ -40,7 +40,7 @@ async function main() {
         console.log(contract);
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryMarks', 'Alice');
+        const result = await contract.evaluateTransaction('queryMarks', 'Bob');
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {
