@@ -12,7 +12,7 @@ class CitizenRegister extends StateList {
     }
 
     async addCitizen(citizen) {
-
+        return this.addState(citizen);
     }
 
     async getCitizen(citizenKey) {
