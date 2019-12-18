@@ -1,67 +1,16 @@
 const State = require('./../ledger-api/state.js');
-const PersonType = require('./dataTypes');
-const PersonIdentificationType = require('./dataTypes');
-const BirthDataType = require('./dataTypes');
-const NationalityDataType = require('./dataTypes');
-const PlaceOfOriginDataType = require('./dataTypes');
-const ResidenceDataType = require('./dataTypes');
-const DwellingAddressDataType = require('./dataTypes');
-const SwissAddressInformationDataType = require('./dataTypes');
-
-require('./dataTypes');
+const ResidenceDataType = require('./residenceDataType');
+const PersonDataType = require('./personDataType');
 
 class Citizen extends State {
 
-  constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName,
-    canton, reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold){
-      this.vn = vn;
-      this.localPersonId = localPersonId;
-      this.officialName = officialName;
-      this.firstName = firstName;
-      this.dateOfBirth = dateOfBirth;
-      this.sex = sex;
-      this.religion = religion;
-      this.maritalStatus = maritalStatus;
-      this.nationality = nationality;
-      this.originName = originName
-  }
-
-
-    /**
-     * Basic getters and setters
-    */
-    getPersonData() {
-        return this.personData;
+  constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
+    religion, maritalStatus, nationality, originName, canton, residencePermit,
+    reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
+        super(Citizen.getClass(), [vn, officialName]);
+        this.personData = new PersonDataType(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit);
+        this.hasMainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
     }
-
-    setPersonData(newPersonData) {
-        this.personData = newPersonData;
-    }
-
-    getMainResidence() {
-        return this.hasMainResidence;
-    }
-
-    setMainResidence(newMainResidence) {
-        this.hasMainResidence = newMainResidence;
-    }
-
-    getSecondaryResidence() {
-        return this.hasSecondaryResidence;
-    }
-
-    setSecondaryResidence(newSecondaryResidence) {
-        this.hasSecondaryResidence = newSecondaryResidence;
-    }
-
-    getOtherResidence() {
-        return this.hasOtherResidence;
-    }
-
-    setOtherResidence(newOtherResidence) {
-        this.hasOtherResidence = newOtherResidence;
-    }
-
 
 
     static fromBuffer(buffer) {
@@ -79,10 +28,6 @@ class Citizen extends State {
     static deserialize(data) {
         return State.deserializeClass(data, Citizen);
     }
-
-    /**
-     * Factory method to create a commercial paper object
-     */
 
 
     static getClass() {
