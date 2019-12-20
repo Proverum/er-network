@@ -34,6 +34,12 @@ class StateList {
         await this.ctx.stub.putState(key, data);
     }
 
+    async addPrivateState(state, collection) {
+        let key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
+        let data = State.serialize(state);
+        await this.ctx.stub.putPrivateData(collection, key, data);
+    }
+
     /**
      * Get a state from the list using supplied keys. Form composite
      * keys to retrieve state from world state. State data is deserialized
@@ -42,6 +48,17 @@ class StateList {
     async getState(key) {
         let ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         let data = await this.ctx.stub.getState(ledgerKey);
+        if (data){
+            let state = State.deserialize(data, this.supportedClasses);
+            return state;
+        } else {
+            return null;
+        }
+    }
+
+    async getPrivateState(key, collection) {
+        let ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
+        let data = await this.ctx.stub.getPrivateData(collection, ledgerKey);
         if (data){
             let state = State.deserialize(data, this.supportedClasses);
             return state;
@@ -61,6 +78,13 @@ class StateList {
         let data = State.serialize(state);
         await this.ctx.stub.putState(key, data);
     }
+
+    async updatePrivateState(state, collection) {
+        let key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
+        let data = State.serialize(state);
+        await this.ctx.stub.putPrivateData(collection, key, data);
+    }
+
 
     /** Stores the class for future deserialization */
     use(stateClass) {

@@ -17,7 +17,6 @@ PEER0_ESP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrgan
 
 
 
-
 # verify the result of the end-to-end test
 verifyResult() {
   if [ $1 -ne 0 ]; then
@@ -110,6 +109,39 @@ setGlobals() {
   fi
 }
 
+createChannel() {
+	setGlobals 0 "confederation"
+
+	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+                set -x
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
+		res=$?
+                set +x
+	else
+				set -x
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		res=$?
+				set +x
+	fi
+	cat log.txt
+	verifyResult $res "Channel creation failed"
+	echo "===================== Channel '$CHANNEL_NAME' created ===================== "
+	echo
+}
+
+joinChannel () {
+	for org in "${orgs[@]}"; do
+	    for peer in 0 1; do
+		echo $peer "$org"
+		joinChannelWithRetry $peer "$org"
+		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME' ===================== "
+		sleep $DELAY
+		echo
+	    done
+	done
+}
+
+
 updateAnchorPeers() {
   PEER=$1
   ORG="$2"
@@ -171,6 +203,22 @@ installChaincode() {
   echo
 }
 
+installErChaincode() {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  setGlobals $PEER "$ORG"
+  VERSION=${4:-1.0}
+  set -x
+  peer chaincode install -n ${CCName} -v ${VERSION} -p ${CC_SRC_PATH} -l "${LANGUAGE}" >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  verifyResult $res "Chaincode' ${CCName}' installation on peer${PEER}.${ORG} has failed"
+  echo "===================== Chaincode '${CCName}' is installed on peer${PEER}.${ORG} ===================== "
+  echo
+}
+
 instantiateChaincode() {
   PEER=$1
   ORG="$2"
@@ -187,13 +235,45 @@ instantiateChaincode() {
     set +x
   else
     set -x
-    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n testcc -l "${LANGUAGE}" -v 1.0 -c '{"Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA  >&log.txt
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n testcc -l "${LANGUAGE}" -v ${VERSION} -c '{"Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA  >&log.txt
     res=$?
     set +x
   fi
   cat log.txt
-  verifyResult $res "Chaincode instantiation on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' failed"
-  echo "===================== Chaincode is instantiated on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  verifyResult $res "Chaincode testcc instantiation on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' failed"
+  echo "===================== Chaincode testcc is instantiated on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
+
+instantiateErChaincode() {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  setGlobals $PEER "$ORG"
+  VERSION=${4:-1.0}
+
+  # while 'peer chaincode' command can get the orderer endpoint from the peer
+  # (if join was successful), let's supply it directly as we know it using
+  # the "-o" option
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l ${LANGUAGE} -v ${VERSION} -c '{"Args":[]}' >&log.txt
+    res=$?
+    set +x
+  else
+    set -x
+    #peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} -c '{"Args":["instantiate"]}' -P "OR('ConfederationMSP.member','CantonMSP.member','MunicipalityMSP.member')" --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA --collections-config $COLLECTIONCONFIG >&log.txt
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} -c '{"Args":["er-network.registercontract:instantiate"]}' -P "OR('ConfederationMSP.member','CantonMSP.member','MunicipalityMSP.member')" --tls $CORE_PEER_TLS_ENABLED\
+      --cafile ${ORDERER_CA} \
+      --collections-config $COLLECTIONCONFIG >&log.txt
+    # peer chaincode instantiate -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C federalchannel -n registercc -v 1.0 -c '{"Args":[]}' --collections-config opt/gopath/src/github.com/chaincode/register_management/collections_config.json
+
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Chaincode '${CCName}' instantiation on peer${PEER}.${ORG} on channel '$CHANNEL_NAME' failed"
+  echo "===================== Chaincode '${CCName}' is instantiated from peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
   echo
 }
 
@@ -236,6 +316,35 @@ chaincodeQuery() {
   cat log.txt
   verifyResult $res "Chaincode query on peer${PEER}.org${ORG} has failed"
   echo "===================== Chaincode was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  echo
+
+}
+
+chaincodeErQuery() {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  setGlobals $PEER "$ORG"
+  echo "===================== Querying on peer${PEER}${ORG} on channel '$CHANNEL_NAME'... ===================== "
+  local rc=1
+  local starttime=$(date +%s)
+
+  # continue to poll
+  # we either get a successful response, or reach TIMEOUT
+  while
+    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
+  do
+    sleep $DELAY
+    echo "Attempting to Query peer${PEER}.${ORG} ...$(($(date +%s) - starttime)) secs"
+    set -x
+    peer chaincode query -o orderer.example.com:7050 -C $CHANNEL_NAME -n $CCName -c '{"function":"queryCitizen","Args":["Citizen1"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+    res=$?
+    set +x
+  done
+  echo
+  cat log.txt
+  verifyResult $res "Chaincode '$CCName' query on peer${PEER}.org${ORG} has failed"
+  echo "===================== Chaincode '$CCName' was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
   echo
 
 }
@@ -328,8 +437,8 @@ invokeChaincode () {
   PEER=$1
   ORG="$2"
   setGlobals $PEER "$ORG"
-	invokeWithRetry $peer $org
-	echo "===================== peer${peer}.${org} invoked testcc on channel '$CHANNEL_NAME' ===================== "
+	invokeWithRetry $PEER $ORG
+	echo "===================== peer${PEER}.${ORG} invoked testcc on channel '$CHANNEL_NAME' ===================== "
 	sleep $DELAY
 	echo
 }
@@ -354,6 +463,75 @@ invokeWithRetry() {
   echo "===================== Invoke transaction successful on $PEERS on channel '$CHANNEL_NAME' ===================== "
   echo
 }
+
+initLedgerMunicipality () {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  setGlobals $PEER "$ORG"
+	initLedgerMunicipalityWithRetry $PEER $ORG $CCName
+	echo "===================== peer${PEER}.${ORG} invoked '${CCName}' on channel '$CHANNEL_NAME' ===================== "
+	sleep $DELAY
+	echo
+}
+
+initLedgerMunicipalityWithRetry() {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  set -x
+  peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -c '{"function":"initLedgerMunicipality","Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+  --peerAddresses peer0.municipality.example.com:13051 \
+  --tlsRootCertFiles ${PEER0_MUNICIPALITY_CA} >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
+    COUNTER=$(expr $COUNTER + 1)
+    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
+    sleep $DELAY
+    initLedgerMunicipalityWithRetry $PEER $ORG $CCName
+  else
+    COUNTER=1
+  fi
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to invoked the chaincode '${CCName}'' on channel '$CHANNEL_NAME' "
+  echo "===================== Init transaction successful on $PEERS on channel '$CHANNEL_NAME' and contract '${CCName}'===================== "
+  echo
+}
+
+initLedgerMunicipality2 () {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  setGlobals $PEER "$ORG"
+	initLedgerMunicipality2WithRetry $PEER $ORG $CCName
+	echo "===================== peer${PEER}.${ORG} invoked '${CCName}' on channel '$CHANNEL_NAME' ===================== "
+	sleep $DELAY
+	echo
+}
+
+initLedgerMunicipality2WithRetry() {
+  PEER=$1
+  ORG="$2"
+  CCName="$3"
+  set -x
+  peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -c '{"function":"initLedgerMunicipality2","Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA  >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
+    COUNTER=$(expr $COUNTER + 1)
+    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
+    sleep $DELAY
+    initLedgerMunicipality2WithRetry $PEER $ORG $CCName
+  else
+    COUNTER=1
+  fi
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to invoked the chaincode '${CCName}'' on channel '$CHANNEL_NAME' "
+  echo "===================== Init transaction successful on $PEERS on channel '$CHANNEL_NAME' and contract '${CCName}'===================== "
+  echo
+}
+
 
 
 # chaincodeInvoke <peer> <org> ...

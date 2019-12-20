@@ -7,11 +7,15 @@ class Citizen extends State {
   constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
     religion, maritalStatus, nationality, originName, canton, residencePermit,
     reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-        super(Citizen.getClass(), [vn, officialName]);
+        super(Citizen.getClass(), [vn, reportingMunicipality]);
         this.personData = new PersonDataType(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit);
-        this.hasMainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+        this.MainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+        this.SecondaryResidence = 'na';
     }
 
+    static addSecondaryResidence(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
+        this.SecondaryResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+    }
 
     static fromBuffer(buffer) {
         return Citizen.deserialize(buffer);
@@ -22,7 +26,7 @@ class Citizen extends State {
     }
 
     /**
-     * Deserialize a state data to commercial paper
+     * Deserialize a state data to citizen
      * @param {Buffer} data to form back into the object
      */
     static deserialize(data) {

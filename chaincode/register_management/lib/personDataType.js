@@ -29,7 +29,6 @@ class NameDataType {
     this.firstName = firstName;
   }
 }
-module.exports = NameDataType;
 
 
 class BirthDataType {

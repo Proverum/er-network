@@ -15,12 +15,24 @@ class CitizenRegister extends StateList {
         return this.addState(citizen);
     }
 
-    async getCitizen(citizenKey) {
+    async addPrivateCitizen(citizen, collection) {
+        return this.addPrivateState(citizen, collection);
+    }
 
+    async getCitizen(citizenKey) {
+        return this.getState(citizenKey);
+    }
+
+    async getPrivateCitizen(citizenKey, collection) {
+        return this.getPrivateData(citizenKey, collection);
     }
 
     async updateCitizen(citizen) {
         return this.updateState(citizen);
+    }
+
+    async updatePrivateCitizen(citizen, collection) {
+        return this.updateState(citizen, collection);
     }
 }
 

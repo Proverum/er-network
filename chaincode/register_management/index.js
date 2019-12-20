@@ -1,4 +1,6 @@
 'use strict';
 
-const cpcontract = require('./lib/registerManagementContract.js');
-module.exports.contracts = [cpcontract];
+const RegisterContract = require('./lib/registerContract.js');
+
+module.exports.registercontract = RegisterContract;
+module.exports.contracts = [ RegisterContract ];

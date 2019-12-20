@@ -1,5 +1,5 @@
 {
-    "name": "registerManagementContract",
+    "name": "RegisterContract",
     "version": "0.0.3",
     "description": "Register Management Contract",
     "main": "index.js",
@@ -18,8 +18,8 @@
     "author": "hyperledger",
     "license": "Apache-2.0",
     "dependencies": {
-        "fabric-contract-api": "~1.4.0",
-        "fabric-shim": "~1.4.0"
+        "fabric-contract-api": "^1.4.4",
+        "fabric-shim": "^1.4.4"
     },
     "devDependencies": {
         "chai": "^4.1.2",

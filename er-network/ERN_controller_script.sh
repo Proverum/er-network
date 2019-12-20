@@ -536,6 +536,14 @@ function runTest() {
   exit 1
   fi
 }
+
+function initSetup() {
+  docker exec cli scripts/setup-er.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE $NO_CHAINCODE
+  if [ $? -ne 0 ]; then
+  echo "ERROR !!!! Init failed"
+  exit 1
+  fi
+}
 # Obtain the OS and Architecture string that will be used to select the correct
 # native binaries for your platform, e.g., darwin-amd64 or linux-amd64
 OS_ARCH=$(echo "$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
@@ -580,6 +588,8 @@ elif [ "$MODE" == "down" ]; then
   EXPMODE="Stopping"
 elif [ "$MODE" == "test" ]; then
   EXPMODE="running test"
+elif [ "$MODE" == "init" ]; then
+  EXPMODE="running initialization"
 elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
 else
@@ -646,8 +656,10 @@ if [ "${MODE}" == "up" ]; then
   networkUp
 elif [ "${MODE}" == "down" ]; then ## Clear the network
   networkDown
-elif [ "${MODE}" == "test" ]; then ## Clear the network
+elif [ "${MODE}" == "test" ]; then ## run basic test
   runTest
+elif [ "${MODE}" == "init" ]; then ## run er specific setup
+  initSetup
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
   replacePrivateKey
