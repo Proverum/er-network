@@ -18,7 +18,7 @@ NO_CHAINCODE="$6"
 : ${CHANNEL_NAME:="federalchannel"}
 : ${DELAY:="3"}
 : ${LANGUAGE:="node"}
-: ${TIMEOUT:="10"}
+: ${TIMEOUT:="20"}
 : ${VERBOSE:="false"}
 : ${NO_CHAINCODE:="false"}
 LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
@@ -131,20 +131,70 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	echo "Instantiating chaincode from peer0.confederation..."
 	instantiateErChaincode 0 "confederation" "registercc"
 
-	# Invoke chaincode on peer0.confederation
-	echo "Sending invoke transaction on peer0.confederation"
+	# initialize some ledger with some mock citizens for each municipality
+	echo "Sending invoke transaction on peer0.municipality2"
+  initLedgerMunicipality2 0 "municipality2" "registercc"
+  echo "Sending invoke transaction on peer0.municipality3"
+  initLedgerMunicipality3 0 "municipality3" "registercc"
+  echo "Sending invoke transaction on peer0.municipality"
 	initLedgerMunicipality 0 "municipality" "registercc"
 
+	#adding individual citizens to private data collections
+	echo "Adding individual citizen on peer0.municipality..."
+	addIndividualCitizen 0 "municipality" "collectionCitizenMunicipality" "TESTADD0"
+	echo "Adding individual citizen on peer0.municipality3..."
+	addIndividualCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "TEST2ADD0"
+	echo "Adding individual citizen on peer0.municipality3..."
+	addIndividualCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "TEST3ADD0"
 
-	# Query chaincode on all peers and all organizations
-	# echo "Querying chaincode on peer0.confederation..."
-	# chaincodeErQuery 0 "confederation" "registercc"
-	# echo "Querying chaincode on peer1.confederation..."
-	# chaincodeErQuery 1 "confederation" "registercc"
-	# echo "Querying chaincode on peer0.canton..."
-	# chaincodeErQuery 0 "canton" "registercc"
-	# echo "Querying chaincode on peer1.canton..."
-	# chaincodeErQuery 1 "canton" "registercc"
+  echo "Querying citizens on peer0.municipality..."
+	queryCitizenFromPeer 0 "municipality" "collectionCitizenMunicipality" "CITIZEN0"
+	echo "Querying citizens on peer0.municipality..."
+	queryCitizenFromPeer 0 "municipality" "collectionCitizenMunicipality" "CITIZEN1"
+	echo "Querying citizens on peer0.municipality..."
+	queryCitizenFromPeer 0 "municipality" "collectionCitizenMunicipality" "CITIZEN2"
+	echo "Querying test add citizens on peer0.municipality..."
+	queryCitizenFromPeer 0 "municipality" "collectionCitizenMunicipality" "TESTADD0"
+  echo "Querying all public citizens on peer0.municipality..."
+	queryAllCitizens 0 "municipality" "collectionCitizenMunicipality"
+	echo "Querying all public citizens on peer0.municipality2..."
+	queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
+	echo "Querying all public citizens on peer0.municipality3..."
+	queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
+	echo "Querying public citizens on peer0.municipality2..."
+	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "TEST2ADD0"
+	echo "Querying public citizens on peer0.municipality3..."
+	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "TEST3ADD0"
+  echo "Querying public citizens on peer0.canton..."
+	queryCitizenFromPeer 0 "canton" "registercc" "collectionPublicCitizenMunicipality" "PUBLIC_CITIZEN_MUNICIPALITY_0"
+  echo "Querying public citizens on peer0.confederations..."
+	queryCitizenFromPeer 0 "confederation"  "collectionPublicCitizenMunicipality" "PUBLIC_CITIZEN_MUNICIPALITY_0"
+
+  echo "Querying citizens on peer0.municipality2..."
+  queryCitizenFromPeer 0 "municipality2" "registercc" "collectionCitizenMunicipality2" "CITIZEN0"
+  echo "Querying public citizens on peer0.canton..."
+	queryCitizenFromPeer 0 "canton" "registercc" "collectionPublicCitizenMunicipality2" "PUBLIC_CITIZEN_MUNICIPALITY2_0"
+  echo "Querying public citizens on peer0.confederations..."
+	queryCitizenFromPeer 0 "confederation" "registercc" "collectionPublicCitizenMunicipality2" "PUBLIC_CITIZEN_MUNICIPALITY2_0"
+
+  echo "Querying for citizen0 on peer0.municipality3..."
+	queryCitizenFromPeer 0 "municipality3" "registercc" "collectionCitizenMunicipality3" "MUNICIPALITY3_CITIZEN_0"
+  echo "Querying for public citizen3 0 public citizens on peer0.canton..."
+	queryCitizenFromPeer 0 "canton" "registercc" "collectionPublicCitizenMunicipality" "PUBLIC_CITIZEN_MUNICIPALITY3_0"
+  echo "Querying for public citizen3 0 on peer0.confederations..."
+	queryCitizenFromPeer 0 "confederation" "registercc" "collectionPublicCitizenMunicipality" "PUBLIC_CITIZEN_MUNICIPALITY3_0"
+  echo "Querying citizens on peer0.municipality3..."
+
+
+	# manuel globals changing: source scripts/utils.sh; setGlobals 0 "municipality3"  //for municipality3 peer0 for example
+
+	# peer chaincode query -o orderer.example.com:7050 -C federalchannel -n registercc -c '{"function":"queryCitizen","Args":["collectionCitizenMunicipality","CITIZEN0"]}' --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses peer0.municipality.example.com:13051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality.example.com/peers/peer0.municipality.example.com/tls/ca.crt
+
+	# peer chaincode query -o orderer.example.com:7050 -C federalchannel -n registercc -c '{"function":"queryCitizen","Args":["collectionCitizenMunicipality2","CITIZEN0"]}' --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses peer0.municipality2.example.com:15051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality2.example.com/peers/peer0.municipality2.example.com/tls/ca.crt
+	#
+	# peer chaincode query -o orderer.example.com:7050 -C federalchannel -n registercc -c '{"function":"queryAllCitizens","Args":["collectionCitizenMunicipality2"]}' --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses peer0.municipality2.example.com:15051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality2.example.com/peers/peer0.municipality2.example.com/tls/ca.crt
+	#
+	# peer chaincode query -o orderer.example.com:7050 -C federalchannel -n registercc -c '{"function":"queryAllCitizens","Args":["collectionCitizenMunicipality"]}' --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses peer0.municipality.example.com:13051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality.example.com/peers/peer0.municipality.example.com/tls/ca.crt
 fi
 
 echo

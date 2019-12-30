@@ -5,15 +5,6 @@ const { Contract, Context } = require('fabric-contract-api');
 const Citizen = require('./citizen.js');
 const CitizenPublic = require('./citizenPublic.js');
 
-// class RegisterContext extends Context {
-//
-//     constructor() {
-//         super();
-//         // All citizens are held in a the citizen registry
-//         this.citizenRegistry = new CitizenRegistry(this);
-//     }
-//
-// }
 
 class RegisterContract extends Contract {
 
@@ -28,14 +19,10 @@ class RegisterContract extends Contract {
         console.log('Instantiate the contract');
   }
 
-  // createContext() {
-  //       return new RegistryContext();
-  // }
-
   static test() {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    const citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
+    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
       'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
       new Citizen('678.9933.3677.89', 'CH.VERA.5466525', 'Rauper', 'Sandra', '13.08.2005', 'Zürich', 'weiblich',
@@ -47,7 +34,7 @@ class RegisterContract extends Contract {
 
     ];
 
-    const publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
+    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
         new CitizenPublic('409.2659.1234.44', 'Zürich'),
 
     ];
@@ -68,7 +55,7 @@ class RegisterContract extends Contract {
   async initLedgerMunicipality(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    const citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
+    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
       'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
       new Citizen('678.9933.3677.89', 'CH.VERA.5466525', 'Rauper', 'Sandra', '13.08.2005', 'Zürich', 'weiblich',
@@ -80,7 +67,7 @@ class RegisterContract extends Contract {
 
     ];
 
-    const publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
+    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
         new CitizenPublic('409.2659.1234.44', 'Zürich'),
 
     ];
@@ -91,18 +78,18 @@ class RegisterContract extends Contract {
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
-    for (let i = 0; i < publicCitizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipality", 'PUBLICCITIZEN' + i, Buffer.from(JSON.stringify(publicCitizens[i])));
-        console.info('Added <--> ', publicCitizens[i]);
+    for (let j = 0; j < publicCitizens.length; j++) {
+        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipality", 'PUBLIC_CITIZEN_MUNICIPALITY_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
+        console.info('Added <--> ', publicCitizens[j]);
     }
     console.info('============= END : Initialize Ledger ===========');
   }
 
   //Bassersdorf example with a bunch of mock citizens
-  async initLedgerMunicipality2(ctx) {
+  async initLedgerMunicipalityTwo(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    const citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.123298367', 'Laubi', 'Johan', '12.02.88', 'Baar', 'männlich',
+    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.123298367', 'Laubi', 'Johan', '12.02.88', 'Baar', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Baar', 'Zug', 'na',
       'Bassersdorf', 'Hauptwohnsitz', '22.09.1980', 'Basserstrasse 78', '8879', 'Bassersdorf', '8303', 'Kollektivhaushalt'),
       new Citizen('724.9933.3237.89', 'CH.VERA.923411', 'Lehner', 'Jasmin', '13.08.2005', 'Zürich', 'weiblich',
@@ -111,31 +98,32 @@ class RegisterContract extends Contract {
       new Citizen('466.6666.4446.12', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '26.03.1990', 'Madrid', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Spanien', 'Madrid', 'na', 'B',
         'Bassersdorf', 'Hauptwohnsitz', '02.10.2011', 'Hautstrasse 1', '234', 'Bassersdorf', '8303', 'Privathaushalt'),
+
     ];
 
-    const publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Bassersdorf'), new CitizenPublic('724.9933.3237.89', 'Bassersdorf'),
+    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Bassersdorf'), new CitizenPublic('724.9933.3237.89', 'Bassersdorf'),
         new CitizenPublic('466.6666.4446.12', 'Bassersdorf'),
 
     ];
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipality2", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
-    for (let i = 0; i < publicCitizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipality2", 'PUBLICCITIZEN' + i, Buffer.from(JSON.stringify(publicCitizens[i])));
-        console.info('Added <--> ', publicCitizens[i]);
+    for (let j = 0; j < publicCitizens.length; j++) {
+        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityTwo", 'PUBLIC_CITIZEN_MUNICIPALITY2_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
+        console.info('Added <--> ', publicCitizens[j]);
     }
     console.info('============= END : Initialize Ledger ===========');
   }
 
   //Wallisellen example with a bunch of mock citizens
-  async initLedgerMunicipality3(ctx) {
+  async initLedgerMunicipalityThree(ctx) {
     console.info('============= START : Initialize Ledger ===========');
-
-    const citizens = [new Citizen('487.6662.1099.45', 'SuisseId.02', 'Johnson', 'Mike', '22.09.1979', 'Seattle', 'männlich',
+    //dummy variables wallisellen example
+    let citizens = [new Citizen('487.6662.1099.45', 'SuisseId.02', 'Johnson', 'Mike', '22.09.1979', 'Seattle', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'USA', 'New York', 'na', 'A',
       'Wallisellen', 'Hauptwohnsitz', '22.09.2003', 'Wallisellerstrasse 78', '123', 'Wallisellen', '8304', 'Kollektivhaushalt'),
       new Citizen('925.4567.1342.24', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '13.08.1992', 'Zürich', 'männlich',
@@ -146,99 +134,138 @@ class RegisterContract extends Contract {
         'Wallisellen', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Wallisellen', '8304', 'Privathaushalt'),
     ];
 
-    const publicCitizens = [new CitizenPublic('487.6662.1099.45', 'Wallisellen'), new CitizenPublic('925.4567.1342.24', 'Wallisellen'),
+    let publicCitizens = [new CitizenPublic('487.6662.1099.45', 'Wallisellen'), new CitizenPublic('925.4567.1342.24', 'Wallisellen'),
         new CitizenPublic('275.5544.2948.02', 'Wallisellen'),
 
     ];
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipality3", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
-    for (let i = 0; i < publicCitizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipality3", 'PUBLICCITIZEN' + i, Buffer.from(JSON.stringify(publicCitizens[i])));
-        console.info('Added <--> ', publicCitizens[i]);
+    for (let j = 0; j < publicCitizens.length; j++) {
+        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityThree", 'PUBLIC_CITIZEN_MUNICIPALITY3_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
+        console.info('Added <--> ', publicCitizens[j]);
     }
     console.info('============= END : Initialize Ledger ===========');
   }
 
-  async queryCitizen(ctx, citizenkey) {
+  async queryCitizen(ctx, collection, citizenkey) {
 
-    const citizenAsBytes = await ctx.stub.getState(citizenkey); // get the citizen from chaincode state
-        if (!citizenAsBytes || citizenAsBytes.length === 0) {
-            throw new Error(`${citizenkey} does not exist`);
-        }
-        console.log(citizenAsBytes.toString());
-        return citizenAsBytes.toString();
+    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer
+    if (!citizenAsBytes || citizenAsBytes.length === 0) {
+          throw new Error(`${citizenkey} does not exist`);
+    }
+    console.log(citizenAsBytes.toString());
+    return citizenAsBytes.toString();
   }
 
-  async queryAllCitizens(ctx) {
-        const startKey = 'CITIZEN=';
-        const endKey = 'CITIZEN999';
+  async getCitizensByRange(ctx, startKey, endKey, collection) {
 
-        const iterator = await ctx.stub.getStateByRange(startKey, endKey);
+    let iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
 
-        const allResults = [];
-        while (true) {
-            const res = await iterator.next();
+    const allResults = [];
+    while (true) {
+        const res = await iterator.next();
 
-            if (res.value && res.value.value.toString()) {
-                console.log(res.value.value.toString('utf8'));
+        if (res.value && res.value.value.toString()) {
+            console.log(res.value.value.toString('utf8'));
 
-                const Key = res.value.key;
-                let Record;
-                try {
-                    Record = JSON.parse(res.value.value.toString('utf8'));
-                } catch (err) {
-                    console.log(err);
-                    Record = res.value.value.toString('utf8');
-                }
-                allResults.push({ Key, Record });
+            const Key = res.value.key;
+            let Record;
+            try {
+                Record = JSON.parse(res.value.value.toString('utf8'));
+            } catch (err) {
+                console.log(err);
+                Record = res.value.value.toString('utf8');
             }
-            if (res.done) {
-                console.log('end of data');
-                await iterator.close();
-                console.info(allResults);
-                return JSON.stringify(allResults);
-            }
+            allResults.push({ Key, Record });
+        }
+        if (res.done) {
+            console.log('end of data');
+            await iterator.close();
+            console.info(allResults);
+            return JSON.stringify(allResults);
         }
     }
+  }
 
-  // async addCitizen(ctx, vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
-  //   religion, maritalStatus, nationality, originName, canton, residencePermit,
-  //   reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-  //   // create an instance of the paper
-  //   let citizen = new Citizen(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
-  //     religion, maritalStatus, nationality, originName, canton, residencePermit,
-  //     reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold)
-  //
-  //   await ctx.citizenRegistry.addCitizen(citizen);
-  //   return citizen.toBuffer();
-  // }
-  //
-  // async moveCitizen(ctx, vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
-  //   religion, maritalStatus, nationality, originName, canton, residencePermit,
-  //   reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-  //
-  //   let citizen = new Citizen(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
-  //     religion, maritalStatus, nationality, originName, canton, residencePermit,
-  //     reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold)
-  //
-  //   await ctx.citizenRegistry.addCitizen(citizen);
-  //   return citizen.toBuffer();
-  // }
-  //
-  // async deleteCitizen(ctx, carNumber, make, model, color, owner) {
-  //
-  //   await ctx.citizenRegistry.deleteCitizen(paper);
-  //   return paper.toBuffer();
-  // }
-  //
-  // async generateElectoralRegisterSnapshot(ctx) {
-  //
-  // }
+  async getAllCitizens(ctx, collection, thisClass) {
+
+    const startKey = "CITIZEN0";
+    const endKey = "CITIZEN999";
+
+    const iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+
+    const allResults = [];
+    while (true) {
+        const res = await iterator.next();
+
+        if (res.value && res.value.value.toString()) {
+            console.log(res.value.value.toString('utf8'));
+
+            const Key = res.value.key;
+            let Record;
+            try {
+                Record = JSON.parse(res.value.value.toString('utf8'));
+            } catch (err) {
+                console.log(err);
+                Record = res.value.value.toString('utf8');
+            }
+            allResults.push({ Key, Record });
+        }
+        if (res.done) {
+            console.log('end of data');
+            await iterator.close();
+            console.info(allResults);
+            return JSON.stringify(allResults);
+        }
+    }
+  }
+
+
+
+  async addCitizen(ctx, vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
+    religion, maritalStatus, nationality, originName, canton, residencePermit,
+    reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, collection, citizenKey) {
+    // create an instance of the paper
+    let citizen = new Citizen(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
+      religion, maritalStatus, nationality, originName, canton, residencePermit,
+      reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+
+    await ctx.stub.putPrivateData(collection, citizenKey, Buffer.from(JSON.stringify(citizen)));
+    console.info('Added <--> ', citizen);
+  }
+
+  async moveCitizen(ctx, citizenkey, citizenkeyNew, currentCollection, destinationCollection) {
+    const citizenAsBuffer= queryCitizen(currentCollection, citizenkey);
+    let citizen = Citizen.fromBuffer(citizenAsBuffer);
+
+    deleteCitizen(citizenkey, currentCollection);
+    await ctx.stub.putPrivateData( destinationCollection, citizenkeyNew, Buffer.from(JSON.stringify(citizen)));
+
+  }
+
+  async deleteCitizen(ctx, citizenkey, collection) {
+
+    let citizenAsbytes = await ctx.stub.getPrivateData(collection, citizenkey)  // get the citizen from chaincode state
+
+    let jsonResp = {};
+    if (!citizenAsbytes) {
+      jsonResp.error = 'citizen does not exist: ' + citizenkey;
+      throw new Error(jsonResp);
+    }
+
+    await ctx.stub.deletePrivateData(collection, citizenkey);
+
+  }
+
+  async generateElectoralRegisterSnapshot(ctx) {
+
+  }
+
 //contract end braces
 }
 
