@@ -108,7 +108,7 @@ class RegisterContract extends Contract {
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'C' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
@@ -141,7 +141,7 @@ class RegisterContract extends Contract {
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CI' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
@@ -197,11 +197,14 @@ class RegisterContract extends Contract {
     const startKey = "CITIZEN0";
     const endKey = "CITIZEN999";
 
-    const iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+    const range = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+
+    // let promiseOfIterator = ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+    // let results = await getAllResults(promiseOfIterator);
 
     const allResults = [];
     while (true) {
-        const res = await iterator.next();
+        let res = await range.iterator.next();
 
         if (res.value && res.value.value.toString()) {
             console.log(res.value.value.toString('utf8'));
@@ -218,13 +221,23 @@ class RegisterContract extends Contract {
         }
         if (res.done) {
             console.log('end of data');
-            await iterator.close();
+            await range.iterator.close();
             console.info(allResults);
             return JSON.stringify(allResults);
         }
     }
   }
 
+//   async getAllResults(promiseOfIterator) {
+//     const allResults = [];
+//     for await (const res of promiseOfIterator) {
+//         // if not a getHistoryForKey iterator then key is contained in res.key
+//         allResults.push(res.value.toString('utf8'));
+//     }
+//     // iterator will be automatically closed on exit from the loop
+//     // either by reaching the end, or a break or throw terminated the loop
+//     return allResults;
+// }
 
 
   async addCitizen(ctx, vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
@@ -234,6 +247,8 @@ class RegisterContract extends Contract {
     let citizen = new Citizen(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
       religion, maritalStatus, nationality, originName, canton, residencePermit,
       reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+
+    //have to add to public collection as well
 
     await ctx.stub.putPrivateData(collection, citizenKey, Buffer.from(JSON.stringify(citizen)));
     console.info('Added <--> ', citizen);
