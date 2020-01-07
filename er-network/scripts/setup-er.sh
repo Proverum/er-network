@@ -131,18 +131,12 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	echo "Instantiating chaincode from peer0.confederation..."
 	instantiateErChaincode 0 "confederation" "registercc"
 
-	# initialize some ledger with some mock citizens for each municipality
-  echo "Sending invoke transaction on peer0.municipality"
-	initLedgerMunicipality 0 "municipality" "registercc"
-
+	# initialize  ledger with some mock citizens for each municipality which is mimicking zürich in this case
+  echo "Sending invoke init transaction on peer0.municipality"
+	initLedgerMunicipality 0 "municipality"
 	#adding individual citizens to private data collections
 	echo "Adding individual citizen on peer0.municipality..."
 	addIndividualCitizen 0 "municipality" "collectionCitizenMunicipality" "CITIZEN100"
-	echo "Adding individual citizen on peer0.municipality3..."
-	addIndividualCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
-	echo "Adding individual citizen on peer0.municipality3..."
-	addIndividualCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
-
   echo "Querying citizens on peer0.municipality..."
 	queryCitizenFromPeer 0 "municipality" "collectionCitizenMunicipality" "CITIZEN0"
 	echo "Querying citizens on peer0.municipality..."
@@ -159,49 +153,58 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
   echo "Querying public citizens on peer0.confederations..."
 	queryCitizenFromPeer 0 "confederation" "collectionPublicCitizenMunicipality" "PUBLIC_CITIZEN_MUNICIPALITY_0"
 
-	# echo "Querying all public citizens on peer0.municipality2..."
-	# queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
-	# echo "Querying all public citizens on peer0.municipality3..."
-	# queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
-	echo "Sending invoke transaction on peer0.municipality2"
-  initLedgerMunicipality2 0 "municipality2" "registercc"
-	#works till here
-	echo "Querying public citizens on peer0.municipality2..."
-	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
-	echo "Querying public citizens on peer0.canton..."
-	queryCitizenFromPeer 0 "canton" "collectionPublicCitizenMunicipalityTwo" "PUBLIC_CITIZEN_MUNICIPALITY2_0"
-	echo "Querying public citizens on peer0.confederations..."
-	queryCitizenFromPeer 0 "confederation" "collectionPublicCitizenMunicipalityTwo" "PUBLIC_CITIZEN_MUNICIPALITY2_0"
 
+	echo "Sending invoke init transaction on peer0.municipality2"
+	initLedgerMunicipality 0 "municipality2"
+	addIndividualCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
+	echo "Adding individual citizen on peer0.municipality3..."
 	echo "Querying citizens on peer0.municipality2..."
-	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "C0"
+	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN1"
 	echo "Querying citizens on peer0.municipality2..."
-	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "C1"
+	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN1"
 	echo "Querying citizens on peer0.municipality2..."
-	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "C2"
+	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN1"
 	echo "Querying public citizens on peer0.municipality2..."
 	queryCitizenFromPeer 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
+	echo "Querying all public citizens on peer0.municipality2..."
+	queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
 	# querying the public citizens just containing the vn and reporting municipality
 
-
 	echo "Sending invoke transaction on peer0.municipality3"
-  initLedgerMunicipality3 0 "municipality3" "registercc"
-
+  initLedgerMunicipality 0 "municipality3"
+	echo "Adding individual citizen on peer0.municipality2..."
+	addIndividualCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
 	echo "Querying public citizens on peer0.municipality3..."
-	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN0"
-	echo "Querying citizens on peer0.municipality..."
 	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN1"
-	echo "Querying citizens on peer0.municipality..."
-	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN2"
-	echo "Querying citizens on peer0.municipality..."
+	echo "Querying citizens on peer0.municipality3..."
+	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN1"
+	echo "Querying citizens on peer0.municipality3..."
+	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN1"
+	echo "Querying citizens on peer0.municipality3..."
 	queryCitizenFromPeer 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
-  # echo "Querying for citizen0 on peer0.municipality3..."
-	# queryCitizenFromPeer 0 "municipality3" "registercc" "collectionCitizenMunicipality3" "CITIZEN0"
+	echo "Querying all public citizens on peer0.municipality3..."
+	queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
   echo "Querying for public citizen3 0 public citizens on peer0.canton..."
 	queryCitizenFromPeer 0 "canton" "collectionPublicCitizenMunicipalityThree" "PUBLIC_CITIZEN_MUNICIPALITY3_0"
   echo "Querying for public citizen3 0 on peer0.confederations..."
 	queryCitizenFromPeer 0 "confederation" "collectionPublicCitizenMunicipalityThree" "PUBLIC_CITIZEN_MUNICIPALITY3_0"
   echo "Querying citizens on peer0.municipality3..."
+
+	#deleting some citizen
+	echo "delete individual citizen on peer0.municipality..."
+	deleteCitizen 0 "municipality" "collectionCitizenMunicipality" "CITIZEN100"
+	echo "Querying all public citizens on peer0.municipality... should now not contain CITIZEN100"
+	queryAllCitizens 0 "municipality" "collectionCitizenMunicipality"
+	echo "delete individual citizen on peer0.municipality2..."
+	deleteCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
+	echo "Querying all public citizens on peer0.municipality2... should now not contain CITIZEN100"
+	queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
+	echo "delete individual citizen on peer0.municipality3..."
+	deleteCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
+	echo "Querying all public citizens on peer0.municipality3... should now not contain CITIZEN100"
+	queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
+
+	# moving some citizen between municipalities
 
 
 	# manuel globals changing: source scripts/utils.sh; setGlobals 0 "municipality3"  //for municipality3 peer0 for example

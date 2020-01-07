@@ -1,6 +1,8 @@
 'use strict';
 
 const { Contract, Context } = require('fabric-contract-api');
+const shim = require('fabric-shim');
+const util = require('util');
 
 const Citizen = require('./citizen.js');
 const CitizenPublic = require('./citizenPublic.js');
@@ -108,7 +110,7 @@ class RegisterContract extends Contract {
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'C' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
@@ -141,7 +143,7 @@ class RegisterContract extends Contract {
 
     //add public information to corresponding canton and confederation
     for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CI' + i, Buffer.from(JSON.stringify(citizens[i])));
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
         console.info('Added <--> ', citizens[i]);
     }
     // add full citizen information to corresponding municipality private data store
@@ -258,12 +260,13 @@ class RegisterContract extends Contract {
     const citizenAsBuffer= queryCitizen(currentCollection, citizenkey);
     let citizen = Citizen.fromBuffer(citizenAsBuffer);
 
+    // let method = thisClass['deleteCitizen'];
     deleteCitizen(citizenkey, currentCollection);
     await ctx.stub.putPrivateData( destinationCollection, citizenkeyNew, Buffer.from(JSON.stringify(citizen)));
 
   }
 
-  async deleteCitizen(ctx, citizenkey, collection) {
+  async deleteCitizen(ctx, collection, citizenkey) {
 
     let citizenAsbytes = await ctx.stub.getPrivateData(collection, citizenkey)  // get the citizen from chaincode state
 
