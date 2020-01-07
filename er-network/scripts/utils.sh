@@ -15,7 +15,7 @@ PEER0_MUNICIPALITY2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto
 PEER0_MUNICIPALITY3_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality3.example.com/peers/peer0.municipality3.example.com/tls/ca.crt
 PEER0_ESP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/esp.example.com/peers/peer0.esp.example.com/tls/ca.crt
 
-
+CHANNEL_NAME="federalchannel"
 
 # verify the result of the end-to-end test
 verifyResult() {
@@ -376,6 +376,48 @@ queryCitizenFromPeer() {
   echo
 }
 
+queryCitizensNoRepeat() {
+  PEER=$1
+  ORG="$2"
+  COLLECTION="$3"
+  setGlobals $PEER "$ORG"
+  if [ "$ORG" = "confederation" ]; then
+    TLS_ROOT=${PEER0_CONFEDERATION_CA}
+    PEER_ADDRESS=peer0.confederation.example.com:7051
+  elif [ "$ORG" = "canton" ]; then
+    TLS_ROOT=${PEER0_CANTON_CA}
+    PEER_ADDRESS=peer0.canton.example.com:9051
+  elif [ "$ORG" = "canton2" ]; then
+    TLS_ROOT=${PEER0_CANTON2_CA}
+    PEER_ADDRESS=peer0.canton2.example.com:11051
+  elif [ "$ORG" = "municipality" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY_CA}
+    PEER_ADDRESS=peer0.municipality.example.com:13051
+  elif [ "$ORG" = "municipality2" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
+    PEER_ADDRESS=peer0.municipality2.example.com:15051
+  elif [ "$ORG" = "municipality3" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
+    PEER_ADDRESS=peer0.municipality3.example.com:17051
+  elif [ "$ORG" = "esp" ]; then
+    TLS_ROOT=${PEER0_ESP_CA}
+    PEER_ADDRESS=peer0.esp.example.com:19051
+  else
+    echo "================== ERROR !!! ORG Unknown =================="
+  fi
+  echo "Attempting to Query peer${PEER}.${ORG}..secs"
+  set -x
+  peer chaincode query -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"queryCitizen","Args":["'${COLLECTION}'","'${QUERYKEY}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+  --peerAddresses ${PEER_ADDRESS} \
+  --tlsRootCertFiles ${TLS_ROOT} >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  verifyResult $res "Chaincode registercc query from peer${PEER} ${ORG} has failed"
+  echo "===================== Chaincode registercc was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
+
 queryAllCitizens() {
   PEER=$1
   ORG="$2"
@@ -390,14 +432,14 @@ queryAllCitizens() {
   elif [ "$ORG" = "canton2" ]; then
     TLS_ROOT=${PEER0_CANTON2_CA}
     PEER_ADDRESS=peer0.canton2.example.com:11051
-  if [ "$ORG" = "municipality" ]; then
+  elif [ "$ORG" = "municipality" ]; then
     TLS_ROOT=${PEER0_MUNICIPALITY_CA}
     PEER_ADDRESS=peer0.municipality.example.com:13051
   elif [ "$ORG" = "municipality2" ]; then
     TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
     PEER_ADDRESS=peer0.municipality2.example.com:15051
   elif [ "$ORG" = "municipality3" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
+    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
     PEER_ADDRESS=peer0.municipality3.example.com:17051
   elif [ "$ORG" = "esp" ]; then
     TLS_ROOT=${PEER0_ESP_CA}
@@ -430,6 +472,48 @@ queryAllCitizens() {
   echo
 }
 
+queryAllCitizensNoRepeat() {
+  PEER=$1
+  ORG="$2"
+  COLLECTION="$3"
+  setGlobals $PEER "$ORG"
+  if [ "$ORG" = "confederation" ]; then
+    TLS_ROOT=${PEER0_CONFEDERATION_CA}
+    PEER_ADDRESS=peer0.confederation.example.com:7051
+  elif [ "$ORG" = "canton" ]; then
+    TLS_ROOT=${PEER0_CANTON_CA}
+    PEER_ADDRESS=peer0.canton.example.com:9051
+  elif [ "$ORG" = "canton2" ]; then
+    TLS_ROOT=${PEER0_CANTON2_CA}
+    PEER_ADDRESS=peer0.canton2.example.com:11051
+  elif [ "$ORG" = "municipality" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY_CA}
+    PEER_ADDRESS=peer0.municipality.example.com:13051
+  elif [ "$ORG" = "municipality2" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
+    PEER_ADDRESS=peer0.municipality2.example.com:15051
+  elif [ "$ORG" = "municipality3" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
+    PEER_ADDRESS=peer0.municipality3.example.com:17051
+  elif [ "$ORG" = "esp" ]; then
+    TLS_ROOT=${PEER0_ESP_CA}
+    PEER_ADDRESS=peer0.esp.example.com:19051
+  else
+    echo "================== ERROR !!! ORG Unknown =================="
+  fi
+  echo "Attempting to Query peer${PEER}.${ORG}..."
+  set -x
+  peer chaincode query -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"getAllCitizens","Args":["'${COLLECTION}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+  --peerAddresses ${PEER_ADDRESS} \
+  --tlsRootCertFiles ${TLS_ROOT} >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  verifyResult $res "Chaincode registercc query from peer${PEER} ${ORG} has failed"
+  echo "===================== Chaincode registercc was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
+
 deleteCitizen() {
   PEER=$1
   ORG="$2"
@@ -452,7 +536,7 @@ deleteCitizen() {
     TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
     PEER_ADDRESS=peer0.municipality2.example.com:15051
   elif [ "$ORG" = "municipality3" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
+    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
     PEER_ADDRESS=peer0.municipality3.example.com:17051
   elif [ "$ORG" = "esp" ]; then
     TLS_ROOT=${PEER0_ESP_CA}
@@ -460,87 +544,18 @@ deleteCitizen() {
   else
     echo "================== ERROR !!! ORG Unknown =================="
   fi
-  echo "===================== Querying from peer${PEER}${ORG} on channel '$CHANNEL_NAME'... ===================== "
-  local rc=1
-  local starttime=$(date +%s)
-
-  # continue to poll
-  # we either get a successful response, or reach TIMEOUT
-  while
-    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-  do
-    sleep $DELAY
-    echo "Attempting to Query peer${PEER}.${ORG} ...$(($(date +%s) - starttime)) secs"
-    set -x
-    peer chaincode query -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"deleteCitizen","Args":["'${COLLECTION}'", "'${DELETEKEY}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-    --peerAddresses ${PEER_ADDRESS} \
-    --tlsRootCertFiles ${TLS_ROOT} >&log.txt
-    res=$?
-    set +x
-  done
-  echo
+  echo "Attempting to Query peer${PEER}.${ORG}..."
+  set -x
+  peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"deleteCitizen","Args":["'${COLLECTION}'", "'${DELETEKEY}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
+  --peerAddresses ${PEER_ADDRESS} \
+  --tlsRootCertFiles ${TLS_ROOT} >&log.txt
+  res=$?
+  set +x
   cat log.txt
   verifyResult $res "Chaincode registercc query from peer${PEER} ${ORG} has failed"
   echo "===================== Chaincode registercc was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
   echo
 }
-
-moveCitizen() {
-  PEER=$1
-  ORG="$2"
-  GETKEY="$3"
-  CURRENTCOLLECTION="$4"
-  DESTINATIONCOLLECTION="$5"
-  setGlobals $PEER "$ORG"
-  if [ "$ORG" = "confederation" ]; then
-    TLS_ROOT=${PEER0_CONFEDERATION_CA}
-    PEER_ADDRESS=peer0.confederation.example.com:7051
-  elif [ "$ORG" = "canton" ]; then
-    TLS_ROOT=${PEER0_CANTON_CA}
-    PEER_ADDRESS=peer0.canton.example.com:9051
-  elif [ "$ORG" = "canton2" ]; then
-    TLS_ROOT=${PEER0_CANTON2_CA}
-    PEER_ADDRESS=peer0.canton2.example.com:11051
-  elif [ "$ORG" = "municipality" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY_CA}
-    PEER_ADDRESS=peer0.municipality.example.com:13051
-  elif [ "$ORG" = "municipality2" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
-    PEER_ADDRESS=peer0.municipality2.example.com:15051
-  elif [ "$ORG" = "municipality3" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY2_CA}
-    PEER_ADDRESS=peer0.municipality3.example.com:17051
-  elif [ "$ORG" = "esp" ]; then
-    TLS_ROOT=${PEER0_ESP_CA}
-    PEER_ADDRESS=peer0.esp.example.com:19051
-  else
-    echo "================== ERROR !!! ORG Unknown =================="
-  fi
-  echo "===================== Querying from peer${PEER}${ORG} on channel '$CHANNEL_NAME'... ===================== "
-  local rc=1
-  local starttime=$(date +%s)
-
-  # continue to poll
-  # we either get a successful response, or reach TIMEOUT
-  while
-    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-  do
-    sleep $DELAY
-    echo "Attempting to move citizen ...$(($(date +%s) - starttime)) secs"
-    set -x
-    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"moveCitizen","Args":[ "'${GETKEY}'", "'${PUTKEY}'", "'${CURRENTCOLLECTION}'", "'${DESTINATIONCOLLECTION}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-    --peerAddresses ${PEER_ADDRESS} \
-    --tlsRootCertFiles ${TLS_ROOT} >&log.txt
-    res=$?
-    set +x
-  done
-  echo
-  cat log.txt
-  verifyResult $res "Chaincode registercc query from peer${PEER} ${ORG} has failed"
-  echo "===================== Chaincode registercc was successfully queried form peer${PEER}.${ORG} on channel '$CHANNEL_NAME' ===================== "
-  echo
-}
-
 
 # fetchChannelConfig <channel_id> <output_json>
 # Writes the current channel config for a given channel to a JSON file

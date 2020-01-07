@@ -160,7 +160,6 @@ class RegisterContract extends Contract {
     if (!citizenAsBytes || citizenAsBytes.length === 0) {
           throw new Error(`${citizenkey} does not exist`);
     }
-    console.log(citizenAsBytes.toString());
     return citizenAsBytes.toString();
   }
 
@@ -194,7 +193,7 @@ class RegisterContract extends Contract {
     }
   }
 
-  async getAllCitizens(ctx, collection, thisClass) {
+  async getAllCitizens(ctx, collection) {
 
     const startKey = "CITIZEN0";
     const endKey = "CITIZEN999";
@@ -270,10 +269,8 @@ class RegisterContract extends Contract {
 
     let citizenAsbytes = await ctx.stub.getPrivateData(collection, citizenkey)  // get the citizen from chaincode state
 
-    let jsonResp = {};
-    if (!citizenAsbytes) {
-      jsonResp.error = 'citizen does not exist: ' + citizenkey;
-      throw new Error(jsonResp);
+    if (!citizenAsBytes || citizenAsBytes.length === 0) {
+          throw new Error(`${citizenkey} does not exist`);
     }
 
     await ctx.stub.deletePrivateData(collection, citizenkey);
