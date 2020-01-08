@@ -1,38 +1,51 @@
+const VotingPersonDataType = require('./basicVotingPersonDataType');
+const State = require('./../ledger-api/state.js');
+const DomainOfInfluenceDataType = require('./domainOfInfluenceDataType');
+
 class VotingCitizen extends State {
-
-  constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
-    religion, maritalStatus, nationality, originName, canton, residencePermit,
-    reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-        super(VotingCitizen.getClass(), [vn, reportingMunicipality]);
-        this.personData = new PersonDataType(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit);
-        this.MainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
-        this.SecondaryResidence = 'na';
+  constructor(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, electoralAddress, ...domainsOfInfluenceArgs) {
+    super(VotingCitizen.getClass(), [vn, municipality]);
+    this.personData = new VotingPersonDataType(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality);
+    this.dataLock = dataLock;
+    this.electoralAddress = electoralAddress;
+    this.domainOfInfluenceInfo = [];
+    try {
+    const chunks = this.chunkArray(domainsOfInfluenceArgs, 3);
+    for(const chunk of chunks) {
+      const domain = new DomainOfInfluenceDataType(chunk[0], chunk[1], chunk[2]);
+      this.domainOfInfluenceInfo.push(domain);
     }
-
-    static addSecondaryResidence(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-        this.SecondaryResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+    } catch(error) {
+      console.error(error);
     }
+  }
 
-    static fromBuffer(buffer) {
-        return VotingCitizen.deserialize(buffer);
-    }
+  chunkArray(array, chunkSize) {
+    return Array.from(
+      { length: Math.ceil(array.length / chunkSize) },
+      (_, index) => array.slice(index * chunkSize, (index + 1) * chunkSize));
+  }
 
-    toBuffer() {
-        return Buffer.from(JSON.stringify(this));
-    }
+  static fromBuffer(buffer) {
+      return VotingCitizen.deserialize(buffer);
+  }
 
-    /**
-     * Deserialize a state data to citizen
-     * @param {Buffer} data to form back into the object
-     */
-    static deserialize(data) {
-        return State.deserializeClass(data, VotingCitizen);
-    }
+  toBuffer() {
+      return Buffer.from(JSON.stringify(this));
+  }
+
+  /**
+   * Deserialize a state data to citizen
+   * @param {Buffer} data to form back into the object
+   */
+  static deserialize(data) {
+      return State.deserializeClass(data, VotingCitizen);
+  }
 
 
-    static getClass() {
-        return 'er-network.citizen';
-    }
+  static getClass() {
+      return 'er-network.voting-citizen';
+  }
 }
 
 module.exports = VotingCitizen;
