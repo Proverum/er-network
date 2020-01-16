@@ -1,3 +1,6 @@
+const SwissAddressInformationDataType = require('./swissAddressDataType');
+
+
 class ResidenceDataType {
   constructor(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold){
   this.reportingMunicipality = reportingMunicipality;
@@ -6,7 +9,6 @@ class ResidenceDataType {
   this.dwellingAddress = new DwellingAddressDataType(street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
   }
 }
-module.exports = ResidenceDataType;
 
 
 class DwellingAddressDataType {
@@ -15,15 +17,5 @@ class DwellingAddressDataType {
   this.typeOfHousehold = typeOfHousehold;  // 1 = Privathaushalt 2 = Kollektivhaushalt 3 = Sammelhaushalt
   }
 }
-module.exports = DwellingAddressDataType;
 
-
-class SwissAddressInformationDataType {
-  constructor(street, postOfficeBoxText, city, swissZipCode){
-  this.street = street;
-  this.postOfficeBoxText = postOfficeBoxText;
-  this.city = city;
-  this.swissZipCode = swissZipCode;
-  }
-}
 module.exports = ResidenceDataType;

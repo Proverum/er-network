@@ -544,7 +544,7 @@ deleteCitizen() {
   else
     echo "================== ERROR !!! ORG Unknown =================="
   fi
-  echo "Attempting to Query peer${PEER}.${ORG}..."
+  echo "===================== Querying from peer${PEER}${ORG} on channel '$CHANNEL_NAME'... ===================== "
   set -x
   peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"deleteCitizen","Args":["'${COLLECTION}'", "'${DELETEKEY}'"]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
   --peerAddresses ${PEER_ADDRESS} \
@@ -720,71 +720,6 @@ initLedgerMunicipalityWithRetry() {
   echo
 }
 
-initLedgerMunicipality2() {
-  PEER=$1
-  ORG="$2"
-  setGlobals $PEER "$ORG"
-	initLedgerMunicipality2WithRetry $PEER $ORG
-	echo "===================== peer${PEER}.${ORG} invoked registercc on channel '$CHANNEL_NAME' ===================== "
-	sleep $DELAY
-	echo
-}
-#refactor this duplication shit...
-initLedgerMunicipality2WithRetry() {
-  PEER=$1
-  ORG="$2"
-  set -x
-  peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"initLedgerMunicipalityTwo","Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-  --peerAddresses peer0.municipality2.example.com:15051 \
-  --tlsRootCertFiles ${PEER0_MUNICIPALITY2_CA} >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
-    COUNTER=$(expr $COUNTER + 1)
-    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
-    sleep $DELAY
-    initLedgerMunicipality2WithRetry $PEER $ORG
-  else
-    COUNTER=1
-  fi
-  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to invoked the chaincode registercc on channel '$CHANNEL_NAME' "
-  echo "===================== Init transaction successful on $PEERS on channel '$CHANNEL_NAME' and contract registercc===================== "
-  echo
-}
-
-initLedgerMunicipality3() {
-  PEER=$1
-  ORG="$2"
-  setGlobals $PEER "$ORG"
-	initLedgerMunicipality3WithRetry $PEER $ORG
-	echo "===================== peer${PEER}.${ORG} invoked registercc on channel '$CHANNEL_NAME' ===================== "
-	sleep $DELAY
-	echo
-}
-
-initLedgerMunicipality3WithRetry() {
-  PEER=$1
-  ORG="$2"
-  set -x
-  peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -c '{"function":"initLedgerMunicipalityThree","Args":[]}' --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA \
-  --peerAddresses peer0.municipality3.example.com:17051 \
-  --tlsRootCertFiles ${PEER0_MUNICIPALITY3_CA} >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
-    COUNTER=$(expr $COUNTER + 1)
-    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
-    sleep $DELAY
-    initLedgerMunicipality3WithRetry $PEER $ORG $CCName
-  else
-    COUNTER=1
-  fi
-  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.${ORG} has failed to invoked the chaincode '${CCName}'' on channel '$CHANNEL_NAME' "
-  echo "===================== Init transaction successful on $PEERS on channel '$CHANNEL_NAME' and contract '${CCName}'===================== "
-  echo
-}
 
 addIndividualCitizen() {
   PEER=$1

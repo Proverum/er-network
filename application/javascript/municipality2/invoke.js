@@ -8,7 +8,7 @@ const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
 
 const ccpPath = path.resolve(__dirname, '..', '..', 'er-network', 'connection-confederation.json');
-console.log(ccpPath);
+
 async function main() {
     try {
 
@@ -27,24 +27,25 @@ async function main() {
 
         // Create a new gateway for connecting to our peer node.
         const gateway = new Gateway();
-        await gateway.connect(ccpPath, { wallet: wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
-        console.log("gateway options: ", gateway.getOptions());
-        console.log("gateway itself: ", gateway);
+        await gateway.connect(ccpPath, { wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
 
         // Get the network (channel) our contract is deployed to.
-        const network = await gateway.getNetwork('federalchannel');    //daaaaa isch de fehler!
-        console.log(network);
+        const network = await gateway.getNetwork('federalchannel');
 
         // Get the contract from the network.
         const contract = network.getContract('testcc');
-        console.log(contract);
 
-        // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryMarks', 'Bob');
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        // Submit the specified transaction.
+        // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
+        // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR10', 'Dave')
+        await contract.submitTransaction('addMarks', 'Bob', '666', '668', '667');
+        console.log('Transaction has been submitted');
+
+        // Disconnect from the gateway.
+        await gateway.disconnect();
 
     } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
+        console.error(`Failed to submit transaction: ${error}`);
         process.exit(1);
     }
 }

@@ -10,11 +10,20 @@ class Citizen extends State {
         super(Citizen.getClass(), [vn, reportingMunicipality]);
         this.personData = new PersonDataType(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit);
         this.MainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
-        this.SecondaryResidence = 'na';
+        this.SecondaryResidence = "na";
+        this.restrictedVoting = "false";
     }
 
-    static addSecondaryResidence(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
+    addSecondaryResidence(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
         this.SecondaryResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+    }
+
+    toggleRestrictVoting(){
+      if(this.restrictedVoting=="false"){
+        this.restrictedVoting = "true";
+      }else {
+        this.restrictedVoting = "false";
+      }
     }
 
     static fromBuffer(buffer) {

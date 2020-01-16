@@ -7,7 +7,7 @@
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, '..', '..', 'er-network', 'connection-confederation.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality.json');
 console.log(ccpPath);
 async function main() {
     try {
@@ -25,10 +25,10 @@ async function main() {
             return;
         }
 
-        // Create a new gateway for connecting to our peer node.
+        // Create a new gateway for connecting to our peer node.3
         const gateway = new Gateway();
         await gateway.connect(ccpPath, { wallet: wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
-  
+
         // Get the network (channel) our contract is deployed to.
         const network = await gateway.getNetwork('federalchannel');    //daaaaa isch de fehler!
 
@@ -36,7 +36,7 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'MUNICIPALITY_CITIZEN_');
+        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'CITIZENX');
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {

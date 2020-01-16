@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { FileSystemWallet, Gateway } = require('fabric-network');
-const Citizen = require('../../chaincode/register_management/lib/citizen.js');
 const ccpPath = path.resolve(__dirname, '..', '..', 'er-network', 'connection-confederation.json');
 
 
@@ -9,6 +8,7 @@ async function main() {
 
     // Main try/catch block
     try {
+
         // Create a new file system based wallet for managing identities.
         const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
@@ -20,6 +20,7 @@ async function main() {
             console.log('An identity for the user "clerk1" already exists in the wallet');
             return;
         }
+
         // A gateway defines the peers used to access Fabric networks
         const gateway = new Gateway();
 
@@ -35,21 +36,9 @@ async function main() {
         console.log('get contract: federalchannel.');
         const contract = network.getContract('registerManagement', 'er-network.registermanagementcontract');
 
-        // register citizen
+        // issue commercial paper
         console.log('Submit commercial paper issue transaction.');
-        const registrationResponse = await contract.submitTransaction('registerCitizen', '897034539-concord', 'citizen12387', 'Zug',
-        '342-Zg-234', '2509091-flat1', 'Müller', 'Michael', 'Baarerstrasse 20',
-        '20.04.1990', 'Baar',
-        'male', 'unmarried', 'catholic', 'swiss', 'na', 'resident',
-        'Zug', 'na', 'na', 'Swiss, Zug, Zug', 'na');
-
-        // process response
-        console.log('Process issue transaction response.'+registrationResponse);
-
-        let citizen = Citizen.fromBuffer(registrationResponse);
-
-        console.log(`${citizen.name} citizen name : ${paper.} successfully registred for municipality ${citizen.municipality}`);
-        console.log('Transaction complete.');
+        const issueResponse = await contract.submitTransaction('initLedger');
 
 
     } catch (error) {

@@ -1,13 +1,17 @@
 const VotingPersonDataType = require('./basicVotingPersonDataType');
 const State = require('./../ledger-api/state.js');
 const DomainOfInfluenceDataType = require('./domainOfInfluenceDataType');
+const ResidenceDataType = require('./residenceDataType');
 
+//gemäss eCh-0045
 class VotingCitizen extends State {
-  constructor(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, electoralAddress, ...domainsOfInfluenceArgs) {
+  constructor(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, reportingMunicipality,
+    typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, ...domainsOfInfluenceArgs) {
     super(VotingCitizen.getClass(), [vn, municipality]);
     this.personData = new VotingPersonDataType(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality);
     this.dataLock = dataLock;
-    this.electoralAddress = electoralAddress;
+    this.electoralAddress = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
+    this.deliveryAddress = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
     this.domainOfInfluenceInfo = [];
     try {
     const chunks = this.chunkArray(domainsOfInfluenceArgs, 3);
@@ -18,6 +22,10 @@ class VotingCitizen extends State {
     } catch(error) {
       console.error(error);
     }
+  }
+
+  setDeliveryAddress(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold){
+    this.deliveryAddress = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
   }
 
   chunkArray(array, chunkSize) {

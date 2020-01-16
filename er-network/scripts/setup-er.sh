@@ -190,18 +190,18 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	queryCitizenFromPeer 0 "confederation" "collectionPublicCitizenMunicipalityThree" "PUBLIC_CITIZEN_MUNICIPALITY3_0"
 
 	#deleting some citizen
-	echo "delete individual citizen on peer0.municipality..."
-	deleteCitizen 0 "municipality" "collectionCitizenMunicipality" "CITIZEN100"
-	echo "Querying all public citizens on peer0.municipality... should now not contain CITIZEN100"
-	queryAllCitizens 0 "municipality" "collectionCitizenMunicipality"
-	echo "delete individual citizen on peer0.municipality2..."
-	deleteCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
-	echo "Querying all public citizens on peer0.municipality2... should now not contain CITIZEN100"
-	queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
-	echo "delete individual citizen on peer0.municipality3..."
-	deleteCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
-	echo "Querying all public citizens on peer0.municipality3... should now not contain CITIZEN100"
-	queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
+	# echo "delete individual citizen on peer0.municipality..."
+	# deleteCitizen 0 "municipality" "collectionCitizenMunicipality" "CITIZEN100"
+	# echo "Querying all public citizens on peer0.municipality... should now not contain CITIZEN100"
+	# queryAllCitizens 0 "municipality" "collectionCitizenMunicipality"
+	# echo "delete individual citizen on peer0.municipality2..."
+	# deleteCitizen 0 "municipality2" "collectionCitizenMunicipalityTwo" "CITIZEN100"
+	# echo "Querying all public citizens on peer0.municipality2... should now not contain CITIZEN100"
+	# queryAllCitizens 0 "municipality2" "collectionCitizenMunicipalityTwo"
+	# echo "delete individual citizen on peer0.municipality3..."
+	# deleteCitizen 0 "municipality3" "collectionCitizenMunicipalityThree" "CITIZEN100"
+	# echo "Querying all public citizens on peer0.municipality3... should now not contain CITIZEN100"
+	# queryAllCitizens 0 "municipality3" "collectionCitizenMunicipalityThree"
 
 	# moving some citizen between municipalities
 
