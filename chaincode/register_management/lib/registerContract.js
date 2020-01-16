@@ -164,8 +164,8 @@ class RegisterContract extends Contract {
           throw new Error(`${citizenkey} does not exist`);
     }
 
-    const citizenObject = Citizen.fromBuffer(citizenAsBytes);
-    return citizenObject;
+    //const citizenObject = Citizen.fromBuffer(citizenAsBytes);
+    return citizenAsBytes.toString();
   }
 
   async getCitizensByRange(ctx, startKey, endKey, collection) {
@@ -240,7 +240,7 @@ class RegisterContract extends Contract {
     reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, collection, citizenKey) {
     // create an instance of the paper
     // ==== Check if marble already exists ====
-    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey);
+    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenKey);
     if (citizenAsBytes.toString()) {
       throw new Error('This citizen already exists: ');
     }
@@ -282,15 +282,16 @@ class RegisterContract extends Contract {
     const allVoters = [];
     while (true) {
         let citizenObject = await allCitizensAsBytes.iterator.next();
-        if (citizenObject.value) {
-            console.log(res.value.value.toString('utf8'));
-            var TypeOfResidenceType = JSON.parse(citizenObject.value.value.MainResidence.typeOfResidenceType.toString('utf8'));
-            var VotingRestriction = JSON.parse(citizenObject.value.value.restrictedVoting.toString('utf8'));
-            var Nationality = JSON.parse(citizenObject.value.value.personData.nationality.toString('utf8'));
-            let today = new Date();
-            let birthDate = new Date(JSON.parse(citizenObject.value.value.personData.dateOfBirth.toString('utf8')));
-            let age = today.getFullYear() - birthDate.getFullYear();
-            let m = today.getMonth() - birthDate.getMonth();
+        if (citizenObject.value && citizenObject.value.value.toString()) {
+            console.log(citizenObject.value.value.toString('utf8'));
+            const citizen = JSON.parse(citizenObject.value.value.toString('utf8')); //unmarshal respnce
+            var TypeOfResidenceType = citizen.MainResidence.typeOfResidenceType;
+            var VotingRestriction = citizen.restrictedVoting;
+            var Nationality = citizen.personData.nationality;
+            var today = new Date();
+            var birthDate = new Date(citizen.personData.birthData.dateOfBirth);
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
             if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
                 age--;
             }
@@ -298,21 +299,21 @@ class RegisterContract extends Contract {
             if(age >= 18 && TypeOfResidenceType=="Hauptwohnsitz" && VotingRestriction=="false" && Nationality=="Schweiz"){
               var Influence = ['CH', '1', 'Bund', 'CT', '1', 'Kanton Zürich'];
               try {
-                let Vn = JSON.parse(citizenObject.value.value.personData.vn.toString('utf8'));
-                let LocalPersonId = JSON.parse(citizenObject.value.value.personData.localPersonId.toString('utf8'));
-                let OfficialName = JSON.parse(citizenObject.value.value.personData.officialName.toString('utf8'));
-                let FirstName = JSON.parse(citizenObject.value.value.personData.firstName.toString('utf8'));
-                let Sex = JSON.parse(citizenObject.value.value.personData.sex.toString('utf8'));
-                let DateOfBirth = JSON.parse(citizenObject.value.value.personData.dateOfBirth.toString('utf8'));
-                let LanguageOfCorrespondance = JSON.parse(citizenObject.value.value.personData.sex.toString('utf8'));
-                let Municipality = JSON.parse(citizenObject.value.value.MainResidence.reportingMunicipality.toString('utf8'));
-                let ArrivalDate = JSON.parse(citizenObject.value.value.MainResidence.arrivalDate.toString('utf8'));
-                let TypeOfHousehold = JSON.parse(citizenObject.value.value.MainResidence.dwellingAddress.typeOfHousehold.toString('utf8'));
-                let DataLock = "false";
-                let Street = JSON.parse(citizenObject.value.value.MainResidence.dwellingAddress.address.street.toString('utf8'));
-                let PostOfficeBox = JSON.parse(citizenObject.value.value.MainResidence.dwellingAddress.address.postOfficeBoxText.toString('utf8'));
-                let City = JSON.parse(citizenObject.value.value.MainResidence.dwellingAddress.address.city.toString('utf8'));
-                let SwissZipCode = JSON.parse(citizenObject.value.value.MainResidence.dwellingAddress.address.swissZipCode.toString('utf8'));
+                var Vn = citizen.personData.personIdentificationData.vn;
+                var LocalPersonId = citizen.personData.personIdentificationData.localPersonId;
+                var OfficialName = citizen.personData.nameData.officialName;
+                var FirstName = citizen.personData.nameData.firstName;
+                var Sex = citizen.personData.personIdentificationData.sex;
+                var DateOfBirth = citizen.value.value.personData.birthData.dateOfBirth;
+                var LanguageOfCorrespondance = citizen.personData.personIdentificationData.sex;
+                var Municipality = citizen.MainResidence.reportingMunicipality;
+                var ArrivalDate = citizen.MainResidence.arrivalDate;
+                var TypeOfHousehold = citizen.MainResidence.dwellingAddress.typeOfHousehold;
+                var DataLock = "false";
+                var Street = citizen.MainResidence.dwellingAddress.address.street;
+                var PostOfficeBox = citizen.value.value.MainResidence.dwellingAddress.address.postOfficeBoxText;
+                var City = citizen.MainResidence.dwellingAddress.address.city;
+                var SwissZipCode = citizen.value.value.MainResidence.dwellingAddress.address.swissZipCode;
                 if (Municipality="Bassersdorf") {
                   municipalityInfluence = ['MU', '23', 'Gemeinde Bassersdorf'];
                   Influence = influence.concat(municipalityInfluence);
@@ -326,7 +327,7 @@ class RegisterContract extends Contract {
                 }
                 var voter = new VotingCitizen(Vn, LocalPersonId, OfficialName, FirstName, Sex, DateOfBirth, LanguageOfCorrespondance, Municipality, DataLock, Municipality,
                   TypeOfResidenceType, ArrivalDate, Street, PostOfficeBox, City, SwissZipCode, TypeOfHousehold, Influence);
-                await ctx.stub.putPrivateData(collection, VotingCitizen.makeKey([Vn, Municipality]), Buffer.from(JSON.stringify(voter)));
+                //await ctx.stub.putPrivateData(collection, VotingCitizen.makeKey([Vn, Municipality]), Buffer.from(JSON.stringify(voter)));
 
               } catch (err) {
                   console.log(err);
@@ -334,14 +335,20 @@ class RegisterContract extends Contract {
             };
             allVoters.push(voter);
         }
-        if (res.done) {
+        if (citizenObject.done) {
             console.log('end of data');
-            await range.iterator.close();
+            await allCitizensAsBytes.iterator.close();
             var erRegister = new VoterList(Municipality, allVoters);
-            await ctx.stub.putPrivateData(collection, erKey, Buffer.from(JSON.stringify(erRegister)));
+            //await ctx.stub.putPrivateData(collection, erKey, Buffer.from(JSON.stringify(erRegister)));
             console.info('Generated and added er-register to private data');
-            return JSON.stringify(erRegister);
+            return JSON.stringify(allVoters);
         }
+    }
+  }
+
+  async persistElectoralRegister(listOfElegibleVoters) {
+    for (var voter in listOfElegibleVoters) {
+      await ctx.stub.putPrivateData(collection, VotingCitizen.makeKey([Vn, Municipality]), Buffer.from(JSON.stringify(voter)));
     }
   }
 

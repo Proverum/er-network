@@ -1,7 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
-
 'use strict';
 
 const { FileSystemWallet, Gateway } = require('fabric-network');
@@ -36,8 +32,9 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'CITIZEN0');
-        console.log(`Transaction has been evaluated, result is: ${result}`);
+        const allVoters = await contract.evaluateTransaction('generateElectoralRegisterSnapshot', 'collectionCitizenMunicipality', "ER0");
+        console.log(allVoters);
+        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);

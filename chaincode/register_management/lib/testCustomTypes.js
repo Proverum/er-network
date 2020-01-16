@@ -44,5 +44,4 @@ keyparts = ["muni", "8q1515"];
 console.log(testlist);
 console.log(keyparts.map(part => JSON.stringify(part)).join(':'));
 console.log(testresi);
-console.log(testresi.personData.nameData.firstName);
-console.log(testresi.personData.nameData.officialName);
+console.log(testresi.MainResidence.typeOfResidenceType);

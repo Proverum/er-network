@@ -1,4 +1,4 @@
-
+// supper strange rudundancies but eCh 0011 said so...
 class PersonDataType {
   constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit) {
     this.personIdentificationData = new PersonIdentificationType(vn, localPersonId, officialName, firstName, sex, dateOfBirth);
