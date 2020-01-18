@@ -39,9 +39,13 @@ async function main() {
         const result = await contract.evaluateTransaction('getAllCitizens', 'collectionCitizenMunicipality');
         const resultString = result.toString();
         const object = JSON.parse(resultString);
+        const personData = object[0].nationality
         //console.log(result.toString());
         //console.log(resultString);
         console.log(object);
+        console.log(personData);
+        console.log(personData=="Schweiz");
+
         //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {

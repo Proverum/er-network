@@ -528,6 +528,21 @@ Profiles:
             Capabilities:
                 <<: *ApplicationCapabilities
 
+    FederalChannel:
+        Consortium: FederalConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Confederation
+                - *Canton
+                - *Canton2
+                - *Municipality
+                - *Municipality2
+                - *Municipality3
+            Capabilities:
+                <<: *ApplicationCapabilities
+
     SampleDevModeKafka:
         <<: *ChannelDefaults
         Capabilities:

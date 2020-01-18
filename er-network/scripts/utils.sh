@@ -279,13 +279,17 @@ instantiateErChaincode() {
   echo
 }
 
-upgradeChaincode() {
+upgradeERChaincode() {
   PEER=$1
   ORG="$2"
-  s $PEER "$ORG"
-
+  NEWVERSION="$3"
+  setGlobals $PEER "$ORG"
   set -x
-  peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n testcc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer','Org3MSP.peer')"
+  peer chaincode upgrade -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l "${LANGUAGE}" -v ${NEWVERSION} \
+    -c '{"Args":["er-network.registercontract:instantiate"]}' \
+    -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member', 'ESPMSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+    --cafile ${ORDERER_CA} \
+    --collections-config $COLLECTIONCONFIG >&log.txt
   res=$?
   set +x
   cat log.txt

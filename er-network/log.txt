@@ -1,1 +1,14 @@
-./scripts/setup_scenario.sh: line 46: peer: command not found
++ '[' -x /usr/lib/command-not-found ']'
++ /usr/lib/command-not-found -- peer
+
+Command 'peer' not found, did you mean:
+
+  command 'beer' from deb gerstensaft
+  command 'peet' from deb pipexec
+  command 'seer' from deb seer
+  command 'pee' from deb moreutils
+  command 'pear' from deb php-pear
+
+Try: sudo apt install <deb name>
+
++ return 127

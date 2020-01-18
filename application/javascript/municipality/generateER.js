@@ -2,6 +2,7 @@
 
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
+var hash = require('object-hash');
 
 const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality.json');
 console.log(ccpPath);
@@ -32,9 +33,12 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const allVoters = await contract.evaluateTransaction('generateElectoralRegisterSnapshot', 'collectionCitizenMunicipality', "ER0");
-        console.log(allVoters);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        const result = await contract.evaluateTransaction('generateERSnapshot', 'collectionCitizenMunicipality');
+        const resultString = result.toString();
+        const resultJSON = JSON.parse(resultString);
+        console.log(resultJSON);
+        console.log(hash(resultJSON))
+
 
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);

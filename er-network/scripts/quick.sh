@@ -76,7 +76,7 @@ echo "Creating channel..."
 createChannel
 
 ## Join all the peers to the channel
-echo "Having all peers join the channel..."
+echo "Having all peers join the external channel channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
@@ -136,7 +136,7 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	initLedgerMunicipality 0 "municipality"
   initLedgerMunicipality 0 "municipality2"
   initLedgerMunicipality 0 "municipality3"
-  
+
 fi
 
 echo
