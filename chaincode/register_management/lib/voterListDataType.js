@@ -4,7 +4,7 @@ const VotingCitizen = require('./votingCitizen');
 
 class VoterList extends State {
   constructor(reportingMunicipality, votersArgs) {
-    super(VoterList.getClass(), [reportingMunicipality, votersArgs.length]);
+    super(VoterList.getClass(), [VoterList.getClass(), reportingMunicipality]);
     this.reportingMunicipality = reportingMunicipality;
     this.numberOfVoters = votersArgs.length;
     this.cuurentState = "valid";

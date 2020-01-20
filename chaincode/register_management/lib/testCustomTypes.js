@@ -5,6 +5,8 @@ const Citizen = require('./citizen');
 const CitizenPublic = require('./citizenPublic.js');
 const VotingCitizen = require('./votingCitizen');
 const VoterList = require('./voterListDataType');
+const Hash = require('./hash');
+
 var hash = require('object-hash');
 
 
@@ -35,8 +37,14 @@ influence = influence.concat(['CT', '1', 'Kanton Zürich', 'MU', '261', 'Stadt Z
 var testvoter4 = new VotingCitizen('vn3', 'localPersonId', 'officialName', 'firstName', 'sex', 'dateOfBirth', 'languageOfCorrespondance', 'municipality', 'dataLock', 'reportingMunicipality',
   'typeOfResidenceType', 'arrivalDate', 'street', 'postOfficeBoxText', 'city', 'swissZipCode', 'typeOfHousehold', influence);
 
-console.log(hash(testvoter4));
-console.log(hash(testvoter3));
+let reportingMunicipality = testvoter4.electoralAddress.reportingMunicipality;
+
+let voterHash = new Hash(reportingMunicipality, "voterHash", testvoter4);
+
+let voterListKey = reportingMunicipality.concat(JSON.stringify(new Date()));
+
+console.log(voterListKey)
+
 
 
 

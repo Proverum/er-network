@@ -9,7 +9,9 @@ var hash = require('object-hash');
 const Citizen = require('./citizen.js');
 const CitizenPublic = require('./citizenPublic.js');
 const VotingCitizen = require('./votingCitizen.js');
-const VoterList = require('./voterListDataType');
+const VoterList = require('./voterListDataType.js');
+const Hash = require('./hash.js');
+
 
 
 
@@ -170,17 +172,6 @@ class RegisterContract extends Contract {
     return citizenAsBytes.toString();
   }
 
-  async testQueryCitizen(ctx, collection, citizenkey) {
-
-    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer
-    if (!citizenAsBytes || citizenAsBytes.length === 0) {
-          throw new Error(`${citizenkey} does not exist`);
-    }
-
-    //const citizenObject = Citizen.fromBuffer(citizenAsBytes);
-    return citizenAsBytes;
-  }
-
   async getCitizensByRange(ctx, startKey, endKey, collection) {
 
     let iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
@@ -306,7 +297,6 @@ class RegisterContract extends Contract {
     const endKey = "";
 
     const range = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
-    let checks = [];
     let allResults = [];
     let voters = [];
     let invokingMunicipality;
@@ -330,7 +320,7 @@ class RegisterContract extends Contract {
                 if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
                     age--;
                 }
-                checks.push({ typeOfResidenceType, votingRestriction, nationality, age });
+                // checks if a citizen is allowed to vote
                 if(age >= 18 && typeOfResidenceType=="Hauptwohnsitz" && votingRestriction=="false" && nationality=="Schweiz"){
                   let influence = ['CH', '1', 'Bund', 'CT', '1', 'Kanton Zürich'];
                   let vn = Record.personData.personIdentificationData.vn;
@@ -363,9 +353,7 @@ class RegisterContract extends Contract {
                   typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, influence);
                   voters.push(voter);
                   invokingMunicipality = municipality;
-                  //saving a hash of the voter object on the public ledger for verification later on, hash is linked to the vn of the voter for querying and identification
-                  //await ctx.stub.putState(vn, Buffer.from(hash(voter));
-                  allResults.push({ Key, voter });
+                  allResults.push(voter);
                 }
             } catch (err) {
                 console.log(err);
@@ -377,18 +365,103 @@ class RegisterContract extends Contract {
             await range.iterator.close();
             let ElectoralRegister = new VoterList(invokingMunicipality, voters);
             allResults.push(ElectoralRegister);
-            //also save a hash of he complete ER for later verification
-            //await ctx.stub.putState(invokingMunicipality, Buffer.from(JSON.stringify(ElectoralRegister)));
             console.info(allResults);
             return JSON.stringify(allResults);
         }
     }
   }
 
-  async persistElectoralRegister(listOfElegibleVoters) {
-    for (var voter in listOfElegibleVoters) {
-      await ctx.stub.putPrivateData(collection, VotingCitizen.makeKey([Vn, Municipality]), Buffer.from(JSON.stringify(voter)));
+  async persistElectoralRegister(ctx, collection, electoralRegister) {
+    //store the individual voters in private collection and its hash on the public ledger (external channel)
+    let electoralRegisterObject = JSON.parse(electoralRegister);
+    let reportingMunicipality;
+    let voterHashes = [];
+    for( var i=0 ; i < electoralRegisterObject.length-1; i++){
+        const voter = electoralRegisterObject[i];
+        reportingMunicipality = voter.electoralAddress.reportingMunicipality;
+        let voterVn = voter.personData.personIdentificationData.vn;
+        let voterKey = "VoterPrivate:".concat(voterVn);
+        const voterHash = new Hash(reportingMunicipality, "voterHash", voter);
+        voterHashes.push(voterHash);
+        await ctx.stub.putState(voterHash.getKey(), Buffer.from(JSON.stringify(voterHash)));
+        await ctx.stub.putPrivateData(collection, voterKey, Buffer.from(JSON.stringify(voter)));
     }
+    const voterList = electoralRegisterObject[electoralRegisterObject.length-1];
+    let voterListKey = voterList.key.concat(JSON.stringify(new Date()));
+    const voterListHash = new Hash(reportingMunicipality, "voterListHash", voterList);
+    //also store the voterList in private collection and its hash on the public ledger (external channel)
+    await ctx.stub.putState(voterListHash.getKey(), Buffer.from(JSON.stringify(voterListHash)));
+    await ctx.stub.putPrivateData(collection, voterListKey, Buffer.from(JSON.stringify(voterList)));
+
+    console.info('Added voterListHash and individual voter hashes');
+    return {voterHashes, voterListHash};
+  }
+
+  async queryVoterHash(ctx, voterHashKey) {
+
+    const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the citizen from chaincode state type Buffer
+    if (!voterHashAsBytes || v.length === 0) {
+          throw new Error(`${voterHashKey} does not exist`);
+    }
+
+    console.log(voterHashAsBytes.toString());
+    return voterHashAsBytes.toString();
+  }
+
+  async queryWorldState(ctx) {
+
+    //empty string start and end key to fetch all
+    const startKey = "";
+    const endKey = "";
+
+    const iterator = await ctx.stub.getStateByRange(startKey, endKey);
+
+    let allResults = [];
+    while (true) {
+        const res = await iterator.next();
+
+        if (res.value && res.value.value.toString()) {
+            console.log(res.value.value.toString('utf8'));
+
+            const Key = res.value.key;
+            let Record;
+            try {
+                Record = JSON.parse(res.value.value.toString('utf8'));
+            } catch (err) {
+                console.log(err);
+                Record = res.value.value.toString('utf8');
+            }
+            allResults.push({ Key, Record });
+        }
+        if (res.done) {
+            console.log('end of data');
+            await iterator.close();
+            console.info(allResults);
+            return JSON.stringify(allResults);
+        }
+    }
+  }
+
+  async queryVoterListHash(ctx, voterListHashKey) {
+
+    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); // get the citizen from chaincode state type Buffer
+    if (!voterListHashAsBytes || v.length === 0) {
+          throw new Error(`${voterListHashKey} does not exist`);
+    }
+
+    console.log(voterListHashAsBytes.toString());
+    return voterListHashAsBytes.toString();
+  }
+
+  async queryAllVoterListHash(ctx, voterListHashKey) {
+
+    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); // get the citizen from chaincode state type Buffer
+    if (!voterListHashAsBytes || v.length === 0) {
+          throw new Error(`${voterListHashKey} does not exist`);
+    }
+
+    console.log(voterListHashAsBytes.toString());
+    return voterListHashAsBytes.toString();
   }
 
   async queryVoter(ctx, collection, voterkey) {
@@ -398,20 +471,36 @@ class RegisterContract extends Contract {
           throw new Error(`${voterkey} does not exist`);
     }
 
-    const voterObject = VotingCitizen.fromBuffer(voterAsBytes);
-    return voterObject;
+    console.log(voterAsBytes.toString());
+    return voterAsBytes.toString();
   }
 
-  async queryER(ctx, collection, erKey) {
+  async queryVoterList(ctx, collection, voterListKey) {
 
-    const registerAsBytes = await ctx.stub.getPrivateData(collection, erKey);  // get the citizen from chaincode state
+    const voterListAsBytes = await ctx.stub.getPrivateData(collection, voterListKey);  // get the citizen from chaincode state
 
     if (!registerAsBytes || registerAsBytes.length === 0) {
-          throw new Error(`${erKey} does not exist`);
+          throw new Error(`${voterListKey} does not exist`);
     }
 
-    const voterListObject = VoterList.fromBuffer(registerAsBytes);
-    return voterListObject;
+    console.log(voterListAsBytes.toString());
+    return voterListAsBytes.toString();
+
+  }
+
+  // async queryAllVoterListHash(ctx, voterListHashKey) {
+  //
+  //   const voterListHashAsBytes = await ctx.stub.getPrivateData(collection, voterListHashKey); // get the citizen from chaincode state type Buffer
+  //   if (!voterListHashAsBytes || v.length === 0) {
+  //         throw new Error(`${voterListHashKey} does not exist`);
+  //   }
+  //
+  //   console.log(voterListHashAsBytes.toString());
+  //   return voterListHashAsBytes.toString();
+  // }
+
+  async verifyVoter(ctx, voter){
+
 
   }
 

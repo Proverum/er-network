@@ -7,7 +7,7 @@ class Citizen extends State {
   constructor(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex,
     religion, maritalStatus, nationality, originName, canton, residencePermit,
     reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold) {
-        super(Citizen.getClass(), [vn, reportingMunicipality]);
+        super(Citizen.getClass(), [Citizen.getClass(), vn, reportingMunicipality]);
         this.personData = new PersonDataType(vn, localPersonId, officialName, firstName, dateOfBirth, placeofBirth, sex, religion, maritalStatus, nationality, originName, canton, residencePermit);
         this.MainResidence = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);
         this.SecondaryResidence = "na";
