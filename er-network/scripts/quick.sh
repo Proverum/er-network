@@ -25,8 +25,6 @@ LANGUAGE=`echo "$LANGUAGE" | tr [:upper:] [:lower:]`
 COUNTER=1
 MAX_RETRY=10
 
-declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "esp")
-
 CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/register_management"
 COLLECTIONCONFIG="/opt/gopath/src/github.com/chaincode/register_management/collections_config.json"
 
@@ -38,62 +36,47 @@ echo "Channel name : "$CHANNEL_NAME
 . scripts/utils.sh
 
 
-createChannel() {
-	setGlobals 0 "confederation"
-
-	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-                set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
-		res=$?
-                set +x
-	else
-				set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
-		res=$?
-				set +x
-	fi
-	cat log.txt
-	verifyResult $res "Channel creation failed"
-	echo "===================== Channel '$CHANNEL_NAME' created ===================== "
-	echo
-}
-
-joinChannel () {
-	for org in "${orgs[@]}"; do
-	    for peer in 0 1; do
-		echo $peer "$org"
-		joinChannelWithRetry $peer "$org"
-		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME' ===================== "
-		sleep $DELAY
-		echo
-	    done
-	done
-}
-
-
 ## Create channel
-echo "Creating channel..."
-createChannel
+echo "Creating Er channel..."
+createErChannel
+echo "Creating Federal channel..."
+createFederalChannel
 
 ## Join all the peers to the channel
 echo "Having all peers join the external channel channel..."
-joinChannel
+joinErChannel
+joinFederalChannel
 
 ## Set the anchor peers for each org in the channel
-echo "Updating anchor peers for confederation..."
+echo "Updating anchor peers for confederation on erchannel..."
 updateAnchorPeers 0 "confederation"
-echo "Updating anchor peers for canton..."
+echo "Updating anchor peers for canton on erchannel..."
 updateAnchorPeers 0 "canton"
-echo "Updating anchor peers for canton2..."
+echo "Updating anchor peers for canton2 on erchannel..."
 updateAnchorPeers 0 "canton2"
-echo "Updating anchor peers for municipality..."
+echo "Updating anchor peers for municipality on erchannel..."
 updateAnchorPeers 0 "municipality"
-echo "Updating anchor peers for municipality2..."
+echo "Updating anchor peers for municipality2 on erchannel..."
 updateAnchorPeers 0 "municipality2"
-echo "Updating anchor peers for municipality3..."
+echo "Updating anchor peers for municipality3 on erchannel..."
 updateAnchorPeers 0 "municipality3"
-echo "Updating anchor peers for esp..."
+echo "Updating anchor peers for esp on erchannel..."
 updateAnchorPeers 0 "esp"
+
+## Set the anchor peers for each org in the channel
+echo "Updating anchor peers for confederation on federalchannel..."
+updateFederalAnchorPeers 0 "confederation"
+echo "Updating anchor peers for canton on federalchannel..."
+updateFederalAnchorPeers 0 "canton"
+echo "Updating anchor peers for canton2 on federalchannel..."
+updateFederalAnchorPeers 0 "canton2"
+echo "Updating anchor peers for municipality on federalchannel..."
+updateFederalAnchorPeers 0 "municipality"
+echo "Updating anchor peers for municipality2 on federalchannel..."
+updateFederalAnchorPeers 0 "municipality2"
+echo "Updating anchor peers for municipality3 on federalchannel..."
+updateFederalAnchorPeers 0 "municipality3"
+
 
 if [ "${NO_CHAINCODE}" != "true" ]; then
 

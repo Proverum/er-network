@@ -17,6 +17,9 @@ PEER0_ESP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrgan
 
 CHANNEL_NAME="federalchannel"
 
+declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "esp")
+
+
 # verify the result of the end-to-end test
 verifyResult() {
   if [ $1 -ne 0 ]; then
@@ -109,17 +112,17 @@ setGlobals() {
   fi
 }
 
-createChannel() {
+createErChannel() {
 	setGlobals 0 "confederation"
 
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
+		peer channel create -o orderer.example.com:7050 -c "erchannel" -f ./channel-artifacts/erchannel.tx >&log.txt
 		res=$?
                 set +x
 	else
 				set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		peer channel create -o orderer.example.com:7050 -c "erchannel" -f ./channel-artifacts/erchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
 		res=$?
 				set +x
 	fi
@@ -129,14 +132,47 @@ createChannel() {
 	echo
 }
 
-joinChannel () {
+createFederalChannel() {
+	setGlobals 0 "confederation"
+
+	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+                set -x
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/federalchannel.tx >&log.txt
+		res=$?
+                set +x
+	else
+				set -x
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/federalchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		res=$?
+				set +x
+	fi
+	cat log.txt
+	verifyResult $res "Channel creation failed"
+	echo "===================== Channel '$CHANNEL_NAME' created ===================== "
+	echo
+}
+#join all organization to the erchannel
+joinErChannel () {
 	for org in "${orgs[@]}"; do
 	    for peer in 0 1; do
-		echo $peer "$org"
-		joinChannelWithRetry $peer "$org"
-		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME' ===================== "
-		sleep $DELAY
-		echo
+    		echo $peer "$org"
+    		joinErChannelWithRetry $peer "$org"
+    		echo "===================== peer${peer}${org} joined channel erchannel===================== "
+    		sleep $DELAY
+    		echo
+	    done
+	done
+}
+#only join all except the esp from the federal channel
+joinFederalChannel () {
+	for org in "${orgs[@]}"; do
+      ["$sorg" = "esp" ] && continue   # if var is esp jump to next loop
+	    for peer in 0 1; do
+    		echo $peer "$org"
+    		joinFederalChannelWithRetry $peer "$org"
+    		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME' ===================== "
+    		sleep $DELAY
+    		echo
 	    done
 	done
 }
@@ -148,12 +184,35 @@ updateAnchorPeers() {
 
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx >&log.txt
+    peer channel update -o orderer.example.com:7050 -c "erchannel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx >&log.txt
     res=$?
     set +x
   else
     set -x
-    peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+    peer channel update -o orderer.example.com:7050 -c "erchannel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Anchor peer update failed"
+  echo "===================== Anchor peers updated for org '$CORE_PEER_LOCALMSPID' on channel erchannel ===================== "
+  sleep $DELAY
+  echo
+}
+
+updateFederalAnchorPeers() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsFederal.tx >&log.txt
+    res=$?
+    set +x
+  else
+    set -x
+    peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsFederal.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
     res=$?
     set +x
   fi
@@ -165,7 +224,29 @@ updateAnchorPeers() {
 }
 
 ## Sometimes Join takes time hence RETRY at least 5 times
-joinChannelWithRetry() {
+joinErChannelWithRetry() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  set -x
+  echo "peer channel join -b erchannel .block >&log.txt"
+  peer channel join -b erchannel.block >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
+    COUNTER=$(expr $COUNTER + 1)
+    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
+    sleep $DELAY
+    joinErChannelWithRetry $PEER $ORG
+  else
+    COUNTER=1
+  fi
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel '$CHANNEL_NAME' "
+}
+
+joinFederalChannelWithRetry() {
   PEER=$1
   ORG="$2"
   setGlobals $PEER "$ORG"
@@ -180,7 +261,7 @@ joinChannelWithRetry() {
     COUNTER=$(expr $COUNTER + 1)
     echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
     sleep $DELAY
-    joinChannelWithRetry $PEER $ORG
+    joinFederalChannelWithRetry $PEER $ORG
   else
     COUNTER=1
   fi

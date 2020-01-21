@@ -428,7 +428,8 @@ function generateChannelArtifacts() {
   echo "### Generating channel configuration transaction 'channel.tx' ###"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+  configtxgen -profile ErChannel -outputCreateChannelTx ./channel-artifacts/erchannel.tx -channelID "erchannel"
+  configtxgen -profile FederalChannel -outputCreateChannelTx ./channel-artifacts/federalchannel.tx -channelID $CHANNEL_NAME
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -441,20 +442,22 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for ConfederationMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ConfederationMSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchors.tx -channelID "erchannel" -asOrg ConfederationMSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/ConfederationMSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg ConfederationMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
     echo "Failed to generate anchor peer update for ConfederationMSP..."
     exit 1
   fi
-
   echo
   echo "#################################################################"
   echo "#######    Generating anchor peer update for CantonMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchors.tx -channelID $CHANNEL_NAME -asOrg CantonMSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchors.tx -channelID "erchannel" -asOrg CantonMSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/CantonMSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg CantonMSP
+
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -467,7 +470,8 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for Canton2MSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Canton2MSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchors.tx -channelID "erchannel" -asOrg Canton2MSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/Canton2MSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg Canton2MSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -480,7 +484,8 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for MunicipalityMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/MunicipalityMSPanchors.tx -channelID $CHANNEL_NAME -asOrg MunicipalityMSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/MunicipalityMSPanchors.tx -channelID "erchannel" -asOrg MunicipalityMSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/MunicipalityMSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg MunicipalityMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -493,7 +498,8 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for Municipality2MSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality2MSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality2MSPanchors.tx -channelID "erchannel" -asOrg Municipality2MSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality2MSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg Municipality2MSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -506,7 +512,8 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for Municipality3MSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality3MSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality3MSPanchors.tx -channelID "erchannel" -asOrg Municipality3MSP
+  configtxgen -profile FederalChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality3MSPanchorsFederal.tx -channelID $CHANNEL_NAME -asOrg Municipality3MSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -519,7 +526,7 @@ function generateChannelArtifacts() {
   echo "#######    Generating anchor peer update for ESPMSP   ##########"
   echo "#################################################################"
   set -x
-  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ESPMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ESPMSP
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ESPMSPanchors.tx -channelID "erchannel" -asOrg ESPMSP
   res=$?
   set +x
   if [ $res -ne 0 ]; then
