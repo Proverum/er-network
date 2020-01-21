@@ -26,9 +26,9 @@ var testvoter2 = new VotingCitizen('vn2', 'localPersonId', 'officialName', 'firs
 var testvoter3 = new VotingCitizen('vn3', 'localPersonId', 'officialName', 'firstName', 'sex', 'dateOfBirth', 'languageOfCorrespondance', 'municipality', 'dataLock', 'reportingMunicipality',
   'typeOfResidenceType', 'arrivalDate', 'street', 'postOfficeBoxText', 'city', 'swissZipCode', 'typeOfHousehold', 'CH', '1', 'Bund', 'CT', '1', 'Kanton Zürich', 'MU', '261', 'Stadt Zürich');
 
-// var testvoterlist = [testvoter, testvoter1, testvoter2, testvoter3];
+var testvoterlist = [testvoter, testvoter1, testvoter2, testvoter3];
 //
-// var testlist = new VoterList('Zürich', testvoterlist);
+var testlist = new VoterList('Zürich', testvoterlist);
 //
 // var testdate = new Date('1950/07/01');
 var influence = ['CH', '1', 'Bund'];
@@ -43,7 +43,47 @@ let voterHash = new Hash(reportingMunicipality, "voterHash", testvoter4);
 
 let voterListKey = reportingMunicipality.concat(JSON.stringify(new Date()));
 
-console.log(voterListKey)
+let testListString = JSON.stringify(testlist);
+console.log(testlist);
+console.log("heere comes first the stingified voter then the jsoned voter")
+console.log(testListString);
+var testlistJSON = JSON.parse(testListString);
+console.log(testlistJSON);
+
+console.log(testresi);
+console.log(testvoter4);
+
+var voterlistHash = new Hash(reportingMunicipality, "voterListHash", testlist);
+var voterlistHash2 = new Hash(reportingMunicipality, "voterListHash", testlist);
+
+
+var voterListHash3 = JSON.stringify(testlist);
+var voterListHash4 = JSON.parse(voterListHash3);
+
+console.log(testlist);
+console.log(voterListHash3);
+console.log(voterListHash4);
+console.log(voterListHash4.voter[0].personData);
+
+console.log("hash of the list object " + hash(testlist));
+console.log("hash of the json object " + hash(voterListHash4));
+
+
+// console.log(testvoterJSON.domainOfInfluenceInfo);
+// influenceall = testvoterJSON.domainOfInfluenceInfo
+// masterInfluenceList = [];
+// for (var influence in influenceall) {
+//   console.log(influenceall[influence]);
+//   influencelist = [];
+//   influencelist.push(influenceall[influence].domainOfInfluence);
+//   influencelist.push(influenceall[influence].domainOfInfluenceIdentification);
+//   influencelist.push(influenceall[influence].domainOfInlfluenceName);
+//   console.log(influencelist);
+//   masterInfluenceList = masterInfluenceList.concat(influencelist);
+// }
+// console.log(masterInfluenceList);
+
+
 
 
 

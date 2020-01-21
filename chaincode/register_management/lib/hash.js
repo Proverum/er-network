@@ -5,7 +5,7 @@ var hash = require('object-hash');
 
 class Hash extends State {
   constructor(reportingMunicipality, contentType, contentToHash) {
-    super(Hash.getClass(), [contentType, reportingMunicipality, new Date()]);
+    super(Hash.getClass(), [contentType, reportingMunicipality, contentToHash.key]);
     this.reportingMunicipality = reportingMunicipality;
     this.contentType = contentType;
     this.timestamp = new Date();

@@ -6,6 +6,7 @@
 
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
+var hash = require('object-hash');
 
 const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality.json');
 console.log(ccpPath);
@@ -36,13 +37,32 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('getAllCitizens', 'collectionCitizenMunicipality');
+        const result = await contract.evaluateTransaction('getAllCitizens', 'collectionERMunicipalityESP');
         const resultString = result.toString();
         const object = JSON.parse(resultString);
         //console.log(result.toString());
         //console.log(resultString);
         console.log(object);
+        let voterList = object[0].Record;
+        console.log(voterList);
+        let voterListHash = hash(voterList);
+        console.log(voterListHash);
 
+        // Evaluate the specified transaction.
+        const resultWorldState = await contract.evaluateTransaction('queryWorldState');
+        const resultStringWorldState = resultWorldState.toString('utf8');
+        const resultJSONWorldState = JSON.parse(resultStringWorldState);
+
+        // console.log(resultWorldState);
+        // console.log(resultStringWorldState);
+        console.log(resultJSONWorldState);
+
+        let publicVoterListHash = resultJSONWorldState[resultJSONWorldState.length-1];
+        console.log(publicVoterListHash);
+        console.log(publicVoterListHash.Record.contentHash);
+        console.log(voterList);
+        console.log(voterListHash);
+        console.log(voterListHash==publicVoterListHash.Record.contentHash);
 
         //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 

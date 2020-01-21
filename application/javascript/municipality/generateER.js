@@ -3,6 +3,8 @@
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
 var hash = require('object-hash');
+const VotingCitizen = require('../../../chaincode/register_management/lib/votingCitizen.js');
+
 
 const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality.json');
 console.log(ccpPath);
@@ -37,23 +39,16 @@ async function main() {
         const resultString = queryResult.toString();
         const resultJSON = JSON.parse(resultString);
 
-        let voter = resultJSON[0];
-        let reportingMunicipality = voter.electoralAddress.reportingMunicipality;
+        console.log(queryResult);
         console.log(resultString);
         console.log(resultJSON);
-        console.log(reportingMunicipality);
+        console.log("querying successful now saving the data to private data store...");
 
-
-        const persistResult = await contract.submitTransaction('persistElectoralRegister', 'collectionERMunicipality', resultString);
+        const persistResult = await contract.submitTransaction('persistElectoralRegister', 'collectionERMunicipalityESP', resultString);
         const resultStringPersist = persistResult.toString();
         const resultJSONPersist = JSON.parse(resultStringPersist);
         console.log(resultJSONPersist);
-
-        //query the resulting hashes at last
-        // const queryResult = await contract.evaluateTransaction('generateERSnapshot', 'collectionCitizenMunicipality');
-        // const resultString = queryResult.toString();
-        // const resultJSON = JSON.parse(resultString);
-
+        console.log("finished generating electoral register...");
 
 
     } catch (error) {

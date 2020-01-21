@@ -38,7 +38,7 @@ class VoterList extends State {
 
 
   static getClass() {
-      return 'er-network.voterlist';
+      return 'voterlist';
   }
 }
 

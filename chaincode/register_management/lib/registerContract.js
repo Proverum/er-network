@@ -31,20 +31,20 @@ class RegisterContract extends Contract {
   static test() {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
+    let citizens = [new Citizen('7567898587737', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
       'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
-      new Citizen('678.9933.3677.89', 'CH.VERA.5466525', 'Rauper', 'Sandra', '13.08.2005', 'Zürich', 'weiblich',
+      new Citizen('7560933361289', 'CH.VERA.5466525', 'Rauper', 'Sandra', '13.08.2005', 'Zürich', 'weiblich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zürich', 'na',
         'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zürich', '8003', 'Privathaushalt'),
-      new Citizen('409.2659.1234.44', 'CH.VERA.45254435', 'Muster', 'Max', '15.08.1972', 'Zürich', 'männlich',
+      new Citizen('7566501134144', 'CH.VERA.45254435', 'Muster', 'Max', '15.08.1972', 'Zürich', 'männlich',
         'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zürich', 'na',
         'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zürich', '8003', 'Privathaushalt'),
 
     ];
 
-    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
-        new CitizenPublic('409.2659.1234.44', 'Zürich'),
+    let publicCitizens = [new CitizenPublic('7567898587737', 'Zürich'), new CitizenPublic('7560933361289', 'Zürich'),
+        new CitizenPublic('7566501134144', 'Zürich'),
 
     ];
     for (let i = 0; i < citizens.length; i++) {
@@ -64,20 +64,20 @@ class RegisterContract extends Contract {
   async initLedgerMunicipality(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zürich', 'männlich',
+    let citizens = [new Citizen('7567888567789', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zürich', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
       'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
-      new Citizen('678.9933.3677.89', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zürich', 'weiblich',
+      new Citizen('7569933367789', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zürich', 'weiblich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zürich', 'na',
         'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zürich', '8003', 'Privathaushalt'),
-      new Citizen('409.2659.1234.44', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zürich', 'männlich',
+      new Citizen('7562659123444', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zürich', 'männlich',
         'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zürich', 'na',
         'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zürich', '8003', 'Privathaushalt'),
 
     ];
 
-    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Zürich'), new CitizenPublic('678.9933.3677.89', 'Zürich'),
-        new CitizenPublic('409.2659.1234.44', 'Zürich'),
+    let publicCitizens = [new CitizenPublic('7567888567789', 'Zürich'), new CitizenPublic('7569933367789', 'Zürich'),
+        new CitizenPublic('7562659123444', 'Zürich'),
 
     ];
 
@@ -98,20 +98,20 @@ class RegisterContract extends Contract {
   async initLedgerMunicipalityTwo(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    let citizens = [new Citizen('678.7888.5677.89', 'CH.AUPER.123298367', 'Laubi', 'Johan', '1988/02/12', 'Baar', 'männlich',
+    let citizens = [new Citizen('7567888567789', 'CH.AUPER.123298367', 'Laubi', 'Johan', '1988/02/12', 'Baar', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Baar', 'Zug', 'na',
       'Bassersdorf', 'Hauptwohnsitz', '22.09.1980', 'Basserstrasse 78', '8879', 'Bassersdorf', '8303', 'Kollektivhaushalt'),
-      new Citizen('724.9933.3237.89', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zürich', 'weiblich',
+      new Citizen('7569933323789', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zürich', 'weiblich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Horgen', 'Zürich', 'na',
         'Bassersdorf', 'Hauptwohnsitz', '06.06.2008', 'Hinterweg 43', '78984', 'Bassersdorf', '8303', 'Privathaushalt'),
-      new Citizen('466.6666.4446.12', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '1990/03/25', 'Madrid', 'männlich',
+      new Citizen('7566666444612', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '1990/03/25', 'Madrid', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Spanien', 'Madrid', 'na', 'B',
         'Bassersdorf', 'Hauptwohnsitz', '02.10.2011', 'Hautstrasse 1', '234', 'Bassersdorf', '8303', 'Privathaushalt'),
 
     ];
 
-    let publicCitizens = [new CitizenPublic('678.7888.5677.89', 'Bassersdorf'), new CitizenPublic('724.9933.3237.89', 'Bassersdorf'),
-        new CitizenPublic('466.6666.4446.12', 'Bassersdorf'),
+    let publicCitizens = [new CitizenPublic('7567888567789', 'Bassersdorf'), new CitizenPublic('7569933323789', 'Bassersdorf'),
+        new CitizenPublic('7566666444612', 'Bassersdorf'),
 
     ];
 
@@ -132,19 +132,19 @@ class RegisterContract extends Contract {
   async initLedgerMunicipalityThree(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //dummy variables wallisellen example
-    let citizens = [new Citizen('487.6662.1099.45', 'SuisseId.02', 'Johnson', 'Mike', '1979/09/09', 'Seattle', 'männlich',
+    let citizens = [new Citizen('7566662109945', 'SuisseId.02', 'Johnson', 'Mike', '1979/09/09', 'Seattle', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'USA', 'New York', 'na', 'A',
       'Wallisellen', 'Hauptwohnsitz', '22.09.2003', 'Wallisellerstrasse 78', '123', 'Wallisellen', '8304', 'Kollektivhaushalt'),
-      new Citizen('925.4567.1342.24', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zürich', 'männlich',
+      new Citizen('7564567134224', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zürich', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
         'Wallisellen', 'Nebenwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Wallisellen', '8304', 'Sammelhaushalt'),
-      new Citizen('275.5544.2948.02', 'CH.VERA.263453', 'Schwab', 'Lena', '1982/06/04', 'Altdorf', 'weiblich',
+      new Citizen('7565544294802', 'CH.VERA.263453', 'Schwab', 'Lena', '1982/06/04', 'Altdorf', 'weiblich',
         'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
         'Wallisellen', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Wallisellen', '8304', 'Privathaushalt'),
     ];
 
-    let publicCitizens = [new CitizenPublic('487.6662.1099.45', 'Wallisellen'), new CitizenPublic('925.4567.1342.24', 'Wallisellen'),
-        new CitizenPublic('275.5544.2948.02', 'Wallisellen'),
+    let publicCitizens = [new CitizenPublic('7566662109945', 'Wallisellen'), new CitizenPublic('7564567134224', 'Wallisellen'),
+        new CitizenPublic('7565544294802', 'Wallisellen'),
 
     ];
 
@@ -202,6 +202,7 @@ class RegisterContract extends Contract {
     }
   }
 
+// kind of similar to get all private data from collection x
   async getAllCitizens(ctx, collection) {
 
     //empty string start and end key to fetch all
@@ -221,10 +222,7 @@ class RegisterContract extends Contract {
             let Record;
             try {
                 Record = await JSON.parse(res.value.value.toString('utf8'));
-                const personData = Record.personData;
-                const nationality= Record.personData.nationality;
-                const typeOfResidenceType = Record.MainResidence.typeOfResidenceType;
-                allResults.push({ Key, Record, personData, nationality, typeOfResidenceType});
+                allResults.push({ Key, Record });
 
             } catch (err) {
                 console.log(err);
@@ -329,7 +327,7 @@ class RegisterContract extends Contract {
                   let firstName = Record.personData.nameData.firstName;
                   let sex = Record.personData.personIdentificationData.sex;
                   let dateOfBirth = Record.personData.birthData.dateOfBirth;
-                  let languageOfCorrespondance = Record.personData.personIdentificationData.sex;
+                  let languageOfCorrespondance = "deutsch";
                   const municipality = Record.MainResidence.reportingMunicipality;
                   let arrivalDate = Record.MainResidence.arrivalDate;
                   let typeOfHousehold = Record.MainResidence.dwellingAddress.typeOfHousehold;
@@ -376,25 +374,55 @@ class RegisterContract extends Contract {
     let electoralRegisterObject = JSON.parse(electoralRegister);
     let reportingMunicipality;
     let voterHashes = [];
+    let voterList = [];
     for( var i=0 ; i < electoralRegisterObject.length-1; i++){
-        const voter = electoralRegisterObject[i];
-        reportingMunicipality = voter.electoralAddress.reportingMunicipality;
-        let voterVn = voter.personData.personIdentificationData.vn;
-        let voterKey = "VoterPrivate:".concat(voterVn);
-        const voterHash = new Hash(reportingMunicipality, "voterHash", voter);
+       // some super ugly object recreation due to json parsing issues with the domain of influence field in the votingcitizen object
+        let VoterRecord = electoralRegisterObject[i];
+        let influencelist = VoterRecord.domainOfInfluenceInfo;
+        let masterInfluenceList = [];
+        for (var index in influencelist) {
+          let influenceStringList = [];
+          influenceStringList.push(influencelist[index].domainOfInfluence);
+          influenceStringList.push(influencelist[index].domainOfInfluenceIdentification);
+          influenceStringList.push(influencelist[index].domainOfInlfluenceName);
+          masterInfluenceList = masterInfluenceList.concat(influenceStringList);
+        }
+        let vn = VoterRecord.personData.personIdentificationData.vn;
+        let localPersonId = VoterRecord.personData.personIdentificationData.localPersonId;
+        let officialName = VoterRecord.personData.personIdentificationData.officialName;
+        let firstName = VoterRecord.personData.personIdentificationData.firstName;
+        let sex = VoterRecord.personData.personIdentificationData.sex;
+        let dateOfBirth = VoterRecord.personData.personIdentificationData.dateOfBirth;
+        let languageOfCorrespondance = "deutsch";
+        let municipality = VoterRecord.personData.municipality;
+        let arrivalDate = VoterRecord.electoralAddress.arrivalDate;
+        let typeOfHousehold = VoterRecord.electoralAddress.dwellingAddress.typeOfHousehold;
+        let dataLock = "false";
+        let street = VoterRecord.electoralAddress.dwellingAddress.address.street;
+        let postOfficeBoxText = VoterRecord.electoralAddress.dwellingAddress.address.postOfficeBoxText;
+        let city = VoterRecord.electoralAddress.dwellingAddress.address.city;
+        let swissZipCode = VoterRecord.electoralAddress.dwellingAddress.address.swissZipCode;
+        let typeOfResidenceType = VoterRecord.electoralAddress.typeOfResidenceType;
+        let voterToPersist = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
+        typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList);
+        voterList.push(voterToPersist);
+        reportingMunicipality = municipality;
+        //pass JSON rather then javascript object to hash for simiplified verification with the application return
+        const voterHash = new Hash(reportingMunicipality, "voterHash", JSON.parse(JSON.stringify(voterToPersist)));
         voterHashes.push(voterHash);
         await ctx.stub.putState(voterHash.getKey(), Buffer.from(JSON.stringify(voterHash)));
-        await ctx.stub.putPrivateData(collection, voterKey, Buffer.from(JSON.stringify(voter)));
+        await ctx.stub.putPrivateData(collection, voterToPersist.getKey(), Buffer.from(JSON.stringify(voterToPersist)));
     }
-    const voterList = electoralRegisterObject[electoralRegisterObject.length-1];
-    let voterListKey = voterList.key.concat(JSON.stringify(new Date()));
-    const voterListHash = new Hash(reportingMunicipality, "voterListHash", voterList);
+    const electoralRegisterToPersist = new VoterList(reportingMunicipality, voterList);
+    //again pass JSON rather then javascript object to hash for simiplified verification with the application return
+    const voterListHash = new Hash(reportingMunicipality, "voterListHash", JSON.parse(JSON.stringify(electoralRegisterToPersist)));
     //also store the voterList in private collection and its hash on the public ledger (external channel)
     await ctx.stub.putState(voterListHash.getKey(), Buffer.from(JSON.stringify(voterListHash)));
-    await ctx.stub.putPrivateData(collection, voterListKey, Buffer.from(JSON.stringify(voterList)));
+    await ctx.stub.putPrivateData(collection, electoralRegisterToPersist.getKey(), Buffer.from(JSON.stringify(electoralRegisterToPersist)));
 
     console.info('Added voterListHash and individual voter hashes');
-    return {voterHashes, voterListHash};
+    let result = {voterHashes, voterListHash};
+    return result;
   }
 
   async queryVoterHash(ctx, voterHashKey) {

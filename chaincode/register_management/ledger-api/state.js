@@ -17,7 +17,6 @@ class State {
     constructor(stateClass, keyParts) {
         this.class = stateClass;
         this.key = State.makeKey(keyParts);
-        this.currentState = null;
     }
 
     getClass() {
@@ -86,11 +85,30 @@ class State {
      * @param (String[]) keyParts
      */
     static makeKey(keyParts) {
-        return keyParts.map(part => JSON.stringify(part)).join(':');
+        let stateKey = "";
+        for (var key in keyParts) {
+          if (typeof key !== "string") {
+            throw new Error(`Keypart must be of type string`);
+          }
+          if (stateKey == "") {
+            stateKey = stateKey + keyParts[key];
+
+          }
+          else {
+            stateKey = stateKey + ':' + keyParts[key];
+          }
+        }
+        return stateKey;
     }
 
     static splitKey(key){
         return key.split(':');
+    }
+
+    static createTimestamp() {
+      var date = new Date();
+      var output = date.getFullYear()+'-'+("0" + (date.getMonth() + 1)).slice(-2)+'-'+("0" + date.getDate()).slice(-2)+'-'+date.getHours()+'-'+date.getMinutes();
+      return output;
     }
 
 }
