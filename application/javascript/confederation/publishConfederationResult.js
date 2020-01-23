@@ -37,11 +37,11 @@ async function main() {
         console.log('get contract: federalchannel.');
         const contract = network.getContract('publishcc');
 
-        let municipalityResult;
-        let municipality2Result;
-        let municipality3Result;
+        let cantonResult;
+        let cantonResult2;
+
         //wait for subordiante municpalities results
-        await contract.addContractListener('cantonal-municipality-listener', 'Municipality:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('confederation-canton-listener', 'cantonPublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -62,7 +62,7 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality2-listener', 'municipality2:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('confederation-canton2-listener', 'canton2PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -83,7 +83,7 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality3-listener', 'municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality3-listener', 'municipality3PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;

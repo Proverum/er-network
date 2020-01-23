@@ -39,9 +39,9 @@ async function main() {
 
         // register citizen
         console.log('Submit publish municipality result transaction.');
-        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "municipality", "UmverteilungExToTheTreme", "234234", "1231");
+        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality", "UmverteilungExToTheTreme", "234234", "1231");
         const publishResponseString = publishResponse.toString();
-        const publishResponseJSON = JSON.parse(resultStringPersist);
+        const publishResponseJSON = JSON.parse(publishResponseString);
 
 
         // process response
@@ -57,16 +57,6 @@ async function main() {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
 
-    } finally {
-
-        // Disconnect from the gateway
-        console.log('Disconnect from Fabric gateway.');
-        gateway.disconnect();
-
     }
 }
-main().then(() => {
-
-    console.log('Issue program complete.');
-
-})
+main()

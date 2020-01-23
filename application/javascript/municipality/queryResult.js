@@ -36,7 +36,7 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'CITIZEN0');
+        const result = await contract.evaluateTransaction('queryMunicipalityResult', 'UmverteilungExToTheTreme:Municipality');
         const resultString = result.toString('utf8');
         const resultJSON = JSON.parse(resultString);
         const personData = resultJSON.personData;
