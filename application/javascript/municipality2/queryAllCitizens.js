@@ -36,18 +36,15 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'CITIZEN0');
-        const resultString = result.toString('utf8');
-        const resultJSON = JSON.parse(resultString);
-        const personData = resultJSON.personData;
-        const residence = resultJSON.MainResidence;
+        const result = await contract.evaluateTransaction('getAllCitizens', 'collectionCitizenMunicipality');
+        const resultString = result.toString();
+        const object = JSON.parse(resultString);
+        //console.log(result.toString());
+        //console.log(resultString);
+        console.log(object);
 
-        console.log(result);
-        console.log(resultString);
-        console.log(resultJSON);
-        console.log(personData);
-        console.log(residence);
 
+        //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);

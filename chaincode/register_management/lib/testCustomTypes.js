@@ -44,31 +44,37 @@ let voterHash = new Hash(reportingMunicipality, "voterHash", testvoter4);
 let voterListKey = reportingMunicipality.concat(JSON.stringify(new Date()));
 
 let testListString = JSON.stringify(testlist);
-console.log(testlist);
-console.log("heere comes first the stingified voter then the jsoned voter")
-console.log(testListString);
-var testlistJSON = JSON.parse(testListString);
-console.log(testlistJSON);
+// console.log(testlist);
+// console.log("heere comes first the stingified voter then the jsoned voter")
+// console.log(testListString);
+// var testlistJSON = JSON.parse(testListString);
+// console.log(testlistJSON);
+//
+// console.log(testresi);
+// console.log(testvoter4);
+//
+// var voterlistHash = new Hash(reportingMunicipality, "voterListHash", testlist);
+// var voterlistHash2 = new Hash(reportingMunicipality, "voterListHash", testlist);
+//
+//
+// var voterListHash3 = JSON.stringify(testlist);
+// var voterListHash4 = JSON.parse(voterListHash3);
+//
+// console.log(testlist);
+// console.log(voterListHash3);
+// console.log(voterListHash4);
+// console.log(voterListHash4.voter[0].personData);
+//
+// console.log("hash of the list object " + hash(testlist));
+// console.log("hash of the json object " + hash(voterListHash4));
 
-console.log(testresi);
-console.log(testvoter4);
+let resultToPublish={
+votingId: "voterid",
+yes:"4534",
+no:"546546"
+};
 
-var voterlistHash = new Hash(reportingMunicipality, "voterListHash", testlist);
-var voterlistHash2 = new Hash(reportingMunicipality, "voterListHash", testlist);
-
-
-var voterListHash3 = JSON.stringify(testlist);
-var voterListHash4 = JSON.parse(voterListHash3);
-
-console.log(testlist);
-console.log(voterListHash3);
-console.log(voterListHash4);
-console.log(voterListHash4.voter[0].personData);
-
-console.log("hash of the list object " + hash(testlist));
-console.log("hash of the json object " + hash(voterListHash4));
-
-
+console.log(JSON.stringify(resultToPublish));
 // console.log(testvoterJSON.domainOfInfluenceInfo);
 // influenceall = testvoterJSON.domainOfInfluenceInfo
 // masterInfluenceList = [];

@@ -1,0 +1,98 @@
+[
+  {
+       "name": "collectionCitizenMunicipalityTwo",
+       "policy": "OR('Municipality2MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionPublicCitizenMunicipalityTwo",
+       "policy": "OR('Municipality2MSP.member', 'CantonMSP.member', 'ConfederationMSP.member')",
+       "requiredPeerCount": 2,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionCitizenMunicipalityThree",
+       "policy": "OR('Municipality3MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionPublicCitizenMunicipalityThree",
+       "policy": "OR('Municipality3MSP.member', 'CantonMSP.member', 'ConfederationMSP.member')",
+       "requiredPeerCount": 2,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionCitizenMunicipality",
+       "policy": "OR('MunicipalityMSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionPublicCitizenMunicipality",
+       "policy": "OR('MunicipalityMSP.member', 'CantonMSP.member', 'ConfederationMSP.member')",
+       "requiredPeerCount": 2,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipality",
+       "policy": "OR('MunicipalityMSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipalityTwo",
+       "policy": "OR('Municipality2MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipalityThree",
+       "policy": "OR('Municipality3MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipalityESP",
+       "policy": "OR('ESPMSP.member', 'MunicipalityMSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipalityTwoESP",
+       "policy": "OR('ESPMSP.member', 'Municipality2MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionERMunicipalityThreeESP",
+       "policy": "OR('ESPMSP.member', 'Municipality3MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  }
+]

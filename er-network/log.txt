@@ -4,8 +4,8 @@
 Command 'peer' not found, did you mean:
 
   command 'beer' from deb gerstensaft
-  command 'peet' from deb pipexec
   command 'seer' from deb seer
+  command 'peet' from deb pipexec
   command 'pee' from deb moreutils
   command 'pear' from deb php-pear
 

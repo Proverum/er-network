@@ -36,17 +36,21 @@ async function main() {
         const contract = network.getContract('registercc');
 
         // Evaluate the specified transaction.
-        const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipality', 'CITIZEN0');
-        const resultString = result.toString('utf8');
+        // Evaluate the specified transaction.
+        const queryResult = await contract.evaluateTransaction('getAllCitizens', 'collectionERMunicipality');
+        const resultString = queryResult.toString();
         const resultJSON = JSON.parse(resultString);
-        const personData = resultJSON.personData;
-        const residence = resultJSON.MainResidence;
 
-        console.log(result);
+        console.log(queryResult);
         console.log(resultString);
         console.log(resultJSON);
-        console.log(personData);
-        console.log(residence);
+        console.log("querying successful");
+        //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+
+        const persistResult = await contract.submitTransaction('persistElectoralRegister', 'collectionERMunicipalityESP', resultString);
+        const resultStringPersist = persistResult.toString();
+        const resultJSONPersist = JSON.parse(resultStringPersist);
+        console.log(resultJSONPersist);
 
 
     } catch (error) {

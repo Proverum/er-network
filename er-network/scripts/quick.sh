@@ -15,7 +15,7 @@ LANGUAGE="$3"
 TIMEOUT="$4"
 VERBOSE="$5"
 NO_CHAINCODE="$6"
-: ${CHANNEL_NAME:="federalchannel"}
+: ${CHANNEL_NAME:="erchannel"}
 : ${DELAY:="3"}
 : ${LANGUAGE:="node"}
 : ${TIMEOUT:="20"}
@@ -26,7 +26,10 @@ COUNTER=1
 MAX_RETRY=10
 
 CC_SRC_PATH="/opt/gopath/src/github.com/chaincode/register_management"
+PUBLISHCC_SRC_PATH="/opt/gopath/src/github.com/chaincode/result_publishing"
 COLLECTIONCONFIG="/opt/gopath/src/github.com/chaincode/register_management/collections_config.json"
+COLLECTIONCONFIGPUBLISH="/opt/gopath/src/github.com/chaincode/result_publishing/collections_config.json"
+CHANNEL_NAME_FEDERAL="federalchannel"
 
 
 echo "Channel name : "$CHANNEL_NAME
@@ -80,7 +83,7 @@ updateFederalAnchorPeers 0 "municipality3"
 
 if [ "${NO_CHAINCODE}" != "true" ]; then
 
-	## Install chaincode on all peers of all organizations
+	## Install register management chaincode on all peers of all organizations
 	echo "Installing chaincode on peer0.confederation..."
 	installErChaincode 0 "confederation" "registercc"
 	echo "Install chaincode on peer0.canton..."
@@ -110,9 +113,38 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	echo "Install chaincode on peer1.esp..."
 	installErChaincode 1 "esp" "registercc"
 
+	## Install publish results chaincode on all peers of all organizations except the external providers
+	echo "Installing chaincode on peer0.confederation..."
+	installPublishChaincode 0 "confederation" "publishcc"
+	echo "Install chaincode on peer0.canton..."
+	installPublishChaincode 0 "canton" "publishcc"
+	echo "Install chaincode on peer0.canton2..."
+	installPublishChaincode 0 "canton2" "publishcc"
+	echo "Install chaincode on peer0.municipality..."
+	installPublishChaincode 0 "municipality" "publishcc"
+	echo "Install chaincode on peer0.municipality2..."
+	installPublishChaincode 0 "municipality2" "publishcc"
+	echo "Install chaincode on peer0.municipality3..."
+	installPublishChaincode 0 "municipality3" "publishcc"
+	echo "Installing chaincode on peer1.confederation..."
+	installPublishChaincode 1 "confederation" "publishcc"
+	echo "Install chaincode on peer1.canton..."
+	installPublishChaincode 1 "canton" "publishcc"
+	echo "Install chaincode on peer1.canton2..."
+	installPublishChaincode 1 "canton2" "publishcc"
+	echo "Install chaincode on peer1.municipality..."
+	installPublishChaincode 1 "municipality" "publishcc"
+	echo "Install chaincode on peer1.municipality2..."
+	installPublishChaincode 1 "municipality2" "publishcc"
+	echo "Install chaincode on peer1.municipality3..."
+	installPublishChaincode 1 "municipality3" "publishcc"
+
+
 	# Instantiate chaincode on peer0.org2
 	echo "Instantiating chaincode from peer0.confederation..."
 	instantiateErChaincode 0 "confederation" "registercc"
+	instantiatePublishChaincode 0 "confederation" "publishcc"
+
 
 	# initialize  ledger with some mock citizens for each municipality which is mimicking zürich in this case
   echo "Sending invoke init transaction on peer0.municipality"

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const Citizen = require('../../../chaincode/register_management/lib/citizen.js');
-const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-confederation.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality2.json');
 
 
 // Main program function
@@ -42,14 +42,13 @@ async function main() {
         console.log('Submit add citizen transaction.');
         const registrationResponse = await contract.submitTransaction('addCitizen', "test.5544.2948.02", "CH.VERA.263453", "Schwab", "Lena", "26.03.82", "Altdorf", "weiblich",
           "israelitische Gemeinschaft / jüdische Glaubensgemeinschaft", "verheiratet", "Schweiz", "Altdorf", "Uri", "na",
-          "TestCityExtraAdd", "Hauptwohnsitz", "09.08.2015", "Usterstrasse 9b", "192", "Wallisellen", "8304", "Privathaushalt", "collectionPublicCitizenMunicipalityThree","CITIZENX");
+          "TestCityExtraAdd", "Hauptwohnsitz", "09.08.2015", "Usterstrasse 9b", "192", "Wallisellen", "8304", "Privathaushalt", "collectionCitizenMunicipality","CITIZENX");
 
         // process response
         console.log('Process issue transaction response. '+registrationResponse);
 
-        let citizen = Citizen.fromBuffer(registrationResponse);
 
-        console.log(` citizen name : ${citizen.personData.nameData.firstName} ${citizen.personData.nameData.officialName} successfully registred for municipality ${citizen.MainResidence.reportingMunicipality}`);
+        console.log(` citizen key : ${registrationResponse.key} successfully registred for municipality `);
         console.log('Transaction complete.');
 
 
@@ -70,11 +69,4 @@ main().then(() => {
 
     console.log('Issue program complete.');
 
-}).catch((e) => {
-
-    console.log('Issue program exception.');
-    console.log(e);
-    console.log(e.stack);
-    process.exit(-1);
-
-});
+})

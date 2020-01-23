@@ -1,6 +1,6 @@
 'use strict';
 
-const PublishingContract = require('./lib/registerContract.js');
+const PublishingContract = require('./lib/resultPublishingContract.js');
 
 module.exports.publishingcontract = PublishingContract;
 module.exports.contracts = [ PublishingContract ];
