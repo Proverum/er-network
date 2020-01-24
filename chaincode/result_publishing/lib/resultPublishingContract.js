@@ -20,27 +20,30 @@ class PublishingContract extends Contract {
 
   async publishMunicipalityVotingResult(ctx,reportingMunicipality, votingId, yesCount, noCount) {
 
+    const cid = new ClientIdentity(ctx.stub);
+    const invokingMSP = cid.getMSPID();
+    // only municipaliteis are allowed to publish with this and create an according event
+    if(invokingMSP=='MunicipalityMSP' || invokingMSP=='Municipality2MSP' || invokingMSP=='Municipality3MSP'){
+      const resultToPublish = new ResultVoting(reportingMunicipality, votingId, yesCount, noCount);
+      const resultKey = votingId+":"+reportingMunicipality;
+      await ctx.stub.putState(resultKey, Buffer.from(JSON.stringify(resultToPublish)));
 
-    let cid = new ClientIdentity(ctx.stub); // "stub" is the ChaincodeStub object passed to Init() and Invoke() methods
 
-    let invokingMSP = cid.getMSPID();
+      // define and set publisheventEvent
+      const eventKey = reportingMunicipality+":"+'PublishMunicipalityEvent';
+      const votingResultEvent = {
+          type: eventKey,
+          votingId: votingId,
+          yes: yesCount,
+          no: noCount,
+      };
+      await ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
+      return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
 
-    let resultToPublish = new ResultVoting(reportingMunicipality, votingId, yesCount, noCount);
-    let resultKey = votingId+":"+reportingMunicipality;
-    await ctx.stub.putState(resultKey, Buffer.from(JSON.stringify(resultToPublish)));
+    } else {
+      throw new Error("Only Municipalities are allowed to publish results through this function call");
+    }
 
-
-    // define and set publisheventEvent
-    let eventKey = reportingMunicipality"+":"+'PublishMunicipalityEvent';
-    let votingResultEvent = {
-        type: eventKey,
-        votingId: votingId,
-        yes: yesCount,
-        no: noCount,
-    };
-    await ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
-
-    return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
   }
 
   async queryMunicipalityResult(ctx, resultKey) {
@@ -53,8 +56,8 @@ class PublishingContract extends Contract {
   }
 
   async queryAllMunicipalityResultsForVoting(ctx, votingId) {
-      const startKey = votingId+'municipality';
-      const endKey = votingId+'municipality3';
+      const startKey = votingId+":"+'Municipality';
+      const endKey = votingId+":"+'Municipality3';
 
       const iterator = await ctx.stub.getStateByRange(startKey, endKey);
 
@@ -86,53 +89,62 @@ class PublishingContract extends Contract {
 
   async publishCantonVotingResult(ctx,reportingCanton, votingId, yesCount, noCount) {
 
-    let cid = new ClientIdentity(ctx.stub); // "stub" is the ChaincodeStub object passed to Init() and Invoke() methods
+    const cid = new ClientIdentity(ctx.stub); // "stub" is the ChaincodeStub object passed to Init() and Invoke() methods
+    const invokingMSP = cid.getMSPID();
+    //only cantons are allowed to publish with this and generate an according event
+    if(invokingMSP=='CantonMSP' || invokingMSP=='Canton2MSP'){
 
-    let invokingMSP = cid.getMSPID();
-
-    let resultToPublish = new ResultVoting(reportingCanton, votingId, yesCount, noCount);
-    let resultKey = reportingCanton+votingId;
-    await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
+      const resultToPublish = new ResultVoting(reportingCanton, votingId, yesCount, noCount);
+      const resultKey = votingId+":"+reportingCanton;
+      await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
 
 
-    // define and set publisheventEvent
-    let eventKey = reportingMunicipality"+":"+'PublishMunicipalityEvent';
-    let votingResultEvent = {
-        type: eventKey,
-        votingId: votingId,
-        yes: yesCount,
-        no: noCount,
-    };
-    ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
+      // define and set publisheventEvent
+      const eventKey = reportingCanton+":"+'PublishMunicipalityEvent';
+      const votingResultEvent = {
+          type: eventKey,
+          votingId: votingId,
+          yes: yesCount,
+          no: noCount,
+      };
+      ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
+      return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
 
-    return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
+    } else {
+      throw new Error("Only Cantons are allowed to publish results through this function call");
+    }
+
   }
 
   async publishConfederationVotingResult(ctx, votingId, yesCount, noCount) {
 
-    let cid = new ClientIdentity(ctx.stub); // "stub" is the ChaincodeStub object passed to Init() and Invoke() methods
+    const cid = new ClientIdentity(ctx.stub); // "stub" is the ChaincodeStub object passed to Init() and Invoke() methods
+    const invokingMSP = cid.getMSPID();
+    //only the confederation is allowed to publish with this and generate an according event
+    if(invokingMSP=='ConfederationMSP'){
+      const reportingAgency = "Confederation";
 
-    let invokingMSP = cid.getMSPID();
+      const resultToPublish = new ResultVoting(reportingAgency, votingId, yesCount, noCount);
+      const resultKey = reportingAgency+votingId;
+      await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
 
-     let reportingAgency = "Confederation";
+      // define and set publisheventEvent
+      const eventKey = reportingAgency+":"+'PublishMunicipalityEvent';
+      const votingResultEvent = {
+          type: eventKey,
+          votingId: votingId,
+          yes: yesCount,
+          no: noCount,
+      };
+      await ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
+      return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
 
-     let resultToPublish = new ResultVoting(reportingAgency, votingId, yesCount, noCount);
-     let resultKey = reportingAgency+votingId;
-     await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
-
-     // define and set publisheventEvent
-     let eventKey = reportingAgency"+":"+'PublishMunicipalityEvent';
-     let votingResultEvent = {
-         type: eventKey,
-         votingId: votingId,
-         yes: yesCount,
-         no: noCount,
-     };
-     await ctx.stub.setEvent(eventKey, Buffer.from(JSON.stringify(votingResultEvent)));
-
-     return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
+    } else {
+      throw new Error("Only Cantons are allowed to publish results through this function call");
+    }
   }
-
 }
+
+console.log("hello");
 
 module.exports=PublishingContract;
