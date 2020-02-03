@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const Citizen = require('../../../chaincode/register_management/lib/citizen.js');
-const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality3.json');
 
 
 // Main program function

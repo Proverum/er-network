@@ -39,7 +39,7 @@ async function main() {
 
         // register citizen
         console.log('Submit publish municipality result transaction.');
-        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality", "UmverteilungExToTheTreme", "234234", "1231");
+        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality", "Umverteilung30", "234234", "1231");
         const publishResponseString = publishResponse.toString();
         const publishResponseJSON = JSON.parse(publishResponseString);
 
@@ -59,4 +59,9 @@ async function main() {
 
     }
 }
-main();
+main().then(() => {
+
+    console.log('Publish municipal results program complete.');
+    process.exit();
+
+})

@@ -10,7 +10,6 @@ const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connect
 console.log(ccpPath);
 async function main() {
     try {
-
         // Create a new file system based wallet for managing identities.
         const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
@@ -57,4 +56,8 @@ async function main() {
     }
 }
 
-main();
+main().then(() => {
+
+    console.log('Generate ER program complete.');
+
+})

@@ -37,9 +37,9 @@ async function main() {
         console.log('get contract: federalchannel.');
         const contract = network.getContract('publishcc');
 
-        let municipalityResult;
-        let municipality2Result;
-        let municipality3Result;
+        let result1;
+        let result2;
+        let result3;
         //wait for subordiante municpalities results
         await contract.addContractListener('cantonal-municipality-listener', 'Municipality:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
@@ -50,19 +50,19 @@ async function main() {
             //convert event to something we can parse
             result = event.payload.toString();
             result = JSON.parse(result);
-            municipalityResult = result;
+            result1 = result;
 
             //where we output the PublishEvent
             console.log('************************ Municipality Publish Event *******************************************************');
             console.log(`type: ${result.type}`);
-            console.log(`votingid: ${result.votingid}`);
+            console.log(`votingid: ${result.votingId}`);
             console.log(`yes: ${result.yes}`);
             console.log(`no: ${result.no}`);
             console.log(`Block Number: ${blockNumber} Transaction ID: ${transactionId} Status: ${status}`);
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality2-listener', 'municipality2:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality2-listener', 'Municipality2:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -71,19 +71,19 @@ async function main() {
             //convert event to something we can parse
             result = event.payload.toString();
             result = JSON.parse(result);
-            municipality2Result = result;
+            result2 = result;
 
             //where we output the TradeEvent
             console.log('************************ Municipality Publish Event *******************************************************');
             console.log(`type: ${result.type}`);
-            console.log(`votingid: ${result.votingid}`);
+            console.log(`votingid: ${result.votingId}`);
             console.log(`yes: ${result.yes}`);
             console.log(`no: ${result.no}`);
             console.log(`Block Number: ${blockNumber} Transaction ID: ${transactionId} Status: ${status}`);
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality3-listener', 'municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality3-listener', 'Municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -92,36 +92,45 @@ async function main() {
             //convert event to something we can parse
             result = event.payload.toString();
             result = JSON.parse(result);
-            municipality3Result = result;
+            result3 = result;
 
             //where we output the TradeEvent
             console.log('************************ Municipality Publish Event *******************************************************');
             console.log(`type: ${result.type}`);
-            console.log(`votingid: ${result.votingid}`);
+            console.log(`votingid: ${result.votingId}`);
             console.log(`yes: ${result.yes}`);
             console.log(`no: ${result.no}`);
             console.log(`Block Number: ${blockNumber} Transaction ID: ${transactionId} Status: ${status}`);
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        console.log(municipalityResult, municipality2Result, municipality3Result)
+        let published = false;
+        while (published == false) {
+          if (result1 && result2 && result3) {
+            // publish aggregated result
+            let cantonalYesVotes = parseInt(result1.yes) + parseInt(result2.yes) + parseInt(result3.yes);
+            let cantonalNoVotes = parseInt(result1.no) + parseInt(result2.no) + parseInt(result3.no);
+            console.log('Submit add citizen transaction.');
+            const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "Umverteilung30", cantonalYesVotes.toString(), cantonalNoVotes.toString());
+            const publishResponseString = publishResponse.toString();
+            const publishResponseJSON = JSON.parse(publishResponseString);
 
-        if (municipalityResult && municipality2Result && municipality3Result) {
-          // publish aggregated result
-          let cantonalYesVotes = parseInt(municipalityResult.yes) + parseInt(municipality2Result.yes) + parseInt(municipality3Result.yes);
-          let cantonalNoCVotes = parseInt(municipalityResult.no) + parseInt(municipality2Result.no) + parseInt(municipality3Result.no);
-          console.log('Submit add citizen transaction.');
-          const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "UmverteilungExToTheTreme", cantonalYesVotes.toString(), cantonalNoVotes.toString());
-          const publishResponseString = publishResponse.toString();
-          const publishResponseJSON = JSON.parse(resultStringPersist);
+            published = true;
+            // process response
+            console.log('Process issue transaction response. '+publishResponse);
+            console.log(publishResponseJSON);
+
+            console.log(` result key : ${publishResponse.key} successfully published for canton `);
+            console.log('Transaction complete.');
+          }
+          await timer(5000);
+          console.log("waiting for the subordinate municipality results", result1, result2, result3);
+
+        }
 
 
-          // process response
-          console.log('Process issue transaction response. '+publishResponse);
-          console.log(publishResponseJSON);
-
-          console.log(` result key : ${publishResponse.key} successfully published for municipality `);
-          console.log('Transaction complete.');
+        function timer(ms) {
+         return new Promise(res => setTimeout(res, ms));
         }
 
 
@@ -131,16 +140,11 @@ async function main() {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
 
-    } finally {
-
-        // Disconnect from the gateway
-        console.log('Disconnect from Fabric gateway.');
-        gateway.disconnect();
-
     }
 }
 main().then(() => {
 
-    console.log('Issue program complete.');
+    console.log('Publish cantonal results program complete.');
+    process.exit();
 
 })

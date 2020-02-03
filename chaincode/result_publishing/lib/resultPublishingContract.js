@@ -24,10 +24,16 @@ class PublishingContract extends Contract {
     const invokingMSP = cid.getMSPID();
     // only municipaliteis are allowed to publish with this and create an according event
     if(invokingMSP=='MunicipalityMSP' || invokingMSP=='Municipality2MSP' || invokingMSP=='Municipality3MSP'){
+
       const resultToPublish = new ResultVoting(reportingMunicipality, votingId, yesCount, noCount);
       const resultKey = votingId+":"+reportingMunicipality;
-      await ctx.stub.putState(resultKey, Buffer.from(JSON.stringify(resultToPublish)));
+      // ==== Check if result has already been published ====
+      const resultAsBytes = await ctx.stub.getState(resultKey);
+      if (resultAsBytes.toString()) {
+        throw new Error('This result already exists: ');
+      }
 
+      await ctx.stub.putState(resultKey, Buffer.from(JSON.stringify(resultToPublish)));
 
       // define and set publisheventEvent
       const eventKey = reportingMunicipality+":"+'PublishMunicipalityEvent';
@@ -96,11 +102,16 @@ class PublishingContract extends Contract {
 
       const resultToPublish = new ResultVoting(reportingCanton, votingId, yesCount, noCount);
       const resultKey = votingId+":"+reportingCanton;
+      // ==== Check if result has already been published ====
+      const resultAsBytes = await ctx.stub.getState(resultKey);
+      if (resultAsBytes.toString()) {
+        throw new Error('This result already exists: ');
+      }
+
       await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
 
-
       // define and set publisheventEvent
-      const eventKey = reportingCanton+":"+'PublishMunicipalityEvent';
+      const eventKey = reportingCanton+":"+'PublishCantonEvent';
       const votingResultEvent = {
           type: eventKey,
           votingId: votingId,
@@ -125,11 +136,17 @@ class PublishingContract extends Contract {
       const reportingAgency = "Confederation";
 
       const resultToPublish = new ResultVoting(reportingAgency, votingId, yesCount, noCount);
-      const resultKey = reportingAgency+votingId;
+      const resultKey = votingId+":"+reportingAgency;
+      // ==== Check if result has already been published ====
+      const resultAsBytes = await ctx.stub.getState(resultKey);
+      if (resultAsBytes.toString()) {
+        throw new Error('This result already exists: ');
+      }
+
       await ctx.stub.putState(resultKey,Buffer.from(JSON.stringify(resultToPublish)));
 
       // define and set publisheventEvent
-      const eventKey = reportingAgency+":"+'PublishMunicipalityEvent';
+      const eventKey = reportingAgency+":"+'PublishConfederationEvent';
       const votingResultEvent = {
           type: eventKey,
           votingId: votingId,
@@ -144,7 +161,5 @@ class PublishingContract extends Contract {
     }
   }
 }
-
-console.log("hello");
 
 module.exports=PublishingContract;
