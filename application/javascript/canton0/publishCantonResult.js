@@ -39,9 +39,8 @@ async function main() {
 
         let result1;
         let result2;
-        let result3;
         //wait for subordiante municpalities results
-        await contract.addContractListener('cantonal-municipality-listener', 'Municipality:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality-listener', 'Municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -62,7 +61,7 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality2-listener', 'Municipality2:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality2-listener', 'Municipality4:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -83,35 +82,14 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality3-listener', 'Municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-
-            //convert event to something we can parse
-            result = event.payload.toString();
-            result = JSON.parse(result);
-            result3 = result;
-
-            //where we output the TradeEvent
-            console.log('************************ Municipality Publish Event *******************************************************');
-            console.log(`type: ${result.type}`);
-            console.log(`votingid: ${result.votingId}`);
-            console.log(`yes: ${result.yes}`);
-            console.log(`no: ${result.no}`);
-            console.log(`Block Number: ${blockNumber} Transaction ID: ${transactionId} Status: ${status}`);
-            console.log('************************ End Municipality Publish Event ************************************');
-        });
-
         let published = false;
         while (published == false) {
-          if (result1 && result2 && result3) {
+          if (result1 && result2) {
             // publish aggregated result
-            let cantonalYesVotes = parseInt(result1.yes) + parseInt(result2.yes) + parseInt(result3.yes);
-            let cantonalNoVotes = parseInt(result1.no) + parseInt(result2.no) + parseInt(result3.no);
+            let cantonalYesVotes = parseInt(result1.yes) + parseInt(result2.yes);
+            let cantonalNoVotes = parseInt(result1.no) + parseInt(result2.no);
             console.log('Submit add citizen transaction.');
-            const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "Canton", "Umverteilung30", cantonalYesVotes.toString(), cantonalNoVotes.toString());
+            const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "Canton2", "Umverteilung", cantonalYesVotes.toString(), cantonalNoVotes.toString());
             const publishResponseString = publishResponse.toString();
             const publishResponseJSON = JSON.parse(publishResponseString);
 
@@ -124,7 +102,7 @@ async function main() {
             console.log('Transaction complete.');
           }
           await timer(5000);
-          console.log("waiting for the subordinate municipality results", result1, result2, result3);
+          console.log("waiting for the subordinate municipality results", result1, result2);
 
         }
 

@@ -227,6 +227,7 @@ Organizations:
             - Host: peer0.municipality3.example.com
               Port: 17051
 
+    
     - &ESP
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
