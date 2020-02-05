@@ -161,6 +161,39 @@ class RegisterContract extends Contract {
     console.info('============= END : Initialize Ledger ===========');
   }
 
+  //Dübendorf example with a bunch of mock citizens
+  async initLedgerMunicipalityFour(ctx) {
+    console.info('============= START : Initialize Ledger ===========');
+    //dummy variables wallisellen example
+    let citizens = [new Citizen('7566262108235', 'CH:AUPER', 'Flack', 'Doris', '1975/05/021', 'Cham', 'männlich',
+      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Cham', 'na', 'A',
+      'Dübendorf', 'Hauptwohnsitz', '22.09.2003', 'Dübenerstrasse 1a', '0045', 'Dübendorf', '8600', 'Kollektivhaushalt'),
+      new Citizen('7564528634554', 'CH.INFOSTAR.235453', 'Topfer', 'Tom', '1992/08/17', 'Zürich', 'männlich',
+        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
+        'Dübendorf', 'Hauptwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Dübendorf', '8600', 'Sammelhaushalt'),
+      new Citizen('7565534984777', 'CH.VERA.263453', 'Sutskever', 'Nina', '1982/06/04', 'Altdorf', 'weiblich',
+        'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
+        'Dübendorf', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Dübendorf', '8600', 'Privathaushalt'),
+    ];
+
+    let publicCitizens = [new CitizenPublic('7566262108235', 'Dübendorf'), new CitizenPublic('7564528634554', 'Dübendorf'),
+        new CitizenPublic('7565534984777', 'Dübendorf'),
+
+    ];
+
+    //add public information to corresponding canton and confederation
+    for (let i = 0; i < citizens.length; i++) {
+        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityFour", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+        console.info('Added <--> ', citizens[i]);
+    }
+    // add full citizen information to corresponding municipality private data store
+    for (let j = 0; j < publicCitizens.length; j++) {
+        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityFour", 'PUBLIC_CITIZEN_MUNICIPALITY4_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
+        console.info('Added <--> ', publicCitizens[j]);
+    }
+    console.info('============= END : Initialize Ledger ===========');
+  }
+
   async queryCitizen(ctx, collection, citizenkey) {
 
     const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer

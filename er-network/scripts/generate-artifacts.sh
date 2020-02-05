@@ -22,6 +22,7 @@ export CHANNEL_NAME=federalchannel  && ../bin/configtxgen -profile ErChannel -ou
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/MunicipalityMSPanchors.tx -channelID $CHANNEL_NAME -asOrg MunicipalityMSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality2MSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality3MSP
+../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/Municipality4MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Municipality4MSP
 ../bin/configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/ESPMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ESPMSP
 
 # some fix to not get occupied ports

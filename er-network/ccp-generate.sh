@@ -96,6 +96,17 @@ CAPEM=crypto-config/peerOrganizations/municipality3.example.com/ca/ca.municipali
 echo "$(json_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality3.json
 echo "$(yaml_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality3.yaml
 
+ORG="municipality4"
+ORGCAP="Municipality4"
+P0PORT=21051
+P1PORT=22051
+CAPORT=21054
+PEERPEM=crypto-config/peerOrganizations/municipality4.example.com/tlsca/tlsca.municipality4.example.com-cert.pem
+CAPEM=crypto-config/peerOrganizations/municipality4.example.com/ca/ca.municipality4.example.com-cert.pem
+
+echo "$(json_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality4.json
+echo "$(yaml_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-municipality4.yaml
+
 ORG="esp"
 ORGCAP="ESP"
 P0PORT=19051

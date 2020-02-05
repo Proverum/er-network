@@ -13,6 +13,7 @@ PEER0_CANTON2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerO
 PEER0_MUNICIPALITY_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality.example.com/peers/peer0.municipality.example.com/tls/ca.crt
 PEER0_MUNICIPALITY2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality2.example.com/peers/peer0.municipality2.example.com/tls/ca.crt
 PEER0_MUNICIPALITY3_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality3.example.com/peers/peer0.municipality3.example.com/tls/ca.crt
+PEER0_MUNICIPALITY4_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality4.example.com/peers/peer0.municipality4.example.com/tls/ca.crt
 PEER0_ESP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/esp.example.com/peers/peer0.esp.example.com/tls/ca.crt
 
 CHANNEL_NAME="erchannel"
@@ -24,7 +25,7 @@ COLLECTIONCONFIG="/opt/gopath/src/github.com/chaincode/register_management/colle
 COLLECTIONCONFIGPUBLISH="/opt/gopath/src/github.com/chaincode/result_publishing/collections_config.json"
 
 
-declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "esp")
+declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "municipality4" "esp")
 
 
 # verify the result of the end-to-end test
@@ -101,6 +102,15 @@ setGlobals() {
     else
       CORE_PEER_ADDRESS=peer1.municipality3.example.com:18051
     fi
+  elif [ "$ORG" = "municipality4" ]; then
+    CORE_PEER_LOCALMSPID="Municipality4MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_MUNICIPALITY4_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality4.example.com/users/Admin@municipality4.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.municipality4.example.com:21051
+    else
+      CORE_PEER_ADDRESS=peer1.municipality4.example.com:22051
+    fi
   elif [ "$ORG" = "esp" ]; then
     CORE_PEER_LOCALMSPID="ESPMSP"
     CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ESP_CA
@@ -135,7 +145,47 @@ createErChannel() {
 	fi
 	cat log.txt
 	verifyResult $res "Channel creation failed"
-	echo "===================== Channel '$CHANNEL_NAME' created ===================== "
+	echo "===================== Channel erchannel created ===================== "
+	echo
+}
+
+createCantonChannel() {
+	setGlobals 0 "confederation"
+
+	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+                set -x
+		peer channel create -o orderer.example.com:7050 -c "cantonchannel" -f ./channel-artifacts/cantonchannel.tx >&log.txt
+		res=$?
+                set +x
+	else
+				set -x
+		peer channel create -o orderer.example.com:7050 -c "cantonchannel" -f ./channel-artifacts/cantonchannel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		res=$?
+				set +x
+	fi
+	cat log.txt
+	verifyResult $res "Channel creation failed"
+	echo "===================== Channel cantonchannel created ===================== "
+	echo
+}
+
+createCanton2Channel() {
+	setGlobals 0 "confederation"
+
+	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+                set -x
+		peer channel create -o orderer.example.com:7050 -c "canton2channel" -f ./channel-artifacts/canton2channel.tx >&log.txt
+		res=$?
+                set +x
+	else
+				set -x
+		peer channel create -o orderer.example.com:7050 -c "canton2channel" -f ./channel-artifacts/canton2channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		res=$?
+				set +x
+	fi
+	cat log.txt
+	verifyResult $res "Channel creation failed"
+	echo "===================== Channel canton2 created ===================== "
 	echo
 }
 
@@ -158,6 +208,7 @@ createFederalChannel() {
 	echo "===================== Channel '$CHANNEL_NAME_FEDERAL' created ===================== "
 	echo
 }
+
 #join all organization to the erchannel
 joinErChannel () {
 	for org in "${orgs[@]}"; do
@@ -170,6 +221,7 @@ joinErChannel () {
 	    done
 	done
 }
+
 #only join all except the esp from the federal channel
 joinFederalChannel () {
 	for org in "${orgs[@]}"; do
@@ -178,6 +230,38 @@ joinFederalChannel () {
       for peer in 0 1; do
     		echo $peer "$org"
     		joinFederalChannelWithRetry $peer "$org"
+    		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME_FEDERAL' ===================== "
+    		sleep $DELAY
+    		echo
+	    done
+    fi
+	done
+}
+
+#only join confederation, canton, municipality and municpality2
+joinCantonChannel () {
+	for org in "${orgs[@]}"; do
+    if [[ "$org" != "esp" -o "$org" != "canton2" -o "$org" != "municipality3" -o "$org" != "municipality4"]]
+    then
+      for peer in 0 1; do
+    		echo $peer "$org"
+    		joinCantonChannelWithRetry $peer "$org"
+    		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME_FEDERAL' ===================== "
+    		sleep $DELAY
+    		echo
+	    done
+    fi
+	done
+}
+
+#only join confederation, canton, municipality3 and municpality4
+joinCanton2Channel () {
+	for org in "${orgs[@]}"; do
+    if [[ "$org" != "esp" -o "$org" != "canton" -o "$org" != "municipality" -o "$org" != "municipality2"]]
+    then
+      for peer in 0 1; do
+    		echo $peer "$org"
+    		joinCanton2ChannelWithRetry $peer "$org"
     		echo "===================== peer${peer}${org} joined channel '$CHANNEL_NAME_FEDERAL' ===================== "
     		sleep $DELAY
     		echo
@@ -232,6 +316,53 @@ updateFederalAnchorPeers() {
   echo
 }
 
+updateCantonAnchorPeers() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer channel update -o orderer.example.com:7050 -c "cantonchannel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsCanton.tx >&log.txt
+    res=$?
+    set +x
+  else
+    set -x
+    peer channel update -o orderer.example.com:7050 -c "cantonchannel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsCanton.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Anchor peer update failed"
+  echo "===================== Anchor peers updated for org '$CORE_PEER_LOCALMSPID' on channel cantonchannel ===================== "
+  sleep $DELAY
+  echo
+}
+
+updateCanton2AnchorPeers() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer channel update -o orderer.example.com:7050 -c "canton2channel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsCanton2.tx >&log.txt
+    res=$?
+    set +x
+  else
+    set -x
+    peer channel update -o orderer.example.com:7050 -c "canton2channel" -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchorsCanton2.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Anchor peer update failed"
+  echo "===================== Anchor peers updated for org '$CORE_PEER_LOCALMSPID' on channel canton2channel ===================== "
+  sleep $DELAY
+  echo
+}
+
+
 ## Sometimes Join takes time hence RETRY at least 5 times
 joinErChannelWithRetry() {
   PEER=$1
@@ -252,7 +383,7 @@ joinErChannelWithRetry() {
   else
     COUNTER=1
   fi
-  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel '$CHANNEL_NAME' "
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel erchannel "
 }
 
 joinFederalChannelWithRetry() {
@@ -277,6 +408,49 @@ joinFederalChannelWithRetry() {
   verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel '$CHANNEL_NAME_FEDERAL' "
 }
 
+joinCantonChannelWithRetry() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  set -x
+  echo "peer channel join -b cantonchannel .block >&log.txt"
+  peer channel join -b cantonchannel.block >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
+    COUNTER=$(expr $COUNTER + 1)
+    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
+    sleep $DELAY
+    joinCantonChannelWithRetry $PEER $ORG
+  else
+    COUNTER=1
+  fi
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel cantonchannel "
+}
+
+joinCanton2ChannelWithRetry() {
+  PEER=$1
+  ORG="$2"
+  setGlobals $PEER "$ORG"
+
+  set -x
+  echo "peer channel join -b canton2channel .block >&log.txt"
+  peer channel join -b canton2channel.block >&log.txt
+  res=$?
+  set +x
+  cat log.txt
+  if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
+    COUNTER=$(expr $COUNTER + 1)
+    echo "peer${PEER}.${ORG} failed to join the channel, Retry after $DELAY seconds"
+    sleep $DELAY
+    joinCanton2ChannelWithRetry $PEER $ORG
+  else
+    COUNTER=1
+  fi
+  verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to join channel canton2channel "
+}
 
 installErChaincode() {
   PEER=$1
@@ -315,15 +489,16 @@ instantiatePublishChaincode() {
   PEER=$1
   ORG="$2"
   CCName="$3"
+  CHANNELTOINSTANTIATE="$4"
   setGlobals $PEER "$ORG"
-  VERSION=${4:-1.0}
+  VERSION=${5:-1.0}
 
   # while 'peer chaincode' command can get the orderer endpoint from the peer
   # (if join was successful), let's supply it directly as we know it using
   # the "-o" option
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME_FEDERAL -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNELTOINSTANTIATE -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.publishcontract:instantiate"]}' \
       -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
@@ -332,7 +507,7 @@ instantiatePublishChaincode() {
     set +x
   else
     set -x
-    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME_FEDERAL -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNELTOINSTANTIATE -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.publishcontract:instantiate"]}' \
       -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
@@ -341,11 +516,10 @@ instantiatePublishChaincode() {
     set +x
   fi
   cat log.txt
-  verifyResult $res "Chaincode '${CCName}' instantiation on peer${PEER}.${ORG} on channel '$CHANNEL_NAME_FEDERAL' failed"
-  echo "===================== Chaincode '${CCName}' is instantiated from peer${PEER}.${ORG} on channel '$CHANNEL_NAME_FEDERAL' ===================== "
+  verifyResult $res "Chaincode '${CCName}' instantiation on peer${PEER}.${ORG} on channel '$CHANNELTOINSTANTIATE' failed"
+  echo "===================== Chaincode '${CCName}' is instantiated from peer${PEER}.${ORG} on channel '$CHANNELTOINSTANTIATE' ===================== "
   echo
 }
-
 
 
 instantiateErChaincode() {
@@ -824,6 +998,10 @@ initLedgerMunicipalityWithRetry() {
     TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
     PEER_ADDRESS=peer0.municipality3.example.com:17051
     CHAINCODE_CALL="initLedgerMunicipalityThree"
+  elif [ "$ORG" = "municipality4" ]; then
+    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
+    PEER_ADDRESS=peer0.municipality4.example.com:21051
+    CHAINCODE_CALL="initLedgerMunicipalityFour"
   else
     echo "================== ERROR !!! ORG Unknown =================="
   fi

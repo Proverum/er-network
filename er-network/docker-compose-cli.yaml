@@ -19,6 +19,8 @@ volumes:
   peer1.municipality2.example.com:
   peer0.municipality3.example.com:
   peer1.municipality3.example.com:
+  peer0.municipality4.example.com:
+  peer1.municipality4.example.com:
   peer0.esp.example.com:
   peer1.esp.example.com:
 
@@ -132,6 +134,22 @@ services:
     networks:
       - ern
 
+  peer0.municipality4.example.com:
+    container_name: peer0.municipality4.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.municipality4.example.com
+    networks:
+      - ern
+
+  peer1.municipality4.example.com:
+    container_name: peer1.municipality4.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.municipality4.example.com
+    networks:
+      - ern
+
   peer0.esp.example.com:
     container_name: peer0.esp.example.com
     extends:
@@ -187,6 +205,8 @@ services:
       - peer1.municipality2.example.com
       - peer0.municipality3.example.com
       - peer1.municipality3.example.com
+      - peer0.municipality4.example.com
+      - peer1.municipality4.example.com
       - peer0.esp.example.com
       - peer1.esp.example.com
     networks:

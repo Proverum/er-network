@@ -227,7 +227,6 @@ Organizations:
             - Host: peer0.municipality3.example.com
               Port: 17051
 
-    
     - &ESP
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
@@ -258,6 +257,37 @@ Organizations:
             # encoded in the genesis block in the Application section context
             - Host: peer0.esp.example.com
               Port: 19051
+
+    - &Municipality4
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Municipality4MSP
+
+        # ID to load the MSP definition as
+        ID: Municipality4MSP
+
+        MSPDir: crypto-config/peerOrganizations/municipality4.example.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Municipality4MSP.admin', 'Municipality4MSP.peer', 'Municipality4MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Municipality4MSP.admin', 'Municipality4MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Municipality4MSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.municipality4.example.com
+              Port: 21051
 
 ################################################################################
 #
@@ -512,6 +542,7 @@ Profiles:
                     - *Municipality
                     - *Municipality2
                     - *Municipality3
+                    - *Municipality4
                     - *ESP
     ErChannel:
         Consortium: FederalConsortium
@@ -525,6 +556,7 @@ Profiles:
                 - *Municipality
                 - *Municipality2
                 - *Municipality3
+                - *Municipality4
                 - *ESP
             Capabilities:
                 <<: *ApplicationCapabilities
@@ -541,6 +573,33 @@ Profiles:
                 - *Municipality
                 - *Municipality2
                 - *Municipality3
+                - *Municipality4
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    CantonChannel:
+        Consortium: FederalConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Confederation
+                - *Canton
+                - *Municipality
+                - *Municipality2
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    Canton2Channel:
+        Consortium: FederalConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Confederation
+                - *Canton2
+                - *Municipality3
+                - *Municipality4
             Capabilities:
                 <<: *ApplicationCapabilities
 
@@ -572,6 +631,7 @@ Profiles:
                 - *Municipality
                 - *Municipality2
                 - *Municipality3
+                - *Municipality4
                 - *ESP
 
     SampleMultiNodeEtcdRaft:
@@ -627,4 +687,5 @@ Profiles:
                 - *Municipality
                 - *Municipality2
                 - *Municipality3
+                - *Municipality4
                 - *ESP

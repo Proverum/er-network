@@ -115,6 +115,13 @@ PeerOrgs:
       Count: 2
     Users:
       Count: 1
+  - Name: Municipality4
+    Domain: municipality4.example.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
   - Name: ESP
     Domain: esp.example.com
     EnableNodeOUs: true
