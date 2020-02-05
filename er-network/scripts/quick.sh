@@ -127,6 +127,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installErChaincode 0 "municipality2" "registercc"
 	echo "Install chaincode on peer0.municipality3..."
 	installErChaincode 0 "municipality3" "registercc"
+	echo "Install chaincode on peer0.municipality4..."
+	installErChaincode 0 "municipality4" "registercc"
 	echo "Install chaincode on peer0.esp..."
 	installErChaincode 0 "esp" "registercc"
 	echo "Installing chaincode on peer1.confederation..."
@@ -141,6 +143,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installErChaincode 1 "municipality2" "registercc"
 	echo "Install chaincode on peer1.municipality3..."
 	installErChaincode 1 "municipality3" "registercc"
+	echo "Install chaincode on peer1.municipality4..."
+	installErChaincode 1 "municipality4" "registercc"
 	echo "Install chaincode on peer1.esp..."
 	installErChaincode 1 "esp" "registercc"
 
@@ -157,6 +161,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installPublishChaincode 0 "municipality2" "publishcc"
 	echo "Install chaincode on peer0.municipality3..."
 	installPublishChaincode 0 "municipality3" "publishcc"
+	echo "Install chaincode on peer0.municipality4..."
+	installPublishChaincode 0 "municipality4" "publishcc"
 	echo "Installing chaincode on peer1.confederation..."
 	installPublishChaincode 1 "confederation" "publishcc"
 	echo "Install chaincode on peer1.canton..."
@@ -169,6 +175,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installPublishChaincode 1 "municipality2" "publishcc"
 	echo "Install chaincode on peer1.municipality3..."
 	installPublishChaincode 1 "municipality3" "publishcc"
+	echo "Install chaincode on peer1.municipality4..."
+	installPublishChaincode 1 "municipality4" "publishcc"
 
 
 	# Instantiate chaincodes on the according channels

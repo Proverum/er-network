@@ -241,7 +241,7 @@ joinFederalChannel () {
 #only join confederation, canton, municipality and municpality2
 joinCantonChannel () {
 	for org in "${orgs[@]}"; do
-    if [[ "$org" != "esp" -o "$org" != "canton2" -o "$org" != "municipality3" -o "$org" != "municipality4"]]
+    if [[ "$org" != "esp" ]] && [[ "$org" != "canton2" ]] && [[ "$org" != "municipality3" ]] && [[ "$org" != "municipality4" ]]
     then
       for peer in 0 1; do
     		echo $peer "$org"
@@ -257,7 +257,7 @@ joinCantonChannel () {
 #only join confederation, canton, municipality3 and municpality4
 joinCanton2Channel () {
 	for org in "${orgs[@]}"; do
-    if [[ "$org" != "esp" -o "$org" != "canton" -o "$org" != "municipality" -o "$org" != "municipality2"]]
+    if [[ "$org" != "esp" ]] && [[ "$org" != "canton" ]] && [[ "$org" != "municipality" ]] && [[ "$org" != "municipality2" ]]
     then
       for peer in 0 1; do
     		echo $peer "$org"
@@ -999,7 +999,7 @@ initLedgerMunicipalityWithRetry() {
     PEER_ADDRESS=peer0.municipality3.example.com:17051
     CHAINCODE_CALL="initLedgerMunicipalityThree"
   elif [ "$ORG" = "municipality4" ]; then
-    TLS_ROOT=${PEER0_MUNICIPALITY3_CA}
+    TLS_ROOT=${PEER0_MUNICIPALITY4_CA}
     PEER_ADDRESS=peer0.municipality4.example.com:21051
     CHAINCODE_CALL="initLedgerMunicipalityFour"
   else

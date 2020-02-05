@@ -48,6 +48,22 @@
        "memberOnlyRead": true
   },
   {
+       "name": "collectionCitizenMunicipalityFour",
+       "policy": "OR('Municipality4MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "collectionPublicCitizenMunicipalityFour",
+       "policy": "OR('Municipality4MSP.member', 'CantonMSP.member', 'ConfederationMSP.member')",
+       "requiredPeerCount": 2,
+       "maxPeerCount": 3,
+       "blockToLive":0,
+       "memberOnlyRead": true
+  },
+  {
        "name": "collectionERMunicipality",
        "policy": "OR('MunicipalityMSP.member')",
        "requiredPeerCount": 0,

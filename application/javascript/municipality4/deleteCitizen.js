@@ -1,6 +1,13 @@
+
+'use strict';
+
+// Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
+const yaml = require('js-yaml');
 const path = require('path');
+
 const { FileSystemWallet, Gateway } = require('fabric-network');
+const Citizen = require('../../../chaincode/register_management//lib/citizen.js');
 const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality.json');
 
 
@@ -31,24 +38,21 @@ async function main() {
 
         // Access PaperNet network
         console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('cantonchannel');
+        const network = await gateway.getNetwork('federalchannel');
 
         // Get the contract from the network.
         console.log('get contract: federalchannel.');
-        const contract = network.getContract('publishcc');
+        const contract = network.getContract('registercc');
 
         // register citizen
-        console.log('Submit publish municipality result transaction.');
-        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality", "Umverteilung30", "234234", "1231");
-        const publishResponseString = publishResponse.toString();
-        const publishResponseJSON = JSON.parse(publishResponseString);
-
+        console.log('Submit delete citizen transaction.');
+        const registrationResponse = await contract.submitTransaction('deleteCitizen', "collectionCitizenMunicipality", "CITIZENX");
 
         // process response
-        console.log('Process issue transaction response. '+publishResponse);
-        console.log(publishResponseJSON);
+        console.log('Process issue transaction response. '+registrationResponse);
 
-        console.log(` result key : ${publishResponse.key} successfully published for municipality `);
+
+        console.log(` citizen key : CITIZENX successfully deleted for municipality `);
         console.log('Transaction complete.');
 
 
@@ -57,11 +61,16 @@ async function main() {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
 
+    } finally {
+
+        // Disconnect from the gateway
+        console.log('Disconnect from Fabric gateway.');
+        gateway.disconnect();
+
     }
 }
 main().then(() => {
 
-    console.log('Publish municipal results program complete.');
-    process.exit();
+    console.log('Issue program complete.');
 
 })

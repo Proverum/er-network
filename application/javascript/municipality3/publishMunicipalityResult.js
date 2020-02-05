@@ -30,8 +30,8 @@ async function main() {
         await gateway.connect(ccpPath, { wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
 
         // Access PaperNet network
-        console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('federalchannel');
+        console.log('Use network channel: canton2channel.');
+        const network = await gateway.getNetwork('canton2channel');
 
         // Get the contract from the network.
         console.log('get contract: federalchannel.');

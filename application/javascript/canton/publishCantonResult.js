@@ -31,7 +31,7 @@ async function main() {
 
         // Access PaperNet network
         console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('federalchannel');
+        const network = await gateway.getNetwork('cantonchannel');
 
         // Get the contract from the network.
         console.log('get contract: federalchannel.');

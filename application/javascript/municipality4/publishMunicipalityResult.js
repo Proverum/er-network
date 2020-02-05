@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { FileSystemWallet, Gateway } = require('fabric-network');
-const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality3.json');
 
 
 // Main program function
@@ -30,16 +30,16 @@ async function main() {
         await gateway.connect(ccpPath, { wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
 
         // Access PaperNet network
-        console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('cantonchannel');
+        console.log('Use network channel: canton2channel.');
+        const network = await gateway.getNetwork('canton2channel');
 
         // Get the contract from the network.
         console.log('get contract: federalchannel.');
         const contract = network.getContract('publishcc');
 
-        // register citizen
+        // publish a result
         console.log('Submit publish municipality result transaction.');
-        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality", "Umverteilung30", "234234", "1231");
+        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality4", "Umverteilung30", "46456", "6585");
         const publishResponseString = publishResponse.toString();
         const publishResponseJSON = JSON.parse(publishResponseString);
 
@@ -61,7 +61,7 @@ async function main() {
 }
 main().then(() => {
 
-    console.log('Publish municipal results program complete.');
+    console.log('Publish municipality result program complete.');
     process.exit();
 
 })
