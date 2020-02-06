@@ -29,19 +29,36 @@ async function main() {
         console.log('Connect to Fabric gateway.');
         await gateway.connect(ccpPath, { wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
 
-        // Access PaperNet network
-        console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('federalchannel');
+        // Access canton channel
+        console.log('Use network channel: cantonchannel.');
+        const canton = await gateway.getNetwork('cantonchannel');
 
         // Get the contract from the network.
         console.log('get contract: federalchannel.');
-        const contract = network.getContract('publishcc');
+        const contractCanton = canton.getContract('publishcc');
+
+        // Access canton2 channel
+        console.log('Use network channel: cantonchannel.');
+        const canton2 = await gateway.getNetwork('canton2channel');
+
+        // Get the contract from the network.
+        console.log('get contract: federalchannel.');
+        const contractCanton2 = canton2.getContract('publishcc');
+
+        // Access federal channel
+        console.log('Use network channel: cantonchannel.');
+        const federal = await gateway.getNetwork('federalchannel');
+
+        // Get the contract from the network.
+        console.log('get contract: federalchannel.');
+        const contractFederal = federal.getContract('publishcc');
+
 
         var cantonResult;
         var cantonResult2;
 
         //wait for subordiante canton results
-        await contract.addContractListener('confederation-canton-listener', 'Canton:PublishCantonEvent', (err, event, blockNumber, transactionId, status) => {
+        await contractCanton.addContractListener('confederation-canton-listener', 'Canton:PublishCantonEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -53,7 +70,7 @@ async function main() {
             cantonResult = result;
 
             //where we output the PublishEvent
-            console.log('************************ Municipality Publish Event *******************************************************');
+            console.log('************************ Canton Publish Event *******************************************************');
             console.log(`type: ${result.type}`);
             console.log(`votingid: ${result.votingid}`);
             console.log(`yes: ${result.yes}`);
@@ -62,7 +79,7 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('confederation-canton2-listener', 'Canton2:PublishCantonEvent', (err, event, blockNumber, transactionId, status) => {
+        await contractCanton2.addContractListener('confederation-canton2-listener', 'Canton2:PublishCantonEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -74,7 +91,7 @@ async function main() {
             cantonResult2 = result;
 
             //where we output the TradeEvent
-            console.log('************************ Municipality Publish Event *******************************************************');
+            console.log('************************ Canton Publish Event *******************************************************');
             console.log(`type: ${result.type}`);
             console.log(`votingid: ${result.votingid}`);
             console.log(`yes: ${result.yes}`);
@@ -84,24 +101,33 @@ async function main() {
         });
 
 
-        console.log(cantonResult, cantonResult2)
+        let published = false;
+        while (published == false) {
+          if (cantonResult && cantonResult2) {
+            // publish aggregated result
+            let cantonalYesVotes = parseInt(cantonResult.yes) + parseInt(cantonResult2.yes);
+            let cantonalNoVotes = parseInt(cantonResult.no) + parseInt(cantonResult2.no);
+            console.log('Submit add publish confederation results transaction.');
+            const publishResponse = await contractFederal.submitTransaction('publishConfederationVotingResult', "Umverteilung", cantonalYesVotes.toString(), cantonalNoVotes.toString());
+            const publishResponseString = publishResponse.toString();
+            const publishResponseJSON = JSON.parse(publishResponseString);
 
-        if (cantonResult && cantonResult2) {
-          // publish aggregated result
-          let confederationalYesVotes = parseInt(cantonResult.yes) + parseInt(cantonResult2.yes);
-          let confederationalNoCVotes = parseInt(cantonResult.no) + parseInt(cantonResult2.no);
-          console.log('Submit add citizen transaction.');
-          const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "UmverteilungExToTheTreme", confederationalYesVotes.toString(), confederationalNoCVotes.toString());
-          const publishResponseString = publishResponse.toString();
-          const publishResponseJSON = JSON.parse(resultStringPersist);
+            published = true;
+            // process response
+            console.log('Process issue transaction response. '+publishResponse);
+            console.log(publishResponseJSON);
+
+            console.log(` result key : ${publishResponse.key} successfully published for canton `);
+            console.log('Transaction complete.');
+          }
+          await timer(5000);
+          console.log("waiting for the subordinate canton results", cantonResult, cantonResult2);
+
+        }
 
 
-          // process response
-          console.log('Process issue transaction response. '+publishResponse);
-          console.log(publishResponseJSON);
-
-          console.log(` result key : ${publishResponse.key} successfully published for municipality `);
-          console.log('Transaction complete.');
+        function timer(ms) {
+         return new Promise(res => setTimeout(res, ms));
         }
 
 

@@ -23,7 +23,7 @@ class PublishingContract extends Contract {
     const cid = new ClientIdentity(ctx.stub);
     const invokingMSP = cid.getMSPID();
     // only municipaliteis are allowed to publish with this and create an according event
-    if(invokingMSP=='MunicipalityMSP' || invokingMSP=='Municipality2MSP' || invokingMSP=='Municipality3MSP'){
+    if(invokingMSP=='MunicipalityMSP' || invokingMSP=='Municipality2MSP' || invokingMSP=='Municipality3MSP' || invokingMSP=='Municipality4MSP'){
 
       const resultToPublish = new ResultVoting(reportingMunicipality, votingId, yesCount, noCount);
       const resultKey = votingId+":"+reportingMunicipality;
@@ -47,7 +47,7 @@ class PublishingContract extends Contract {
       return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
 
     } else {
-      throw new Error("Only Municipalities are allowed to publish results through this function call");
+      throw new Error("Only Municipalities are allowed to publish results through this function call however you are identified as ", invokingMSP);
     }
 
   }

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { FileSystemWallet, Gateway } = require('fabric-network');
-const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-canton.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-canton2.json');
 
 
 // Main program function
@@ -30,17 +30,17 @@ async function main() {
         await gateway.connect(ccpPath, { wallet, identity: 'clerk1', discovery: { enabled: true, asLocalhost: true } });
 
         // Access PaperNet network
-        console.log('Use network channel: federalchannel.');
-        const network = await gateway.getNetwork('federalchannel');
+        console.log('Use network channel: canton2channel.');
+        const network = await gateway.getNetwork("canton2channel");
 
         // Get the contract from the network.
-        console.log('get contract: federalchannel.');
-        const contract = network.getContract('publishcc');
+        console.log('get contract: publishcc.');
+        const contract = network.getContract("publishcc");
 
         let result1;
         let result2;
         //wait for subordiante municpalities results
-        await contract.addContractListener('cantonal-municipality-listener', 'Municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality3-listener', 'Municipality3:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -61,7 +61,7 @@ async function main() {
             console.log('************************ End Municipality Publish Event ************************************');
         });
 
-        await contract.addContractListener('cantonal-municipality2-listener', 'Municipality4:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
+        await contract.addContractListener('cantonal-municipality4-listener', 'Municipality4:PublishMunicipalityEvent', (err, event, blockNumber, transactionId, status) => {
             if (err) {
               console.error(err);
               return;
@@ -88,7 +88,7 @@ async function main() {
             // publish aggregated result
             let cantonalYesVotes = parseInt(result1.yes) + parseInt(result2.yes);
             let cantonalNoVotes = parseInt(result1.no) + parseInt(result2.no);
-            console.log('Submit add citizen transaction.');
+            console.log('Submit publish canton results transaction.');
             const publishResponse = await contract.submitTransaction('publishCantonVotingResult', "Canton2", "Umverteilung", cantonalYesVotes.toString(), cantonalNoVotes.toString());
             const publishResponseString = publishResponse.toString();
             const publishResponseJSON = JSON.parse(publishResponseString);

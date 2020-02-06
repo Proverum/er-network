@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { FileSystemWallet, Gateway } = require('fabric-network');
-const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality3.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..',  'er-network', 'connection-municipality4.json');
 
 
 // Main program function
@@ -34,12 +34,12 @@ async function main() {
         const network = await gateway.getNetwork('canton2channel');
 
         // Get the contract from the network.
-        console.log('get contract: federalchannel.');
+        console.log('get contract: publishcc.');
         const contract = network.getContract('publishcc');
 
         // publish a result
         console.log('Submit publish municipality result transaction.');
-        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality4", "Umverteilung30", "46456", "6585");
+        const publishResponse = await contract.submitTransaction('publishMunicipalityVotingResult', "Municipality4", "Umverteilung30", "56", "6585");
         const publishResponseString = publishResponse.toString();
         const publishResponseJSON = JSON.parse(publishResponseString);
 
