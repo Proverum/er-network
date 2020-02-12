@@ -28,56 +28,24 @@ class RegisterContract extends Contract {
         console.log('Instantiate the contract');
   }
 
-  static test() {
-    console.info('============= START : Initialize Ledger ===========');
-    //some dummy citizens to work with
-    let citizens = [new Citizen('7567898587737', 'CH.AUPER.12345567', 'Spähni', 'Peter', '22.05.1980', 'Zürich', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
-      'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
-      new Citizen('7560933361289', 'CH.VERA.5466525', 'Rauper', 'Sandra', '13.08.2005', 'Zürich', 'weiblich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zürich', 'na',
-        'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zürich', '8003', 'Privathaushalt'),
-      new Citizen('7566501134144', 'CH.VERA.45254435', 'Muster', 'Max', '15.08.1972', 'Zürich', 'männlich',
-        'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zürich', 'na',
-        'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zürich', '8003', 'Privathaushalt'),
-
-    ];
-
-    let publicCitizens = [new CitizenPublic('7567898587737', 'Zürich'), new CitizenPublic('7560933361289', 'Zürich'),
-        new CitizenPublic('7566501134144', 'Zürich'),
-
-    ];
-    for (let i = 0; i < citizens.length; i++) {
-        console.log(citizens[i]);
-        console.info('Added <--> ', citizens[i]);
-    }
-    // add full citizen information to corresponding municipality private data store
-    for (let i = 0; i < publicCitizens.length; i++) {
-        console.log(publicCitizens[i]);
-        console.info('Added <--> ', publicCitizens[i]);
-    }
-    console.info('============= END : Initialize Ledger ===========');
-
-  }
-
-  //Zürich example with a bunch of mock citizens
+  //Zuerich example with a bunch of mock citizens
   async initLedgerMunicipality(ctx) {
     console.info('============= START : Initialize Ledger ===========');
     //some dummy citizens to work with
-    let citizens = [new Citizen('7567888567789', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zürich', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zürich', 'Zürich', 'na',
-      'Zürich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zürich', '8002', 'Kollektivhaushalt'),
-      new Citizen('7569933367789', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zürich', 'weiblich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zürich', 'na',
-        'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zürich', '8003', 'Privathaushalt'),
-      new Citizen('7562659123444', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zürich', 'männlich',
-        'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zürich', 'na',
-        'Zürich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zürich', '8003', 'Privathaushalt'),
+    let citizens = [new Citizen('7567888567789', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zuerich', 'männlich',
+      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zuerich', 'Zuerich', 'na',
+      'Zuerich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zuerich', '8002', 'Kollektivhaushalt'),
+      new Citizen('7569933367789', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zuerich', 'weiblich',
+        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zuerich', 'na',
+        'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zuerich', '8003', 'Privathaushalt'),
+      new Citizen('7562659123444', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zuerich', 'männlich',
+        'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zuerich', 'na',
+        'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zuerich', '8003', 'Privathaushalt'),
 
     ];
 
-    let publicCitizens = [new CitizenPublic('7567888567789', 'Zürich'), new CitizenPublic('7569933367789', 'Zürich'),
-        new CitizenPublic('7562659123444', 'Zürich'),
+    let publicCitizens = [new CitizenPublic('7567888567789', 'Zuerich'), new CitizenPublic('7569933367789', 'Zuerich'),
+        new CitizenPublic('7562659123444', 'Zuerich'),
 
     ];
 
@@ -101,8 +69,8 @@ class RegisterContract extends Contract {
     let citizens = [new Citizen('7567888567789', 'CH.AUPER.123298367', 'Laubi', 'Johan', '1988/02/12', 'Baar', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Baar', 'Zug', 'na',
       'Bassersdorf', 'Hauptwohnsitz', '22.09.1980', 'Basserstrasse 78', '8879', 'Bassersdorf', '8303', 'Kollektivhaushalt'),
-      new Citizen('7569933323789', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zürich', 'weiblich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Horgen', 'Zürich', 'na',
+      new Citizen('7569933323789', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zuerich', 'weiblich',
+        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Horgen', 'Zuerich', 'na',
         'Bassersdorf', 'Hauptwohnsitz', '06.06.2008', 'Hinterweg 43', '78984', 'Bassersdorf', '8303', 'Privathaushalt'),
       new Citizen('7566666444612', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '1990/03/25', 'Madrid', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Spanien', 'Madrid', 'na', 'B',
@@ -135,7 +103,7 @@ class RegisterContract extends Contract {
     let citizens = [new Citizen('7566662109945', 'SuisseId.02', 'Johnson', 'Mike', '1979/09/09', 'Seattle', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'USA', 'New York', 'na', 'A',
       'Wallisellen', 'Hauptwohnsitz', '22.09.2003', 'Wallisellerstrasse 78', '123', 'Wallisellen', '8304', 'Kollektivhaushalt'),
-      new Citizen('7564567134224', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zürich', 'männlich',
+      new Citizen('7564567134224', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zuerich', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
         'Wallisellen', 'Nebenwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Wallisellen', '8304', 'Sammelhaushalt'),
       new Citizen('7565544294802', 'CH.VERA.263453', 'Schwab', 'Lena', '1982/06/04', 'Altdorf', 'weiblich',
@@ -168,7 +136,7 @@ class RegisterContract extends Contract {
     let citizens = [new Citizen('7566262108235', 'CH:AUPER', 'Flack', 'Doris', '1975/05/021', 'Cham', 'männlich',
       ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Cham', 'na', 'A',
       'Dübendorf', 'Hauptwohnsitz', '22.09.2003', 'Dübenerstrasse 1a', '0045', 'Dübendorf', '8600', 'Kollektivhaushalt'),
-      new Citizen('7564528634554', 'CH.INFOSTAR.235453', 'Topfer', 'Tom', '1992/08/17', 'Zürich', 'männlich',
+      new Citizen('7564528634554', 'CH.INFOSTAR.235453', 'Topfer', 'Tom', '1992/08/17', 'Zuerich', 'männlich',
         'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
         'Dübendorf', 'Hauptwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Dübendorf', '8600', 'Sammelhaushalt'),
       new Citizen('7565534984777', 'CH.VERA.263453', 'Sutskever', 'Nina', '1982/06/04', 'Altdorf', 'weiblich',
@@ -236,7 +204,7 @@ class RegisterContract extends Contract {
   }
 
 // kind of similar to get all private data from collection x
-  async getAllCitizens(ctx, collection) {
+  async getAllIdentities(ctx, collection) {
 
     //empty string start and end key to fetch all
     const startKey = "";
@@ -353,7 +321,7 @@ class RegisterContract extends Contract {
                 }
                 // checks if a citizen is allowed to vote
                 if(age >= 18 && typeOfResidenceType=="Hauptwohnsitz" && votingRestriction=="false" && nationality=="Schweiz"){
-                  let influence = ['CH', '1', 'Bund', 'CT', '1', 'Kanton Zürich'];
+                  let influence = ['CH', '1', 'Bund', 'CT', '1', 'Kanton Zuerich'];
                   let vn = Record.personData.personIdentificationData.vn;
                   let localPersonId = Record.personData.personIdentificationData.localPersonId;
                   let officialName = Record.personData.nameData.officialName;
@@ -372,8 +340,8 @@ class RegisterContract extends Contract {
                   if (municipality=="Bassersdorf") {
                     let municipalityInfluence = ['MU', '23', 'Gemeinde Bassersdorf'];
                     influence = influence.concat(municipalityInfluence);
-                  }else if (municipality=="Zürich") {
-                    let municipalityInfluence = ['MU', '261', 'Stadt Zürich'];
+                  }else if (municipality=="Zuerich") {
+                    let municipalityInfluence = ['MU', '261', 'Stadt Zuerich'];
                     influence = influence.concat(municipalityInfluence);
                   }else {
                     //only remaining municipality in this use case is wallisellen
@@ -458,17 +426,6 @@ class RegisterContract extends Contract {
     return result;
   }
 
-  async queryVoterHash(ctx, voterHashKey) {
-
-    const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the citizen from chaincode state type Buffer
-    if (!voterHashAsBytes || v.length === 0) {
-          throw new Error(`${voterHashKey} does not exist`);
-    }
-
-    console.log(voterHashAsBytes.toString());
-    return voterHashAsBytes.toString();
-  }
-
   async queryWorldState(ctx) {
 
     //empty string start and end key to fetch all
@@ -503,10 +460,21 @@ class RegisterContract extends Contract {
     }
   }
 
+  async queryVoterHash(ctx, voterHashKey) {
+
+    const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the citizen from chaincode state type Buffer
+    if (!voterHashAsBytes || voterHashAsBytes.length === 0) {
+          throw new Error(`${voterHashKey} does not exist`);
+    }
+
+    console.log(voterHashAsBytes.toString());
+    return voterHashAsBytes.toString();
+  }
+
   async queryVoterListHash(ctx, voterListHashKey) {
 
-    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); // get the citizen from chaincode state type Buffer
-    if (!voterListHashAsBytes || v.length === 0) {
+    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); 
+    if (!voterListHashAsBytes || voterListHashAsBytes.length === 0) {
           throw new Error(`${voterListHashKey} does not exist`);
     }
 
@@ -514,21 +482,11 @@ class RegisterContract extends Contract {
     return voterListHashAsBytes.toString();
   }
 
-  async queryAllVoterListHash(ctx, voterListHashKey) {
-
-    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); // get the citizen from chaincode state type Buffer
-    if (!voterListHashAsBytes || v.length === 0) {
-          throw new Error(`${voterListHashKey} does not exist`);
-    }
-
-    console.log(voterListHashAsBytes.toString());
-    return voterListHashAsBytes.toString();
-  }
 
   async queryVoter(ctx, collection, voterkey) {
 
-    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterkey); // get the citizen from chaincode state type Buffer
-    if (!voterAsBytes || v.length === 0) {
+    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterkey);
+    if (!voterAsBytes || voterAsBytes.length === 0) {
           throw new Error(`${voterkey} does not exist`);
     }
 
@@ -538,9 +496,8 @@ class RegisterContract extends Contract {
 
   async queryVoterList(ctx, collection, voterListKey) {
 
-    const voterListAsBytes = await ctx.stub.getPrivateData(collection, voterListKey);  // get the citizen from chaincode state
-
-    if (!registerAsBytes || registerAsBytes.length === 0) {
+    const voterListAsBytes = await ctx.stub.getPrivateData(collection, voterListKey);
+    if (!voterListAsBytes || voterListAsBytes.length === 0) {
           throw new Error(`${voterListKey} does not exist`);
     }
 
