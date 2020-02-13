@@ -9,16 +9,38 @@ services:
 
   orderer.example.com:
     container_name: orderer.example.com
-    extends:
-      file: peer-base.yaml
-      service: orderer-base
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    environment:
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:7442  # operation RESTful API
+      - ORDERER_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+      - ORDERER_OPERATIONS_TLS_ENABLED=false
+      - ORDERER_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS/var/hyperledger/orderer/tls/ca.crt
+      - ORDERER_OPERATIONS_TLS_CLIENTAUTHREQUIRED=false
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
     volumes:
-        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-        - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
-        - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
-        - orderer.example.com:/var/hyperledger/production/orderer
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
+    - orderer.example.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
+      - 7442:7442  # Operation REST
 
   peer0.confederation.example.com:
     container_name: peer0.confederation.example.com
@@ -34,6 +56,8 @@ services:
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.confederation.example.com:8051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.confederation.example.com:7051
       - CORE_PEER_LOCALMSPID=ConfederationMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:7443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/confederation.example.com/peers/peer0.confederation.example.com/msp:/etc/hyperledger/fabric/msp
@@ -41,6 +65,7 @@ services:
         - peer0.confederation.example.com:/var/hyperledger/production
     ports:
       - 7051:7051
+      - 7444:7443
 
   peer1.confederation.example.com:
     container_name: peer1.confederation.example.com
@@ -56,6 +81,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.confederation.example.com:8051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.confederation.example.com:7051
       - CORE_PEER_LOCALMSPID=ConfederationMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:8443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/confederation.example.com/peers/peer1.confederation.example.com/msp:/etc/hyperledger/fabric/msp
@@ -63,6 +90,7 @@ services:
         - peer1.confederation.example.com:/var/hyperledger/production
     ports:
       - 8051:8051
+      - 8443:8443
 
   peer0.canton.example.com:
     container_name: peer0.canton.example.com
@@ -78,6 +106,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.canton.example.com:9051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.canton.example.com:10051
       - CORE_PEER_LOCALMSPID=CantonMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/canton.example.com/peers/peer0.canton.example.com/msp:/etc/hyperledger/fabric/msp
@@ -85,6 +115,7 @@ services:
         - peer0.canton.example.com:/var/hyperledger/production
     ports:
       - 9051:9051
+      - 9443:9443
 
   peer1.canton.example.com:
     container_name: peer1.canton.example.com
@@ -100,6 +131,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.canton.example.com:10051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.canton.example.com:9051
       - CORE_PEER_LOCALMSPID=CantonMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:10443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/canton.example.com/peers/peer1.canton.example.com/msp:/etc/hyperledger/fabric/msp
@@ -107,6 +140,7 @@ services:
         - peer1.canton.example.com:/var/hyperledger/production
     ports:
       - 10051:10051
+      - 10443:10443
 
   peer0.canton2.example.com:
     container_name: peer0.canton2.example.com
@@ -122,6 +156,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.canton2.example.com:11051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.canton2.example.com:12051
       - CORE_PEER_LOCALMSPID=Canton2MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:11443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/canton2.example.com/peers/peer0.canton2.example.com/msp:/etc/hyperledger/fabric/msp
@@ -129,6 +165,7 @@ services:
         - peer0.canton2.example.com:/var/hyperledger/production
     ports:
       - 11051:11051
+      - 11443:11443
 
   peer1.canton2.example.com:
     container_name: peer1.canton2.example.com
@@ -144,6 +181,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.canton2.example.com:12051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.canton2.example.com:11051
       - CORE_PEER_LOCALMSPID=Canton2MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:12443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/canton2.example.com/peers/peer1.canton2.example.com/msp:/etc/hyperledger/fabric/msp
@@ -151,6 +190,7 @@ services:
         - peer1.canton2.example.com:/var/hyperledger/production
     ports:
       - 12051:12051
+      - 12443:12443
 
   peer0.municipality.example.com:
     container_name: peer0.municipality.example.com
@@ -166,6 +206,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.municipality.example.com:13051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.municipality.example.com:14051
       - CORE_PEER_LOCALMSPID=MunicipalityMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:13443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality.example.com/peers/peer0.municipality.example.com/msp:/etc/hyperledger/fabric/msp
@@ -173,6 +215,7 @@ services:
         - peer0.municipality.example.com:/var/hyperledger/production
     ports:
       - 13051:13051
+      - 13443:13443
 
   peer1.municipality.example.com:
     container_name: peer1.municipality.example.com
@@ -188,6 +231,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.municipality.example.com:14051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.municipality.example.com:13051
       - CORE_PEER_LOCALMSPID=MunicipalityMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:14443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality.example.com/peers/peer1.municipality.example.com/msp:/etc/hyperledger/fabric/msp
@@ -195,6 +240,7 @@ services:
         - peer1.municipality.example.com:/var/hyperledger/production
     ports:
       - 14051:14051
+      - 14443:14443
 
   peer0.municipality2.example.com:
     container_name: peer0.municipality2.example.com
@@ -210,6 +256,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.municipality2.example.com:15051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.municipality2.example.com:16051
       - CORE_PEER_LOCALMSPID=Municipality2MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:15443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality2.example.com/peers/peer0.municipality2.example.com/msp:/etc/hyperledger/fabric/msp
@@ -217,6 +265,7 @@ services:
         - peer0.municipality2.example.com:/var/hyperledger/production
     ports:
       - 15051:15051
+      - 15443:15443
 
   peer1.municipality2.example.com:
     container_name: peer1.municipality2.example.com
@@ -232,6 +281,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.municipality2.example.com:16051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.municipality2.example.com:15051
       - CORE_PEER_LOCALMSPID=Municipality2MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:16443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality2.example.com/peers/peer1.municipality2.example.com/msp:/etc/hyperledger/fabric/msp
@@ -239,6 +290,7 @@ services:
         - peer1.municipality2.example.com:/var/hyperledger/production
     ports:
       - 16051:16051
+      - 16443:16443
 
   peer0.municipality3.example.com:
     container_name: peer0.municipality3.example.com
@@ -254,6 +306,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.municipality3.example.com:17051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.municipality3.example.com:18051
       - CORE_PEER_LOCALMSPID=Municipality3MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:17443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality3.example.com/peers/peer0.municipality3.example.com/msp:/etc/hyperledger/fabric/msp
@@ -261,6 +315,7 @@ services:
         - peer0.municipality3.example.com:/var/hyperledger/production
     ports:
       - 17051:17051
+      - 17443:17443
 
   peer1.municipality3.example.com:
     container_name: peer1.municipality3.example.com
@@ -276,6 +331,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.municipality3.example.com:18051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.municipality3.example.com:17051
       - CORE_PEER_LOCALMSPID=Municipality3MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:18443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality3.example.com/peers/peer1.municipality3.example.com/msp:/etc/hyperledger/fabric/msp
@@ -283,6 +340,7 @@ services:
         - peer1.municipality3.example.com:/var/hyperledger/production
     ports:
       - 18051:18051
+      - 18443:18443
 
   peer0.esp.example.com:
     container_name: peer0.esp.example.com
@@ -298,6 +356,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.esp.example.com:19051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.esp.example.com:20051
       - CORE_PEER_LOCALMSPID=ESPMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:19443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/esp.example.com/peers/peer0.esp.example.com/msp:/etc/hyperledger/fabric/msp
@@ -305,6 +365,7 @@ services:
         - peer0.esp.example.com:/var/hyperledger/production
     ports:
       - 19051:19051
+      - 19443:19443
 
   peer1.esp.example.com:
     container_name: peer1.esp.example.com
@@ -320,6 +381,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.esp.example.com:20051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.esp.example.com:19051
       - CORE_PEER_LOCALMSPID=ESPMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:20443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/esp.example.com/peers/peer1.esp.example.com/msp:/etc/hyperledger/fabric/msp
@@ -327,6 +390,7 @@ services:
         - peer1.esp.example.com:/var/hyperledger/production
     ports:
       - 20051:20051
+      - 20443:20443
 
   peer0.municipality4.example.com:
     container_name: peer0.municipality4.example.com
@@ -342,6 +406,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.municipality4.example.com:21051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.municipality4.example.com:22051
       - CORE_PEER_LOCALMSPID=Municipality4MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:21443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality4.example.com/peers/peer0.municipality4.example.com/msp:/etc/hyperledger/fabric/msp
@@ -349,6 +415,7 @@ services:
         - peer0.municipality4.example.com:/var/hyperledger/production
     ports:
       - 21051:21051
+      - 21443:21443
 
   peer1.municipality4.example.com:
     container_name: peer1.municipality4.example.com
@@ -364,6 +431,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.municipality4.example.com:22051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.municipality4.example.com:21051
       - CORE_PEER_LOCALMSPID=Municipality4MSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:22443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/municipality4.example.com/peers/peer1.municipality4.example.com/msp:/etc/hyperledger/fabric/msp
@@ -371,3 +440,4 @@ services:
         - peer1.municipality4.example.com:/var/hyperledger/production
     ports:
       - 22051:22051
+      - 22443:22443

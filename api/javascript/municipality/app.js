@@ -176,7 +176,6 @@ app.get('/api/municipality/queryvoter/:voter_key', async function (req, res) {
 
 app.get('/api/municipality/queryvoterlist/:voterlist_key', async function (req, res) {
   try {
-
       // Create a new gateway for connecting to our peer node
       const gateway = await connectToGateway();
 

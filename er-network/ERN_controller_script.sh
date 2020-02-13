@@ -157,6 +157,10 @@ function networkUp() {
     replacePrivateKey
     generateChannelArtifacts
     export IMAGE_TAG=latest
+  else
+    replacePrivateKey
+    generateChannelArtifacts
+    export IMAGE_TAG=latest
   fi
   COMPOSE_FILES="-f ${COMPOSE_FILE}"
   if [ "${CERTIFICATE_AUTHORITIES}" == "true" ]; then
@@ -245,7 +249,7 @@ function networkDown() {
     #Cleanup images
     removeUnwantedImages
     # remove orderer block and other channel configuration transactions and certs
-    rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config
+    rm -rf channel-artifacts/*.block channel-artifacts/*.tx #crypto-config
     # remove the docker-compose yaml file that was customized to the example
     rm -f docker-compose-e2e.yaml
   fi
