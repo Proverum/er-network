@@ -1,8 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+const cors = require('cors');
 var app = express();
 
 app.use(bodyParser.json());// Setting for Hyperledger Fabric
+app.use(cors());
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality.json');
@@ -302,4 +304,4 @@ app.put('/api/municipality/generateER', async function (req, res) {
   }
 })
 
-app.listen(8000);
+app.listen(8030);

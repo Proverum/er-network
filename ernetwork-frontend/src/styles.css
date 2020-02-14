@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 /* Text */
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
 h1 {
   font-size: 32px;
@@ -103,10 +104,9 @@ app-top-bar h1 {
 
 /* Checkout Cart, Shipping Prices */
 
-.cart-item, .shipping-item {
+.citizen-info, .shipping-item {
   width: 100%;
   min-width: 400px;
-  max-width: 450px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

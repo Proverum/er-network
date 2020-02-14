@@ -1,0 +1,61 @@
+
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+  <a class="navbar-brand" href="#"> Node Dashboard {{instantiationCase}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto">
+
+      <button mat-button [matMenuTriggerFor]="citizenadmin">Citizen Administration</button>
+
+      <mat-menu #citizenadmin="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="datauploading">Unregister</button>
+        <button mat-menu-item (click)="launchRequestOffer()">Register</button>
+        <button mat-menu-item (click)="launchBuyData()">Move</button>
+      </mat-menu>
+
+      <button mat-button [matMenuTriggerFor]="votingadmin">Voting Administration</button>
+
+      <mat-menu #votingadmin="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="datauploading">Generate & Share Electoral Register</button>
+        <button mat-menu-item (click)="launchRequestOffer()">Verify Voter</button>
+        <button mat-menu-item (click)="launchBuyData()">Publish Result</button>
+      </mat-menu>
+
+
+    </ul>
+  </div>
+</nav>
+
+
+<div class="container" style="margin-top: 70px;">
+
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let citizen of citizens">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Citizenkey: {{citizen.key}}
+        </mat-panel-title>
+        <mat-panel-description>
+          Expand for Citizen Details
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="citizen-info" >
+        <span> Insurnance Number: {{ citizen.vn }}</span>
+        <span> Family Name: {{ citizen.officialName}}</span>
+        <span> Name: {{ citizen.firstName}}</span>
+        <span> Geburtsdatum: {{ citizen.dateOfBirth}}</span>
+      </div>
+      <div class="citizen-info" >
+        <span> Nationality: {{ citizen.nationality }}</span>
+        <span> Street: {{ citizen.street }}</span>
+        <span> City: {{ citizen.city }}</span>
+        <span> Type of Residence: {{ citizen.typeOfResidenceType }}</span>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+</div>
