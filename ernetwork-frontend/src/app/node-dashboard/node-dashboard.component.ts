@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Inject } from '@angular/core';
 import { MatDialogConfig} from "@angular/material";
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from "@angular/material";
+import { AddCitizenComponent } from './../add-citizen/add-citizen.component';
 
 import { ApiServiceService } from './../api-service.service';
 
@@ -92,8 +93,31 @@ export class NodeDashboardComponent implements OnInit {
 
   getAllCitizens() {
     console.log("this is the port sent into getAllCitizens", this.port);
-    this.apiService.getAllCitizens(this.port, this.nodeName, "queryallcitizens").then(
+    this.apiService.getAllCitizens(this.port, this.nodeName).then(
       citizens => this.citizens = citizens,
+    );
+  }
+
+  addCitizen() {
+    console.log("this is the port sent into getAllCitizens", this.port);
+    this.apiService.getAllCitizens(this.port, this.nodeName).then(
+      citizens => this.citizens = citizens,
+    );
+  }
+
+  launchCitizenRegistration(){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '60%';
+    dialogConfig.height = '85%';
+    dialogConfig.data = {
+          port: this.port,
+          nodeName: this.nodeName
+      };
+    const dialogRef = this.dialog.open(AddCitizenComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+        data => console.log("Dialog output:", data)
     );
   }
 

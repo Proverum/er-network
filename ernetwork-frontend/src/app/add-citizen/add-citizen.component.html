@@ -1,0 +1,44 @@
+<div class="container">
+  <form class="example-container"  #NewCitizenRequest="ngForm" id="registerCitizenForm">
+    <h1>Register a Citizen</h1>
+    <div class="form-group">
+      <label for="addCitizenRequest">VN</label>
+      <input type="text" class="form-control" id="vn" [(ngModel)]="addCitizenRequest.vn" name="vn" placeholder="ex 756.3242.1235.52"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Official Name</label>
+      <input type="text" class="form-control" id="officialName" [(ngModel)]="addCitizenRequest.officialName" name="officialName" placeholder="Muster"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">First Name</label>
+      <input type="text" class="form-control" id="firstName" [(ngModel)]="addCitizenRequest.firstName" name="firstName" placeholder="Max"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Date Of Birth</label>
+      <input type="text" class="form-control" id="dateOfBirth" [(ngModel)]="addCitizenRequest.dateOfBirth" name="dateOfBirth" placeholder="dd.mm.yyyy"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Nationality</label>
+      <input type="text" class="form-control" id="nationality" [(ngModel)]="addCitizenRequest.nationality" name="nationality" placeholder="Schweiz"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Reporting Municipality</label>
+      <input type="text" class="form-control" id="reportingMunicipality" [(ngModel)]="addCitizenRequest.reportingMunicipality" name="reportingMunicipality" placeholder="Dübendorf"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Type of Residence</label>
+      <input type="text" class="form-control" id="typeOfResidenceType" [(ngModel)]="addCitizenRequest.typeOfResidenceType" name="typeOfResidenceType" placeholder="Hauptwohnsitz"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Private Data Collection Destination</label>
+      <input type="text" class="form-control" id="collection" [(ngModel)]="addCitizenRequest.collection" name="collection" placeholder="collectionCitizenMunicipality"> <i class="bar"></i>
+    </div>
+    <div class="form-group">
+      <label for="addCitizenRequest">Citizen Key</label>
+      <input type="text" class="form-control" id="citizenKey" [(ngModel)]="addCitizenRequest.citizenKey" name="citizenKey" placeholder="CITIZEN10"> <i class="bar"></i>
+    </div>
+  </form>
+  <div class="button-container">
+    <button type="button" class="button" value="Register Citizen" (click)="addCitizen()"><span>Add Citizen to Private Citizen Register</span></button>
+  </div>
+</div>

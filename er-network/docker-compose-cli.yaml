@@ -23,6 +23,8 @@ volumes:
   peer1.municipality4.example.com:
   peer0.esp.example.com:
   peer1.esp.example.com:
+  peer0.sp.example.com:
+  peer1.sp.example.com:
 
 
 networks:
@@ -166,6 +168,22 @@ services:
     networks:
       - ern
 
+  peer0.sp.example.com:
+    container_name: peer0.sp.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.sp.example.com
+    networks:
+      - ern
+
+  peer1.sp.example.com:
+    container_name: peer1.sp.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.sp.example.com
+    networks:
+      - ern
+
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:$IMAGE_TAG
@@ -209,5 +227,7 @@ services:
       - peer1.municipality4.example.com
       - peer0.esp.example.com
       - peer1.esp.example.com
+      - peer0.sp.example.com
+      - peer1.sp.example.com
     networks:
       - ern

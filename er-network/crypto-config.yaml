@@ -129,3 +129,10 @@ PeerOrgs:
       Count: 2
     Users:
       Count: 1
+  - Name: SP
+    Domain: sp.example.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1

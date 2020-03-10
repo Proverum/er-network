@@ -23,6 +23,8 @@ volumes:
   peer1.municipality4.example.com:
   peer0.esp.example.com:
   peer1.esp.example.com:
+  peer0.sp.example.com:
+  peer1.sp.example.com:
 
 networks:
   ern:
@@ -163,6 +165,23 @@ services:
     networks:
       - ern
 
+  ca8:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-sp
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.sp.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA9_PRIVATE_KEY
+    ports:
+      - "23054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.sp.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA9_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/sp.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerSp
+    networks:
+      - ern
+
   orderer.example.com:
     extends:
       file:   base/docker-compose-base.yaml
@@ -296,5 +315,21 @@ services:
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.esp.example.com
+    networks:
+      - ern
+
+  peer0.sp.example.com:
+    container_name: peer0.sp.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.sp.example.com
+    networks:
+      - ern
+
+  peer1.sp.example.com:
+    container_name: peer1.sp.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.sp.example.com
     networks:
       - ern

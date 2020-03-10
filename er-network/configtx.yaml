@@ -289,6 +289,37 @@ Organizations:
             - Host: peer0.municipality4.example.com
               Port: 21051
 
+    - &SP
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: SPMSP
+
+        # ID to load the MSP definition as
+        ID: SPMSP
+
+        MSPDir: crypto-config/peerOrganizations/sp.example.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('SPMSP.admin', 'SPMSP.peer', 'SPMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('SPMSP.admin', 'SPMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('SPMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.sp.example.com
+              Port: 23051
+
 ################################################################################
 #
 #   SECTION: Capabilities
@@ -544,6 +575,7 @@ Profiles:
                     - *Municipality3
                     - *Municipality4
                     - *ESP
+                    - *SP
     ErChannel:
         Consortium: FederalConsortium
         <<: *ChannelDefaults
@@ -558,6 +590,7 @@ Profiles:
                 - *Municipality3
                 - *Municipality4
                 - *ESP
+                - *SP
             Capabilities:
                 <<: *ApplicationCapabilities
 
@@ -633,6 +666,7 @@ Profiles:
                 - *Municipality3
                 - *Municipality4
                 - *ESP
+                - *SP
 
     SampleMultiNodeEtcdRaft:
         <<: *ChannelDefaults
@@ -689,3 +723,4 @@ Profiles:
                 - *Municipality3
                 - *Municipality4
                 - *ESP
+                - *SP

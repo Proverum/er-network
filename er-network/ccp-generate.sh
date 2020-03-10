@@ -117,3 +117,14 @@ CAPEM=crypto-config/peerOrganizations/esp.example.com/ca/ca.esp.example.com-cert
 
 echo "$(json_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-esp.json
 echo "$(yaml_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-esp.yaml
+
+ORG="sp"
+ORGCAP="SP"
+P0PORT=23051
+P1PORT=24051
+CAPORT=23054
+PEERPEM=crypto-config/peerOrganizations/sp.example.com/tlsca/tlsca.sp.example.com-cert.pem
+CAPEM=crypto-config/peerOrganizations/sp.example.com/ca/ca.sp.example.com-cert.pem
+
+echo "$(json_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-sp.json
+echo "$(yaml_ccp $ORG $ORGCAP $P0PORT $P1PORT $CAPORT $PEERPEM $CAPEM)" > connection-sp.yaml

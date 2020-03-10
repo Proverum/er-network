@@ -441,3 +441,53 @@ services:
     ports:
       - 22051:22051
       - 22443:22443
+
+  peer0.sp.example.com:
+    container_name: peer0.sp.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.sp.example.com
+      - CORE_PEER_ADDRESS=peer0.sp.example.com:23051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:23051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.sp.example.com:23052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:23052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.sp.example.com:23051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.sp.example.com:24051
+      - CORE_PEER_LOCALMSPID=SPMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:23443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/sp.example.com/peers/peer0.sp.example.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/sp.example.com/peers/peer0.sp.example.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.sp.example.com:/var/hyperledger/production
+    ports:
+      - 23051:23051
+      - 23443:23443
+
+  peer1.sp.example.com:
+    container_name: peer1.sp.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.sp.example.com
+      - CORE_PEER_ADDRESS=peer1.sp.example.com:24051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:24051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.sp.example.com:24052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:24052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.sp.example.com:24051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.sp.example.com:23051
+      - CORE_PEER_LOCALMSPID=SPMSP
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:22443  # operation RESTful API
+      - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/sp.example.com/peers/peer1.sp.example.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/sp.example.com/peers/peer1.sp.example.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.sp.example.com:/var/hyperledger/production
+    ports:
+      - 24051:24051
+      - 24443:24443

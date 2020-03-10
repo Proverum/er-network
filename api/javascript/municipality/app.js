@@ -64,7 +64,7 @@ app.post('/api/municipality/addcitizen', async function (req, res) {
       const contract = network.getContract('registercc');
           // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
       console.log("submittes values:");
-      console.log(req.body.vn, req.body.localPersonId, req.body.officialName, req.body.firstName, req.body.dateOfBirth, req.body.placeOfBirth,
+      console.log(req.body.vn, req.body.localPersonId, req.body.officialName, req.body.firstName, req.body.dateOfBirth, req.body.placeofBirth,
         req.body.sex, req.body.religion, req.body.maritalStatus, req.body.nationality, req.body.originName, req.body.canton, req.body.residencePermit, req.body.reportingMunicipality,
         req.body.typeOfResidenceType, req.body.arrivalDate, req.body.street, req.body.postOfficeBoxText, req.body.city, req.body.swissZipCode, req.body.typeOfHousehold,
         req.body.collection, req.body.citizenKey);
@@ -72,7 +72,7 @@ app.post('/api/municipality/addcitizen', async function (req, res) {
         req.body.sex, req.body.religion, req.body.maritalStatus, req.body.nationality, req.body.originName, req.body.canton, req.body.residencePermit, req.body.reportingMunicipality,
         req.body.typeOfResidenceType, req.body.arrivalDate, req.body.street, req.body.postOfficeBoxText, req.body.city, req.body.swissZipCode, req.body.typeOfHousehold,
         req.body.collection, req.body.citizenKey);
-      res.send('Transaction has been submitted', res.json({"result": "successfully added citizen", "body": req.body}));
+      res.status(200).json({response: req.body});
       await gateway.disconnect();
 
     } catch (error) {
@@ -81,7 +81,7 @@ app.post('/api/municipality/addcitizen', async function (req, res) {
       }
 });
 
-app.delete('/api/municipality/deletecitizen', async function (req, res) {
+app.delete('/api/municipality/deletecitizen/:voter_key', async function (req, res) {
   try {
       //gateway defines the peers used to access Fabric networks
       const gateway = await connectToGateway();
@@ -270,11 +270,10 @@ app.get('/api/municipality/worldstate/erchannel', async function (req, res) {
   }
 })
 
-app.put('/api/municipality/generateER', async function (req, res) {
+app.post('/api/municipality/generateER', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
-
       // Get the network (channel) our contract is deployed to.
       const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
 

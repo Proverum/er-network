@@ -173,6 +173,8 @@ function networkUp() {
     export ERN_CA6_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/municipality3.example.com/ca && ls *_sk)
     export ERN_CA7_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/esp.example.com/ca && ls *_sk)
     export ERN_CA8_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/municipality4.example.com/ca && ls *_sk)
+    export ERN_CA9_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/sp.example.com/ca && ls *_sk)
+
   fi
   if [ "${CONSENSUS_TYPE}" == "kafka" ]; then
     COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_KAFKA}"
@@ -249,7 +251,7 @@ function networkDown() {
     #Cleanup images
     removeUnwantedImages
     # remove orderer block and other channel configuration transactions and certs
-    rm -rf channel-artifacts/*.block channel-artifacts/*.tx #crypto-config
+    rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config
     # remove the docker-compose yaml file that was customized to the example
     rm -f docker-compose-e2e.yaml
   fi
@@ -308,6 +310,11 @@ function replacePrivateKey() {
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA7_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/sp.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA8_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
     rm docker-compose-e2e.yamlt
@@ -559,6 +566,19 @@ function generateChannelArtifacts() {
   set +x
   if [ $res -ne 0 ]; then
     echo "Failed to generate anchor peer update for ESPMSP..."
+    exit 1
+  fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for SPMSP   ##########"
+  echo "#################################################################"
+  set -x
+  configtxgen -profile ErChannel -outputAnchorPeersUpdate ./channel-artifacts/SPMSPanchors.tx -channelID "erchannel" -asOrg SPMSP
+  res=$?
+  set +x
+  if [ $res -ne 0 ]; then
+    echo "Failed to generate anchor peer update for SPMSP..."
     exit 1
   fi
 
