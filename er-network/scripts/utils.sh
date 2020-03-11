@@ -15,6 +15,7 @@ PEER0_MUNICIPALITY2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto
 PEER0_MUNICIPALITY3_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality3.example.com/peers/peer0.municipality3.example.com/tls/ca.crt
 PEER0_MUNICIPALITY4_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/municipality4.example.com/peers/peer0.municipality4.example.com/tls/ca.crt
 PEER0_ESP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/esp.example.com/peers/peer0.esp.example.com/tls/ca.crt
+PEER0_SP_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/sp.example.com/peers/peer0.sp.example.com/tls/ca.crt
 
 CHANNEL_NAME="erchannel"
 CHANNEL_NAME_FEDERAL="federalchannel"
@@ -25,7 +26,7 @@ COLLECTIONCONFIG="/opt/gopath/src/github.com/chaincode/register_management/colle
 COLLECTIONCONFIGPUBLISH="/opt/gopath/src/github.com/chaincode/result_publishing/collections_config.json"
 
 
-declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "municipality4" "esp")
+declare -a orgs=("confederation" "canton" "canton2" "municipality" "municipality2" "municipality3" "municipality4" "esp" "sp")
 
 
 # verify the result of the end-to-end test
@@ -119,6 +120,15 @@ setGlobals() {
       CORE_PEER_ADDRESS=peer0.esp.example.com:19051
     else
       CORE_PEER_ADDRESS=peer1.esp.example.com:20051
+    fi
+  elif [ "$ORG" = "sp" ]; then
+    CORE_PEER_LOCALMSPID="SPMSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_SP_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/sp.example.com/users/Admin@sp.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.sp.example.com:23051
+    else
+      CORE_PEER_ADDRESS=peer1.sp.example.com:24051
     fi
   else
     echo "================== ERROR !!! ORG Unknown =================="

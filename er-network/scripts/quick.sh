@@ -131,6 +131,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installErChaincode 0 "municipality4" "registercc"
 	echo "Install chaincode on peer0.esp..."
 	installErChaincode 0 "esp" "registercc"
+	echo "Install chaincode on peer0.sp..."
+	installErChaincode 0 "sp" "registercc"
 	echo "Installing chaincode on peer1.confederation..."
 	installErChaincode 1 "confederation" "registercc"
 	echo "Install chaincode on peer1.canton..."
@@ -147,6 +149,8 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 	installErChaincode 1 "municipality4" "registercc"
 	echo "Install chaincode on peer1.esp..."
 	installErChaincode 1 "esp" "registercc"
+	echo "Install chaincode on peer1.sp..."
+	installErChaincode 1 "sp" "registercc"
 
 	## Install publish results chaincode on all peers of all organizations except the external providers
 	echo "Installing chaincode on peer0.confederation..."

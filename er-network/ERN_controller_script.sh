@@ -653,7 +653,7 @@ elif [ "$MODE" == "test" ]; then
   EXPMODE="running test"
 elif [ "$MODE" == "init" ]; then
   EXPMODE="running initialization"
-elif [ "$MODE" == "quick" ]; then
+elif [ "$MODE" == "quickinit" ]; then
   EXPMODE="running quick initialization"
 elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
@@ -725,7 +725,7 @@ elif [ "${MODE}" == "test" ]; then ## run basic test
   runTest
 elif [ "${MODE}" == "init" ]; then ## run er specific setup
   initSetup
-elif [ "${MODE}" == "quick" ]; then ## run er specific setup
+elif [ "${MODE}" == "quickinit" ]; then ## run er specific setup
   initQuickSetup
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
