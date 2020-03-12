@@ -39,13 +39,6 @@ class BirthDataType {
   }
 }
 
-class NationalityDataType {
-  constructor(nationalityStatus, country) {
-  this.nationalityStatus = nationalityStatus;
-  this.country = country;
-  }
-}
-
 class PlaceOfOriginDataType {
   constructor(originName, canton){
   this.originName = originName;

@@ -52,7 +52,7 @@ class PublishingContract extends Contract {
 
   }
 
-  async queryMunicipalityResult(ctx, resultKey) {
+  async queryResult(ctx, resultKey) {
       const resultAsBytes = await ctx.stub.getState(resultKey); // get the car from chaincode state
       if (!resultAsBytes || resultAsBytes.length === 0) {
           throw new Error(`${resultKey} does not exist`);
@@ -61,37 +61,37 @@ class PublishingContract extends Contract {
       return resultAsBytes.toString();
   }
 
-  async queryAllMunicipalityResultsForVoting(ctx, votingId) {
-      const startKey = votingId+":"+'Municipality';
-      const endKey = votingId+":"+'Municipality3';
-
-      const iterator = await ctx.stub.getStateByRange(startKey, endKey);
-
-      const allResults = [];
-      while (true) {
-          const res = await iterator.next();
-
-          if (res.value && res.value.value.toString()) {
-              console.log(res.value.value.toString('utf8'));
-
-              const Key = res.value.key;
-              let Record;
-              try {
-                  Record = JSON.parse(res.value.value.toString('utf8'));
-              } catch (err) {
-                  console.log(err);
-                  Record = res.value.value.toString('utf8');
-              }
-              allResults.push({ Key, Record });
-          }
-          if (res.done) {
-              console.log('end of data');
-              await iterator.close();
-              console.info(allResults);
-              return JSON.stringify(allResults);
-          }
-      }
-  }
+  // async queryAllMunicipalityResultsForVoting(ctx, votingId) {
+  //     const startKey = votingId+":"+'Municipality';
+  //     const endKey = votingId+":"+'Municipality4';
+  //
+  //     const iterator = await ctx.stub.getStateByRange(startKey, endKey);
+  //
+  //     const allResults = [];
+  //     while (true) {
+  //         const res = await iterator.next();
+  //
+  //         if (res.value && res.value.value.toString()) {
+  //             console.log(res.value.value.toString('utf8'));
+  //
+  //             const Key = res.value.key;
+  //             let Record;
+  //             try {
+  //                 Record = JSON.parse(res.value.value.toString('utf8'));
+  //             } catch (err) {
+  //                 console.log(err);
+  //                 Record = res.value.value.toString('utf8');
+  //             }
+  //             allResults.push({ Key, Record });
+  //         }
+  //         if (res.done) {
+  //             console.log('end of data');
+  //             await iterator.close();
+  //             console.info(allResults);
+  //             return JSON.stringify(allResults);
+  //         }
+  //     }
+  // }
 
   async publishCantonVotingResult(ctx,reportingCanton, votingId, yesCount, noCount) {
 
@@ -157,7 +157,7 @@ class PublishingContract extends Contract {
       return {resultKey, resultToPublish, votingResultEvent, invokingMSP};
 
     } else {
-      throw new Error("Only Cantons are allowed to publish results through this function call");
+      throw new Error("Only the Confederation is allowed to publish results through this function call");
     }
   }
 }

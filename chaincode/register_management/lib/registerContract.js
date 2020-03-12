@@ -7,12 +7,10 @@ var hash = require('object-hash');
 
 
 const Citizen = require('./citizen.js');
-const CitizenPublic = require('./citizenPublic.js');
 const VotingCitizen = require('./votingCitizen.js');
 const VoterList = require('./voterListDataType.js');
 const Hash = require('./hash.js');
-
-
+const ClientIdentity = require('fabric-shim').ClientIdentity;
 
 
 class RegisterContract extends Contract {
@@ -30,134 +28,130 @@ class RegisterContract extends Contract {
 
   //Zuerich example with a bunch of mock citizens
   async initLedgerMunicipality(ctx) {
-    console.info('============= START : Initialize Ledger ===========');
-    //some dummy citizens to work with
-    let citizens = [new Citizen('7567888567789', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zuerich', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zuerich', 'Zuerich', 'na',
-      'Zuerich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zuerich', '8002', 'Kollektivhaushalt'),
-      new Citizen('7569933367789', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zuerich', 'weiblich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zuerich', 'na',
-        'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zuerich', '8003', 'Privathaushalt'),
-      new Citizen('7562659123444', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zuerich', 'männlich',
-        'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zuerich', 'na',
-        'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zuerich', '8003', 'Privathaushalt'),
 
-    ];
+    const cid = new ClientIdentity(ctx.stub);
+    const invokingMSP = cid.getMSPID();
 
-    let publicCitizens = [new CitizenPublic('7567888567789', 'Zuerich'), new CitizenPublic('7569933367789', 'Zuerich'),
-        new CitizenPublic('7562659123444', 'Zuerich'),
+    if(invokingMSP=='MunicipalityMSP'){
+      console.info('============= START : Initialize Ledger ===========');
+      //some dummy citizens to work with municiplaity zürich
+      let citizens = [new Citizen('7567888567789', 'CH.AUPER.12345567', 'Spähni', 'Peter', '1980/05/18', 'Zuerich', 'männlich',
+        ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Zuerich', 'Zuerich', 'na',
+        'Zuerich', 'Hauptwohnsitz', '22.05.1970', 'Rämistrasse 90', '8 15', 'Zuerich', '8002', 'Kollektivhaushalt'),
+        new Citizen('7569933367789', 'CH.VERA.5466525', 'Rauper', 'Sandra', '2010/03/26', 'Zuerich', 'weiblich',
+          'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Wettswil', 'Zuerich', 'na',
+          'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Bahnhofstrasse 55', '234', 'Zuerich', '8003', 'Privathaushalt'),
+        new Citizen('7562659123444', 'CH.VERA.45254435', 'Muster', 'Max', '1950/07/01', 'Zuerich', 'männlich',
+          'Jüdisch Liberale Gemeinde', 'geschieden', 'Schweiz', 'Adliswil', 'Zuerich', 'na',
+          'Zuerich', 'Hauptwohnsitz', '06.09.2010', 'Aegertenstrasse 77', '9283', 'Zuerich', '8003', 'Privathaushalt'),
 
-    ];
+      ];
 
-    //add public information to corresponding canton and confederation
-    for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipality", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
-        console.info('Added <--> ', citizens[i]);
+      //add citizens to private data store
+      for (let i = 0; i < citizens.length; i++) {
+          await ctx.stub.putPrivateData( "collectionCitizenMunicipality", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+          console.info('Added <--> ', citizens[i]);
+      }
     }
-    // add full citizen information to corresponding municipality private data store
-    for (let j = 0; j < publicCitizens.length; j++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipality", 'PUBLIC_CITIZEN_MUNICIPALITY_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
-        console.info('Added <--> ', publicCitizens[j]);
+    else {
+      throw new Error("Only the Municipality1 is allowed to publish results through this function call however you are identified as ", invokingMSP);
     }
-    console.info('============= END : Initialize Ledger ===========');
+    console.info('============= END : Initialize Ledger Municipality ===========');
   }
+
 
   //Bassersdorf example with a bunch of mock citizens
   async initLedgerMunicipalityTwo(ctx) {
-    console.info('============= START : Initialize Ledger ===========');
-    //some dummy citizens to work with
-    let citizens = [new Citizen('7567888567789', 'CH.AUPER.123298367', 'Laubi', 'Johan', '1988/02/12', 'Baar', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Baar', 'Zug', 'na',
-      'Bassersdorf', 'Hauptwohnsitz', '22.09.1980', 'Basserstrasse 78', '8879', 'Bassersdorf', '8303', 'Kollektivhaushalt'),
-      new Citizen('7569933323789', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zuerich', 'weiblich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Horgen', 'Zuerich', 'na',
-        'Bassersdorf', 'Hauptwohnsitz', '06.06.2008', 'Hinterweg 43', '78984', 'Bassersdorf', '8303', 'Privathaushalt'),
-      new Citizen('7566666444612', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '1990/03/25', 'Madrid', 'männlich',
-        'römisch-katholische Kirche', 'ledig', 'Spanien', 'Madrid', 'na', 'B',
-        'Bassersdorf', 'Hauptwohnsitz', '02.10.2011', 'Hautstrasse 1', '234', 'Bassersdorf', '8303', 'Privathaushalt'),
 
-    ];
+    const cid = new ClientIdentity(ctx.stub);
+    const invokingMSP = cid.getMSPID();
 
-    let publicCitizens = [new CitizenPublic('7567888567789', 'Bassersdorf'), new CitizenPublic('7569933323789', 'Bassersdorf'),
-        new CitizenPublic('7566666444612', 'Bassersdorf'),
+    if(invokingMSP=='Municipality2MSP'){
+      console.info('============= START : Initialize Ledger ===========');
+      //some dummy citizens to work with municipality bassersdorf
+      let citizens = [new Citizen('7567888567789', 'CH.AUPER.123298367', 'Laubi', 'Johan', '1988/02/12', 'Baar', 'männlich',
+        ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Baar', 'Zug', 'na',
+        'Bassersdorf', 'Hauptwohnsitz', '22.09.1980', 'Basserstrasse 78', '8879', 'Bassersdorf', '8303', 'Kollektivhaushalt'),
+        new Citizen('7569933323789', 'CH.VERA.923411', 'Lehner', 'Jasmin', '20057/08/05', 'Zuerich', 'weiblich',
+          'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Horgen', 'Zuerich', 'na',
+          'Bassersdorf', 'Hauptwohnsitz', '06.06.2008', 'Hinterweg 43', '78984', 'Bassersdorf', '8303', 'Privathaushalt'),
+        new Citizen('7566666444612', 'CH.ZAR.78342', 'Gonzalez', 'Jorge', '1990/03/25', 'Madrid', 'männlich',
+          'römisch-katholische Kirche', 'ledig', 'Spanien', 'Madrid', 'na', 'B',
+          'Bassersdorf', 'Hauptwohnsitz', '02.10.2011', 'Hautstrasse 1', '234', 'Bassersdorf', '8303', 'Privathaushalt'),
 
-    ];
-
-    //add public information to corresponding canton and confederation
-    for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
-        console.info('Added <--> ', citizens[i]);
+      ];
+      //add citizens to private data store
+      for (let i = 0; i < citizens.length; i++) {
+          await ctx.stub.putPrivateData( "collectionCitizenMunicipalityTwo", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+          console.info('Added <--> ', citizens[i]);
+      }
     }
-    // add full citizen information to corresponding municipality private data store
-    for (let j = 0; j < publicCitizens.length; j++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityTwo", 'PUBLIC_CITIZEN_MUNICIPALITY2_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
-        console.info('Added <--> ', publicCitizens[j]);
+    else {
+      throw new Error("Only the Municipality2 is allowed to publish results through this function call however you are identified as ", invokingMSP);
     }
-    console.info('============= END : Initialize Ledger ===========');
+    console.info('============= END : Initialize Ledger Municipality Two ===========');
   }
 
   //Wallisellen example with a bunch of mock citizens
   async initLedgerMunicipalityThree(ctx) {
-    console.info('============= START : Initialize Ledger ===========');
-    //dummy variables wallisellen example
-    let citizens = [new Citizen('7566662109945', 'SuisseId.02', 'Johnson', 'Mike', '1979/09/09', 'Seattle', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'USA', 'New York', 'na', 'A',
-      'Wallisellen', 'Hauptwohnsitz', '22.09.2003', 'Wallisellerstrasse 78', '123', 'Wallisellen', '8304', 'Kollektivhaushalt'),
-      new Citizen('7564567134224', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zuerich', 'männlich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
-        'Wallisellen', 'Nebenwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Wallisellen', '8304', 'Sammelhaushalt'),
-      new Citizen('7565544294802', 'CH.VERA.263453', 'Schwab', 'Lena', '1982/06/04', 'Altdorf', 'weiblich',
-        'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
-        'Wallisellen', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Wallisellen', '8304', 'Privathaushalt'),
-    ];
 
-    let publicCitizens = [new CitizenPublic('7566662109945', 'Wallisellen'), new CitizenPublic('7564567134224', 'Wallisellen'),
-        new CitizenPublic('7565544294802', 'Wallisellen'),
+    const cid = new ClientIdentity(ctx.stub);
+    const invokingMSP = cid.getMSPID();
 
-    ];
+    if(invokingMSP=='Municipality3MSP'){
+      console.info('============= START : Initialize Ledger ===========');
+      //dummy citizens for wallisellen example
+      let citizens = [new Citizen('7566662109945', 'SuisseId.02', 'Johnson', 'Mike', '1979/09/09', 'Seattle', 'männlich',
+        ' evangelisch-reformierte Kirche', 'verheirated', 'USA', 'New York', 'na', 'A',
+        'Wallisellen', 'Hauptwohnsitz', '22.09.2003', 'Wallisellerstrasse 78', '123', 'Wallisellen', '8304', 'Kollektivhaushalt'),
+        new Citizen('7564567134224', 'CH.INFOSTAR.235453', 'Rand', 'Alf', '1992/08/17', 'Zuerich', 'männlich',
+          'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
+          'Wallisellen', 'Nebenwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Wallisellen', '8304', 'Sammelhaushalt'),
+        new Citizen('7565544294802', 'CH.VERA.263453', 'Schwab', 'Lena', '1982/06/04', 'Altdorf', 'weiblich',
+          'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
+          'Wallisellen', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Wallisellen', '8304', 'Privathaushalt'),
+      ];
 
-    //add public information to corresponding canton and confederation
-    for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
-        console.info('Added <--> ', citizens[i]);
+      //add public information to corresponding canton and confederation
+      for (let i = 0; i < citizens.length; i++) {
+          await ctx.stub.putPrivateData( "collectionCitizenMunicipalityThree", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+          console.info('Added <--> ', citizens[i]);
+      }
     }
-    // add full citizen information to corresponding municipality private data store
-    for (let j = 0; j < publicCitizens.length; j++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityThree", 'PUBLIC_CITIZEN_MUNICIPALITY3_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
-        console.info('Added <--> ', publicCitizens[j]);
+    else {
+      throw new Error("Only the Municipality3 is allowed to publish results through this function call however you are identified as ", invokingMSP);
     }
-    console.info('============= END : Initialize Ledger ===========');
+    console.info('============= END : Initialize Ledger Municipality Three===========');
   }
 
   //Dübendorf example with a bunch of mock citizens
   async initLedgerMunicipalityFour(ctx) {
-    console.info('============= START : Initialize Ledger ===========');
-    //dummy variables wallisellen example
-    let citizens = [new Citizen('7566262108235', 'CH:AUPER', 'Flack', 'Doris', '1975/05/021', 'Cham', 'männlich',
-      ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Cham', 'na', 'A',
-      'Dübendorf', 'Hauptwohnsitz', '22.09.2003', 'Dübenerstrasse 1a', '0045', 'Dübendorf', '8600', 'Kollektivhaushalt'),
-      new Citizen('7564528634554', 'CH.INFOSTAR.235453', 'Topfer', 'Tom', '1992/08/17', 'Zuerich', 'männlich',
-        'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
-        'Dübendorf', 'Hauptwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Dübendorf', '8600', 'Sammelhaushalt'),
-      new Citizen('7565534984777', 'CH.VERA.263453', 'Sutskever', 'Nina', '1982/06/04', 'Altdorf', 'weiblich',
-        'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
-        'Dübendorf', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Dübendorf', '8600', 'Privathaushalt'),
-    ];
 
-    let publicCitizens = [new CitizenPublic('7566262108235', 'Dübendorf'), new CitizenPublic('7564528634554', 'Dübendorf'),
-        new CitizenPublic('7565534984777', 'Dübendorf'),
+    const cid = new ClientIdentity(ctx.stub);
+    const invokingMSP = cid.getMSPID();
 
-    ];
+    if(invokingMSP=='Municipality4MSP'){
+      console.info('============= START : Initialize Ledger ===========');
+      //dummy citizens wallisellen Dübenforf
+      let citizens = [new Citizen('7566262108235', 'CH:AUPER', 'Flack', 'Doris', '1975/05/021', 'Cham', 'männlich',
+        ' evangelisch-reformierte Kirche', 'verheirated', 'Schweiz', 'Cham', 'na', 'A',
+        'Dübendorf', 'Hauptwohnsitz', '22.09.2003', 'Dübenerstrasse 1a', '0045', 'Dübendorf', '8600', 'Kollektivhaushalt'),
+        new Citizen('7564528634554', 'CH.INFOSTAR.235453', 'Topfer', 'Tom', '1992/08/17', 'Zuerich', 'männlich',
+          'römisch-katholische Kirche', 'ledig', 'Schweiz', 'Davos', 'Graubünden', 'na',
+          'Dübendorf', 'Hauptwohnsitz', '06.06.2013', 'Hügelweg 10', '11', 'Dübendorf', '8600', 'Sammelhaushalt'),
+        new Citizen('7565534984777', 'CH.VERA.263453', 'Sutskever', 'Nina', '1982/06/04', 'Altdorf', 'weiblich',
+          'israelitische Gemeinschaft / jüdische Glaubensgemeinschaft', 'verheiratet', 'Schweiz', 'Altdorf', 'Uri', 'na',
+          'Dübendorf', 'Hauptwohnsitz', '09.08.2015', 'Usterstrasse 9b', '192', 'Dübendorf', '8600', 'Privathaushalt'),
+      ];
 
-    //add public information to corresponding canton and confederation
-    for (let i = 0; i < citizens.length; i++) {
-        await ctx.stub.putPrivateData( "collectionCitizenMunicipalityFour", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
-        console.info('Added <--> ', citizens[i]);
+      //add public information to corresponding canton and confederation
+      for (let i = 0; i < citizens.length; i++) {
+          await ctx.stub.putPrivateData( "collectionCitizenMunicipalityFour", 'CITIZEN' + i, Buffer.from(JSON.stringify(citizens[i])));
+          console.info('Added <--> ', citizens[i]);
+      }
     }
-    // add full citizen information to corresponding municipality private data store
-    for (let j = 0; j < publicCitizens.length; j++) {
-        await ctx.stub.putPrivateData( "collectionPublicCitizenMunicipalityFour", 'PUBLIC_CITIZEN_MUNICIPALITY4_' + j, Buffer.from(JSON.stringify(publicCitizens[j])));
-        console.info('Added <--> ', publicCitizens[j]);
+    else {
+      throw new Error("Only the Municipality4 is allowed to publish results through this function call however you are identified as ", invokingMSP);
     }
     console.info('============= END : Initialize Ledger ===========');
   }
@@ -173,35 +167,37 @@ class RegisterContract extends Contract {
     return citizenAsBytes.toString();
   }
 
-  async getCitizensByRange(ctx, startKey, endKey, collection) {
+  //not really needed
 
-    let iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
-
-    let allResults = [];
-    while (true) {
-        let res = await iterator.next();
-
-        if (res.value && res.value.value.toString()) {
-            console.log(res.value.value.toString('utf8'));
-
-            const Key = res.value.key;
-            let Record;
-            try {
-                Record = JSON.parse(res.value.value.toString('utf8'));
-            } catch (err) {
-                console.log(err);
-                Record = res.value.value.toString('utf8');
-            }
-            allResults.push({ Key, Record });
-        }
-        if (res.done) {
-            console.log('end of data');
-            await iterator.close();
-            console.info(allResults);
-            return Buffer.from(JSON.stringify(allResults));
-        }
-    }
-  }
+  // async getCitizensByRange(ctx, startKey, endKey, collection) {
+  //
+  //   let iterator = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+  //
+  //   let allResults = [];
+  //   while (true) {
+  //       let res = await iterator.next();
+  //
+  //       if (res.value && res.value.value.toString()) {
+  //           console.log(res.value.value.toString('utf8'));
+  //
+  //           const Key = res.value.key;
+  //           let Record;
+  //           try {
+  //               Record = JSON.parse(res.value.value.toString('utf8'));
+  //           } catch (err) {
+  //               console.log(err);
+  //               Record = res.value.value.toString('utf8');
+  //           }
+  //           allResults.push({ Key, Record });
+  //       }
+  //       if (res.done) {
+  //           console.log('end of data');
+  //           await iterator.close();
+  //           console.info(allResults);
+  //           return Buffer.from(JSON.stringify(allResults));
+  //       }
+  //   }
+  // }
 
 // kind of similar to get all private data from collection x
   async getAllIdentities(ctx, collection) {
@@ -273,21 +269,21 @@ class RegisterContract extends Contract {
 
   }
 
-  //only for trial purposes function itself is of no use in this usecase
-  async updateCitizen(ctx, collection, citizenkey, newkey) {
-
-    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer
-    if (!citizenAsBytes || v.length === 0) {
-          throw new Error(`${voterkey} does not exist`);
-    }
-
-    const citizen = JSON.parse(citizenAsBytes.toString());
-    const personData = citizen.personData;
-    citizen.key = newkey;
-
-    await ctx.stub.putState(newkey, Buffer.from(JSON.stringify(citizen)));
-    console.info('============= END : changeCarOwner ===========');
-  }
+  //would be needed for futher genric features
+  // async updateCitizen(ctx, collection, citizenkey, newkey) {
+  //
+  //   const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer
+  //   if (!citizenAsBytes || v.length === 0) {
+  //         throw new Error(`${voterkey} does not exist`);
+  //   }
+  //
+  //   const citizen = JSON.parse(citizenAsBytes.toString());
+  //   const personData = citizen.personData;
+  //   citizen.key = newkey;
+  //
+  //   await ctx.stub.putState(newkey, Buffer.from(JSON.stringify(citizen)));
+  //   console.info('============= END : changeCarOwner ===========');
+  // }
 
   async generateERSnapshot(ctx, collection) {
 
@@ -473,7 +469,7 @@ class RegisterContract extends Contract {
 
   async queryVoterListHash(ctx, voterListHashKey) {
 
-    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey); 
+    const voterListHashAsBytes = await ctx.stub.getState(voterListHashKey);
     if (!voterListHashAsBytes || voterListHashAsBytes.length === 0) {
           throw new Error(`${voterListHashKey} does not exist`);
     }

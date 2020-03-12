@@ -7,7 +7,6 @@ class VoterList extends State {
     super(VoterList.getClass(), [VoterList.getClass(), reportingMunicipality]);
     this.reportingMunicipality = reportingMunicipality;
     this.numberOfVoters = votersArgs.length;
-    this.cuurentState = "valid";
     this.voter = [];
     console.log(votersArgs);
     try {

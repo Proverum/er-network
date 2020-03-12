@@ -185,10 +185,11 @@ if [ "${NO_CHAINCODE}" != "true" ]; then
 
 	# Instantiate chaincodes on the according channels
 	echo "Instantiating chaincode from peer0.confederation..."
-	instantiateErChaincode 0 "confederation" "registercc"
 	instantiatePublishChaincode 0 "confederation" "publishcc" "federalchannel"
 	instantiatePublishChaincode 0 "confederation" "publishcc" "cantonchannel"
 	instantiatePublishChaincode 0 "confederation" "publishcc" "canton2channel"
+	instantiateErChaincode 0 "confederation" "registercc"
+
 
 
 	# initialize  ledger with some mock citizens for each municipality which is mimicking zürich in this case

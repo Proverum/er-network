@@ -31,10 +31,6 @@ class State {
         return State.splitKey(this.key);
     }
 
-    getCurrentState(){
-        return this.currentState;
-    }
-
     serialize() {
         return State.serialize(this);
     }

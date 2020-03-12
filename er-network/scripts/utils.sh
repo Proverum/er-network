@@ -510,7 +510,7 @@ instantiatePublishChaincode() {
     set -x
     peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNELTOINSTANTIATE -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.publishcontract:instantiate"]}' \
-      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member','Municipality4MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
       --collections-config $COLLECTIONCONFIGPUBLISH >&log.txt
     res=$?
@@ -519,7 +519,7 @@ instantiatePublishChaincode() {
     set -x
     peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNELTOINSTANTIATE -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.publishcontract:instantiate"]}' \
-      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member','Municipality4MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
       --collections-config $COLLECTIONCONFIGPUBLISH >&log.txt
     res=$?
@@ -546,7 +546,7 @@ instantiateErChaincode() {
     set -x
     peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.registercontract:instantiate"]}' \
-      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member', 'ESPMSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+      -P "OR('ConfederationMSP.member','CantonMSP.member','Canton2MSP.member','MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member','Municipality4MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
       --collections-config $COLLECTIONCONFIG >&log.txt
     res=$?
@@ -555,7 +555,7 @@ instantiateErChaincode() {
     set -x
     peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.registercontract:instantiate"]}' \
-      -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member', 'ESPMSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+      -P "OR('ConfederationMSP.member','CantonMSP.member','Canton2MSP.member','MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member','Municipality4MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
       --cafile ${ORDERER_CA} \
       --collections-config $COLLECTIONCONFIG >&log.txt
     res=$?
@@ -567,43 +567,43 @@ instantiateErChaincode() {
   echo
 }
 
-upgradeErChaincode() {
-  PEER=$1
-  ORG="$2"
-  NEWVERSION="$3"
-  setGlobals $PEER "$ORG"
-  set -x
-  peer chaincode upgrade -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -l "${LANGUAGE}" -v ${NEWVERSION} \
-    -c '{"Args":["er-network.registercontract:instantiate"]}' \
-    -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member', 'ESPMSP.member')" --tls $CORE_PEER_TLS_ENABLED \
-    --cafile ${ORDERER_CA} \
-    --collections-config $COLLECTIONCONFIG >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  verifyResult $res "Chaincode upgrade on peer${PEER}.org${ORG} has failed"
-  echo "===================== Chaincode is upgraded on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
-  echo
-}
-
-upgradePublishChaincode() {
-  PEER=$1
-  ORG="$2"
-  NEWVERSION="$3"
-  setGlobals $PEER "$ORG"
-  set -x
-  peer chaincode upgrade -o orderer.example.com:7050 -C $CHANNEL_NAME_FEDERAL -n publishcc -l "${LANGUAGE}" -v ${NEWVERSION} \
-    -c '{"Args":["er-network.registercontract:instantiate"]}' \
-    -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member', 'Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
-    --cafile ${ORDERER_CA} \
-    --collections-config $COLLECTIONCONFIGPUBLISH >&log.txt
-  res=$?
-  set +x
-  cat log.txt
-  verifyResult $res "Chaincode upgrade on peer${PEER}.org${ORG} has failed"
-  echo "===================== Chaincode is upgraded on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME_FEDERAL' ===================== "
-  echo
-}
+# upgradeErChaincode() {
+#   PEER=$1
+#   ORG="$2"
+#   NEWVERSION="$3"
+#   setGlobals $PEER "$ORG"
+#   set -x
+#   peer chaincode upgrade -o orderer.example.com:7050 -C $CHANNEL_NAME -n registercc -l "${LANGUAGE}" -v ${NEWVERSION} \
+#     -c '{"Args":["er-network.registercontract:instantiate"]}' \
+#     -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member', 'ESPMSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+#     --cafile ${ORDERER_CA} \
+#     --collections-config $COLLECTIONCONFIG >&log.txt
+#   res=$?
+#   set +x
+#   cat log.txt
+#   verifyResult $res "Chaincode upgrade on peer${PEER}.org${ORG} has failed"
+#   echo "===================== Chaincode is upgraded on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
+#   echo
+# }
+#
+# upgradePublishChaincode() {
+#   PEER=$1
+#   ORG="$2"
+#   NEWVERSION="$3"
+#   setGlobals $PEER "$ORG"
+#   set -x
+#   peer chaincode upgrade -o orderer.example.com:7050 -C $CHANNEL_NAME_FEDERAL -n publishcc -l "${LANGUAGE}" -v ${NEWVERSION} \
+#     -c '{"Args":["er-network.registercontract:instantiate"]}' \
+#     -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member', 'Municipality3MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
+#     --cafile ${ORDERER_CA} \
+#     --collections-config $COLLECTIONCONFIGPUBLISH >&log.txt
+#   res=$?
+#   set +x
+#   cat log.txt
+#   verifyResult $res "Chaincode upgrade on peer${PEER}.org${ORG} has failed"
+#   echo "===================== Chaincode is upgraded on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME_FEDERAL' ===================== "
+#   echo
+# }
 
 chaincodeQuery() {
   PEER=$1
