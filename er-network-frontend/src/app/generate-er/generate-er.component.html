@@ -1,0 +1,49 @@
+<div class="container">
+  <form class="example-container"  #NewCitizenRequest="ngForm" id="registerCitizenForm">
+    <h1>Generate the Electoral Register</h1>
+    <h2>Generate the Electoral Register based on the current citizen register.
+      The smart contract call will check for swiss nationality, residency and adulthood of each citizen.
+      The following are the currently registerd citizens:
+    </h2>
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let citizen of citizens">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Citizenkey: {{citizen.key}}
+          </mat-panel-title>
+          <mat-panel-description>
+            Expand for Citizen Details
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+        <div class="citizen-info" >
+          <span> Insurnance Number: {{ citizen.vn }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Family Name: {{ citizen.officialName}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Name: {{ citizen.firstName}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Geburtsdatum: {{ citizen.dateOfBirth}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Nationality: {{ citizen.nationality }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Street: {{ citizen.street }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> City: {{ citizen.city }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Type of Residence: {{ citizen.typeOfResidenceType }}</span>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </form>
+  <div class="button-container">
+    <button type="button" class="button" value="Register Citizen" (click)="createER()"><span>Generate</span></button>
+  </div>
+</div>

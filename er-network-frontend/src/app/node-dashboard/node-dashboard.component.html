@@ -1,0 +1,171 @@
+
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+  <a class="navbar-brand" (click)="update()"> Node Dashboard {{instantiationCase}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto">
+
+      <button mat-button [matMenuTriggerFor]="citizenadmin">Citizen Administration</button>
+
+      <mat-menu #citizenadmin="matMenu">
+        <button mat-menu-item (click)="launchCitizenDeregistration()">Unregister</button>
+        <button mat-menu-item (click)="launchCitizenRegistration()">Register</button>
+        <button mat-menu-item (click)="launchBuyData()">Move</button>
+      </mat-menu>
+
+      <button mat-button [matMenuTriggerFor]="votingadmin">Voting Administration</button>
+
+      <mat-menu #votingadmin="matMenu">
+        <button mat-menu-item (click)="launchERCreation()"> Generate & Share Electoral Register </button>
+        <button mat-menu-item>Verify Voter </button>
+        <button mat-menu-item>Publish Result </button>
+      </mat-menu>
+
+
+    </ul>
+  </div>
+</nav>
+
+
+<div class="" style="margin-top: 70px;">
+
+  <div class="row">
+    <div class="col-6">
+      <h1 class="private-top-bar">Private Data</h1>
+      <p>Citizens</p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let citizen of citizens">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Citizenkey: {{citizen.key}}
+            </mat-panel-title>
+            <mat-panel-description>
+              Expand for Citizen Details
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+          <div class="citizen-info" >
+            <span> Insurnance Number: {{ citizen.vn }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Family Name: {{ citizen.officialName}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Name: {{ citizen.firstName}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Geburtsdatum: {{ citizen.dateOfBirth}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Nationality: {{ citizen.nationality }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Street: {{ citizen.street }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> City: {{ citizen.city }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Type of Residence: {{ citizen.typeOfResidenceType }}</span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <p>Voters</p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let voter of voters">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Voterkey: {{voter.key}}
+            </mat-panel-title>
+            <mat-panel-description>
+              Expand for Voter Details
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+          <div class="citizen-info" >
+            <span> Insurnance Number: {{ voter.vn }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Family Name: {{ voter.officialName}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Name: {{ voter.firstName}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Birthdate: {{ voter.dateOfBirth}}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Language of Correspondence: {{ voter.languageOfCorrespondance }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Reporting Municipality: {{ voter.reportingMunicipality }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> City: {{ voter.city }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Type of Residence: {{ voter.typeOfResidenceType }}</span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <p>Voter List</p>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Voterlistkey: {{voterList.key}}
+            </mat-panel-title>
+            <mat-panel-description>
+              Expand for Voter List Details
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+          <div class="citizen-info" >
+            <span> Number of Voters: {{ voterList.numberOfVoters }}</span>
+          </div>
+          <div class="citizen-info" >
+            <span> Reporting Municipality: {{ voterList.reportingMunicipality}}</span>
+          </div>
+          <div class="citizen-info" *ngFor="let voterinlist of voterList.voter">
+            <span> Voterkey: {{ voterinlist.key }}</span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+    <div class="col-6">
+      <h1 class="public-top-bar">Public Data</h1>
+      <p>Hashes</p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let hash of hashes">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Hashkey: {{hash.key}}
+            </mat-panel-title>
+            <mat-panel-description>
+              Expand for Details
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+          <div class="hash-info" >
+            <span> Reporting Municipality: {{ hash.reportingMunicipality }}</span>
+          </div>
+          <div class="hash-info" >
+            <span> Content Type: {{ hash.contentType}}</span>
+          </div>
+          <div class="hash-info" >
+            <span> Timestamp: {{ hash.timestamp}}</span>
+          </div>
+          <div class="hash-info" >
+            <span> Content Hash: {{ hash.contentHash}}</span>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+  </div>
+
+</div>

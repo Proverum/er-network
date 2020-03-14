@@ -26,7 +26,7 @@ class RegisterContract extends Contract {
         console.log('Instantiate the contract');
   }
 
-  //Zuerich example with a bunch of mock citizens
+  //Menzingen example with a bunch of mock citizens
   async initLedgerMunicipality(ctx) {
 
     const cid = new ClientIdentity(ctx.stub);
@@ -60,7 +60,7 @@ class RegisterContract extends Contract {
   }
 
 
-  //Bassersdorf example with a bunch of mock citizens
+  //Risch example with a bunch of mock citizens
   async initLedgerMunicipalityTwo(ctx) {
 
     const cid = new ClientIdentity(ctx.stub);
@@ -200,7 +200,42 @@ class RegisterContract extends Contract {
   // }
 
 // kind of similar to get all private data from collection x
-  async getAllIdentities(ctx, collection) {
+  async getAllCitizens(ctx, collection) {
+
+    //empty string start and end key to fetch all
+    const startKey = "";
+    const endKey = "";
+
+    const range = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+
+    let allResults = [];
+    while (true) {
+        let res = await range.iterator.next();
+
+        if (res.value && res.value.value.toString()) {
+            console.log(res.value.value.toString('utf8'));
+
+            const Key = res.value.key;
+            let Record;
+            try {
+                Record = await JSON.parse(res.value.value.toString('utf8'));
+                allResults.push({ Key, Record });
+
+            } catch (err) {
+                console.log(err);
+                Record = res.value.value.toString('utf8');
+            }
+        }
+        if (res.done) {
+            console.log('end of data');
+            await range.iterator.close();
+            console.info(allResults);
+            return JSON.stringify(allResults);
+        }
+    }
+  }
+
+  async getAllVoters(ctx, collection) {
 
     //empty string start and end key to fetch all
     const startKey = "";
@@ -301,7 +336,7 @@ class RegisterContract extends Contract {
         if (res.value && res.value.value.toString()) {
             console.log(res.value.value.toString('utf8'));
 
-            const Key = res.value.key;
+            const key = res.value.key;
             let Record;
             try {
                 Record = await JSON.parse(res.value.value.toString('utf8'));
@@ -345,7 +380,7 @@ class RegisterContract extends Contract {
                     influence = influence.concat(municipalityInfluence);
                   }
                   let voter = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
-                  typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, influence);
+                  typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, influence, key);
                   voters.push(voter);
                   invokingMunicipality = municipality;
                   allResults.push(voter);
@@ -374,6 +409,9 @@ class RegisterContract extends Contract {
     let voterList = [];
     for( var i=0 ; i < electoralRegisterObject.length-1; i++){
        // some super ugly object recreation due to json parsing issues with the domain of influence field in the votingcitizen object
+        let keyFull = electoralRegisterObject[i].key;
+        //keep the citizenkey to build a composite hash key later on
+        let key = keyFull.slice(6);
         let VoterRecord = electoralRegisterObject[i];
         let influencelist = VoterRecord.domainOfInfluenceInfo;
         let masterInfluenceList = [];
@@ -401,7 +439,7 @@ class RegisterContract extends Contract {
         let swissZipCode = VoterRecord.electoralAddress.dwellingAddress.address.swissZipCode;
         let typeOfResidenceType = VoterRecord.electoralAddress.typeOfResidenceType;
         let voterToPersist = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
-        typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList);
+        typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList, key);
         voterList.push(voterToPersist);
         reportingMunicipality = municipality;
         //pass JSON rather then javascript object to hash for simiplified verification with the application return
@@ -479,9 +517,9 @@ class RegisterContract extends Contract {
   }
 
 
-  async queryVoter(ctx, collection, voterkey) {
+  async queryVoter(ctx, collection, voterKey) {
 
-    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterkey);
+    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterKey);
     if (!voterAsBytes || voterAsBytes.length === 0) {
           throw new Error(`${voterkey} does not exist`);
     }
@@ -513,8 +551,49 @@ class RegisterContract extends Contract {
   //   return voterListHashAsBytes.toString();
   // }
 
-  async verifyVoter(ctx, voter){
+  async verifyVoter(ctx, collection, voterKey){
 
+    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterKey);
+    if (!voterAsBytes || voterAsBytes.length === 0) {
+          throw new Error(`${voterkey} does not exist`);
+    }
+
+    // again super ugly workaround cause of desarialization issues...
+    const VoterRecord = JSON.parse(citizenAsBytes.toString());
+    let vn = VoterRecord.personData.personIdentificationData.vn;
+    let localPersonId = VoterRecord.personData.personIdentificationData.localPersonId;
+    let officialName = VoterRecord.personData.personIdentificationData.officialName;
+    let firstName = VoterRecord.personData.personIdentificationData.firstName;
+    let sex = VoterRecord.personData.personIdentificationData.sex;
+    let dateOfBirth = VoterRecord.personData.personIdentificationData.dateOfBirth;
+    let languageOfCorrespondance = "deutsch";
+    let municipality = VoterRecord.personData.municipality;
+    let arrivalDate = VoterRecord.electoralAddress.arrivalDate;
+    let typeOfHousehold = VoterRecord.electoralAddress.dwellingAddress.typeOfHousehold;
+    let dataLock = "false";
+    let street = VoterRecord.electoralAddress.dwellingAddress.address.street;
+    let postOfficeBoxText = VoterRecord.electoralAddress.dwellingAddress.address.postOfficeBoxText;
+    let city = VoterRecord.electoralAddress.dwellingAddress.address.city;
+    let swissZipCode = VoterRecord.electoralAddress.dwellingAddress.address.swissZipCode;
+    let typeOfResidenceType = VoterRecord.electoralAddress.typeOfResidenceType;
+    let voter = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
+    typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList, key);
+    const voterHash = new Hash(municipality, "voterHash", JSON.parse(JSON.stringify(voter)));
+
+    let voterHashKey = "voterHash"+voter.personData.municipality+voter.key;
+
+    const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the car from chaincode state
+    if (!voterHashAsBytes || voterHashAsBytes.length === 0) {
+        throw new Error(`${voterHashKey} does not exist`);
+    }
+    const voterHashObject = JSON.parse(voterHashAsBytes.toString());
+    publicVoterHash = voterHashObject.contentHash;
+
+    if (publicVoterHash==voterHash) {
+        return JSON.stringify((true, voterHash, publicVoterHash))
+    } else {
+        return JSON.stringify((false, voterHash, publicVoterHash))
+    }
 
   }
 
@@ -548,14 +627,20 @@ class RegisterContract extends Contract {
 
   }
 
-  // only implement this schnick schnack if enough time...
-  // async addCitizenToER(ctx) {
-  //
-  // }
-  //
-  // async removeCitizenFromER(ctx) {
-  //
-  // }
+  async moveCitizen(ctx, collectionOrigin, collectionDestination, citizenkey) {
+
+    const citizenAsBytes = await ctx.stub.getPrivateData(collection, citizenkey); // get the citizen from chaincode state type Buffer
+    if (!citizenAsBytes || citizenAsBytes.length === 0) {
+          throw new Error(`${citizenkey} does not exist`);
+    }
+    const citizen = JSON.parse(citizenAsBytes.toString());
+    const Key = citizen.key;
+    citizen.key = newkey;
+
+    await ctx.stub.putPrivateData(collectionDestination, Key, Buffer.from(JSON.stringify(citizen)));
+    console.info('============= END : move Citizen ===========');
+
+  }
 
 
 //contract end braces

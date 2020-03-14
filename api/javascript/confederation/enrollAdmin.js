@@ -9,8 +9,8 @@ const { FileSystemWallet, X509WalletMixin } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-confederation.json');
-console.log("this is the ccpPath to get connection-confederation.json", ccpPath);
+const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality2.json');
+console.log("this is the ccpPath to get connection-municipality2.json", ccpPath);
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
 console.log("this is the read json file ccpJSON", ccpJSON);
 const ccp = JSON.parse(ccpJSON);
@@ -20,7 +20,7 @@ async function main() {
     try {
 
         // Create a new CA client for interacting with the CA.
-        const caInfo = ccp.certificateAuthorities['ca.confederation.example.com'];
+        const caInfo = ccp.certificateAuthorities['ca.municipality2.example.com'];
         console.log("this is the caInfo based on ccp", caInfo);
         const caTLSCACerts = caInfo.tlsCACerts.pem;
         console.log(caTLSCACerts);
@@ -28,7 +28,7 @@ async function main() {
         console.log("this is the generated FabricCAService", ca);
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(__dirname, 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -42,7 +42,7 @@ async function main() {
         // Enroll the admin user, and import the new identity into the wallet.
         const enrollment = await ca.enroll({ enrollmentID: 'admin', enrollmentSecret: 'adminpw' });
         console.log("following the enrollment", enrollment);
-        const identity = X509WalletMixin.createIdentity('ConfederationMSP', enrollment.certificate, enrollment.key.toBytes());
+        const identity = X509WalletMixin.createIdentity('Municipality2MSP', enrollment.certificate, enrollment.key.toBytes());
         console.log("following the identity", identity);
         await wallet.import('admin', identity);
         console.log('Successfully enrolled admin user "admin" and imported it into the wallet');

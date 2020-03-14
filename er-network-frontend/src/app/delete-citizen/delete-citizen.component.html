@@ -1,0 +1,12 @@
+<div class="container">
+  <form class="example-container"  #NewCitizenRequest="ngForm" id="registerCitizenForm">
+    <h1>Delete a Citizen</h1>
+    <div class="form-group">
+      <label for="addCitizenRequest">Citizen Key</label>
+      <input type="text" class="form-control" id="citizenKey" [(ngModel)]="deleteCitizenRequest.citizenKey" name="citizenKey" placeholder="CITIZEN1?"> <i class="bar"></i>
+    </div>
+  </form>
+  <div class="button-container">
+    <button type="button" class="button" value="Register Citizen" (click)="deleteCitizen()"><span>Delete Citizen from Private Citizen Register</span></button>
+  </div>
+</div>

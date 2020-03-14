@@ -4,12 +4,12 @@
 const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-canton2.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality2.json');
 
 async function main() {
     try {
 
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(__dirname, 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -26,9 +26,9 @@ async function main() {
         console.log("these are the affiliations", allAffiliations);
         console.log("these are the affiliations[0]", allAffiliations.result.affiliations[0]);
         console.log("these are the affiliations[1]", allAffiliations.result.affiliations[1]);
-        const affiliationX = await affiliationService.create({name: "canton2.amtX", force: true}, adminIdentity);
-        const affiliationY = await affiliationService.create({name: "canton2.amtY", force: true}, adminIdentity);
-        const affiliationZ = await affiliationService.create({name: "canton2.amtZ", force: true}, adminIdentity);
+        const affiliationX = await affiliationService.create({name: "municipality2.amtX", force: true}, adminIdentity);
+        const affiliationY = await affiliationService.create({name: "municipality2.amtY", force: true}, adminIdentity);
+        const affiliationZ = await affiliationService.create({name: "municipality2.amtZ", force: true}, adminIdentity);
         let allAffiliationsUpdated = await affiliationService.getAll(adminIdentity);
         console.log("these are the all updated affiliations", allAffiliationsUpdated);
         let finalAffiliations = await affiliationService.getAll(adminIdentity);

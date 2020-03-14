@@ -9,7 +9,7 @@ const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connect
 async function main() {
     try {
 
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(__dirname, 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 

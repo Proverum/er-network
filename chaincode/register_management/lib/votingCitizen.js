@@ -6,8 +6,8 @@ const ResidenceDataType = require('./residenceDataType');
 //gemäss eCh-0045
 class VotingCitizen extends State {
   constructor(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, reportingMunicipality,
-    typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, domainsOfInfluenceArgs) {
-    super(VotingCitizen.getClass(), [VotingCitizen.getClass(), municipality, vn]);
+    typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, domainsOfInfluenceArgs, citizenKey) {
+    super(VotingCitizen.getClass(), ["voter", citizenKey]);
     this.personData = new VotingPersonDataType(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality);
     this.dataLock = dataLock;
     this.electoralAddress = new ResidenceDataType(reportingMunicipality, typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold);

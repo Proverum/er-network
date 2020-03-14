@@ -94,5 +94,53 @@
        "maxPeerCount": 3,
        "blockToLive":1000,
        "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipalityMunicipality2",
+       "policy": "OR('MunicipalityMSP.member', 'Municipality2MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipalityMunicipality3",
+       "policy": "OR('MunicipalityMSP.member', 'Municipality3MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipalityMunicipality4",
+       "policy": "OR('MunicipalityMSP.member', 'Municipality4MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipality2Municipality3",
+       "policy": "OR('Municipality2MSP.member', 'Municipality3MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipality2Municipality4",
+       "policy": "OR('Municipality2MSP.member', 'Municipality4MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
+  },
+  {
+       "name": "transitMunicipality3Municipality4",
+       "policy": "OR('Municipality3MSP.member', 'Municipality4MSP.member')",
+       "requiredPeerCount": 0,
+       "maxPeerCount": 3,
+       "blockToLive":100,
+       "memberOnlyRead": true
   }
 ]

@@ -252,6 +252,18 @@ function networkDown() {
     removeUnwantedImages
     # remove orderer block and other channel configuration transactions and certs
     rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config
+    #remove all application wallets as with every new network instantiation new wallets have to be generated
+    rm -rf ./../api/javascript/confederation/wallet
+    rm -rf ./../api/javascript/canton/wallet
+    rm -rf ./../api/javascript/canton2/wallet
+    rm -rf ./../api/javascript/municipality/wallet
+    rm -rf ./../api/javascript/municipality2/wallet
+    rm -rf ./../api/javascript/municipality3/wallet
+    rm -rf ./../api/javascript/municipality4/wallet
+    rm -rf ./../api/javascript/esp/wallet
+    rm -rf ./../api/javascript/sp/wallet
+    #stopping all express processes
+    killall node
     # remove the docker-compose yaml file that was customized to the example
     rm -f docker-compose-e2e.yaml
   fi

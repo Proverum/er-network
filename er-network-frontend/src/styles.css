@@ -1,0 +1,170 @@
+/* You can add global styles to this file, and also import other style files */
+/* Text */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h1, h2 {
+  font-weight: lighter;
+}
+
+p {
+  font-size: 14px;
+}
+
+/* Hyperlink */
+
+a {
+  cursor: pointer;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Input */
+
+input {
+  font-size: 14px;
+  border-radius: 2px;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #BDBDBD;
+}
+
+label {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+  text-transform: uppercase;
+}
+
+/* Button */
+.button, button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+}
+
+.button:hover, button:hover {
+  opacity: 0.8;
+  font-weight: normal;
+}
+
+.button:disabled, button:disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+
+/* Fancy Button */
+
+.fancy-button {
+  background-color: white;
+  color: #1976d2;
+}
+
+.fancy-button i.material-icons {
+  color: #1976d2;
+  padding-right: 4px;
+}
+
+/* Top Bar */
+
+app-top-bar, .public-top-bar, .private-top-bar {
+  width: 100%;
+  height: 68px;
+  background-color: #1976d2;
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+app-top-bar h1, h1.public-top-bar, h1.private-top-bar{
+  color: white;
+  margin: 0;
+}
+
+/* Checkout Cart, Shipping Prices */
+
+.citizen-info, .shipping-item, .hash-info {
+  width: 100%;
+  min-width: 400px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 16px 32px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+  background-color: #EEEEEE;
+}
+
+
+.flex {
+      -webkit-flex: 1 1 0%;
+          -ms-flex: 1 1 0%;
+              flex: 1 1 0%;
+      box-sizing: border-box;
+    }
+    .flex-20 {
+      -webkit-flex: 1 1 20%;
+          -ms-flex: 1 1 20%;
+              flex: 1 1 20%;
+      max-width: 20%;
+      max-height: 100%;
+      box-sizing: border-box;
+    }
+
+    .layout-row .flex-33 {
+      -webkit-flex: 1 1 calc(100% / 3);
+          -ms-flex: 1 1 calc(100% / 3);
+              flex: 1 1 calc(100% / 3);
+      box-sizing: border-box;
+    }
+
+    .layout-row  .flex-66 {
+      -webkit-flex: 1 1 calc(200% / 3);
+          -ms-flex: 1 1 calc(200% / 3);
+              flex: 1 1 calc(200% / 3);
+      box-sizing: border-box;
+    }
+
+    .layout-row .flex-33 {
+      max-width: calc(100% / 3);
+      max-height: 100%;
+    }
+
+    .layout-row  .flex-66 {
+      max-width: calc(200% / 3);
+      max-height: 100%;
+    }
+
+    .layout-column .flex-33 {
+      max-width: 100%;
+      max-height: calc(100% / 3);
+    }
+
+    .layout-column  .flex-66 {
+      max-width: 100%;
+      max-height: calc(200% / 3);
+    }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
