@@ -5,6 +5,7 @@ import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from "@angular/material";
 import { NewCitizenRequest } from './../newCitizenRequest';
 
+
 import { ApiServiceService } from './../api-service.service';
 
 
@@ -28,7 +29,7 @@ export class AddCitizenComponent implements OnInit {
   ngOnInit() {
     //pre populate the request for ease of demonstration
     this.addCitizenRequest = {
-      vn: "756.2342.8762.54",
+      vn: "7562342876254",
       localPersonId: "StubId",
       firstName: "Max",
       officialName: "Muster",
@@ -49,9 +50,19 @@ export class AddCitizenComponent implements OnInit {
       city: "Stubcity",
       swissZipCode: "StubZipCode",
       typeOfHousehold: "StubType",
-      collection: "collectionCitizenMunicipality",
-      citizenKey: "CITIZENX",
+      collection: "",
+      citizenKey: "",
     };
+    if (this.nodeName == "municipality") {
+      this.addCitizenRequest.collection = "collectionCitizenMunicipality"
+    } else if (this.nodeName == "municipality2") {
+      this.addCitizenRequest.collection = "collectionCitizenMunicipalityTwo"
+    } else if (this.nodeName == "municipality3") {
+      this.addCitizenRequest.collection = "collectionCitizenMunicipalityThree"
+    } else if (this.nodeName == "municipality4") {
+      this.addCitizenRequest.collection = "collectionCitizenMunicipalityFour"
+    }
+    this.addCitizenRequest.citizenKey = this.addCitizenRequest.vn
   }
 
   addCitizen(): void {

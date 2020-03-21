@@ -1,25 +1,17 @@
 <div class="container">
-  <form class="example-container"  #NewCitizenRequest="ngForm" id="registerCitizenForm">
-    <h1>Move a Citizen</h1>
-    <div class="form-group">
-      <label for="addCitizenRequest">Destination Muncipality</label>
-      <input type="text" class="form-control" id="destinationMunicipality" [(ngModel)]="citizenDestinationRequest" name="destinationMunicipality" placeholder="Dübendorf?"> <i class="bar"></i>
-    </div>
-  </form>
-  <p>Availabel Citizens to move</p>
+  <h1>Citizen Relocation Requests</h1>
+
   <mat-form-field>
-  <mat-label>Select an option</mat-label>
-    <mat-select [(value)]="selectedIndex">
-      <mat-option value="{{i}}" *ngFor="let citizen of citizensAvailableToMove; let i = index">
-        Index: {{i}} Citizenkey: {{citizen.key}}
-      </mat-option>
+    <mat-label>Toppings</mat-label>
+    <mat-select [formControl]="accepting" multiple>
+      <mat-option *ngFor="let citizen of incomingRequests" [value]="topping">{{citizen.citizenKey}}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <p>You selected index: {{selectedIndex}}</p>
+  <p>You selected index: {{accepting}}</p>
 
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let citizen of citizensAvailableToMove">
+    <mat-expansion-panel *ngFor="let citizen of incomingRequests">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Citizenkey: {{citizen.key}}
@@ -56,6 +48,6 @@
     </mat-expansion-panel>
   </mat-accordion>
   <div class="button-container">
-    <button type="button" class="button" value="Register Citizen" (click)="moveCitizen()"><span>Request Citizen Relocation</span></button>
+    <button type="button" class="button" value="Register Citizen" (click)="moveCitizen()"><span>Accept Citizen Relocation Requests</span></button>
   </div>
 </div>

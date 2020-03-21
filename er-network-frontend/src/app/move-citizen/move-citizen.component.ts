@@ -3,7 +3,8 @@ import { Inject } from '@angular/core';
 import { MatDialogConfig} from "@angular/material";
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from "@angular/material";
-import { MoveCitizenRequest } from './../moveCitizenRequest';
+import { Citizen } from './../citizen';
+import { MatSelectModule } from '@angular/material';
 
 import { ApiServiceService } from './../api-service.service';
 
@@ -15,31 +16,67 @@ import { ApiServiceService } from './../api-service.service';
 export class MoveCitizenComponent implements OnInit {
 
   submitted = false;
-  moveCitizenRequest = new MoveCitizenRequest();
   citizenDestinationRequest: string;
+  selectedIndex: number;
+  citizensAvailableToMove: Citizen[];
+  selectedCitizenToMove: Citizen;
   port: number;
   nodeName: string;
 
-  constructor(private apiService: ApiServiceService, private dialog: MatDialog, private dialogRef: MatDialogRef<DeleteCitizenComponent>, @Inject(MAT_DIALOG_DATA) data) {
+  constructor(private apiService: ApiServiceService, private dialog: MatDialog, private dialogRef: MatDialogRef<MoveCitizenComponent>, @Inject(MAT_DIALOG_DATA) data) {
     this.port = data.port;
     this.nodeName = data.nodeName;
+    this.citizensAvailableToMove = data.citizens;
   }
 
   ngOnInit() {
-    this.moveCitizenRequest = {
-      key: "CITIZEN0?",
-      collectionOrigin: "collectionCitizenMunicipality?",
-      collectionDestination: "collectionCitizenMunicipality2?"
-    };
+
   }
 
   moveCitizen(): void {
-    this.submitted = true;
-    if (this.citizenDestinationRequest=="Dübendorf") {
-      this.moveCitizenRequest.collectionDestination = "collectionCitizen"
+    //determine shared transit collection
+    this.selectedCitizenToMove = this.citizensAvailableToMove[this.selectedIndex];
+    if (this.nodeName == "municipality4") {
+      if (this.citizenDestinationRequest=="Wallisellen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityThreeMunicipalityFour"
+      } else if (this.citizenDestinationRequest=="Risch") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityTwoMunicipalityFour"
+      } else if (this.citizenDestinationRequest=="Menzingen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityFour"
+      }
     }
-    this.apiService.moveCitizen(this.port, this.nodeName, this.moveCitizenRequest).then(result => this.launchConfirmationModal(result));
-    this.save();
+    if (this.nodeName == "municipality3") {
+      if (this.citizenDestinationRequest=="Dübendorf") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityThreeMunicipalityFour"
+      } else if (this.citizenDestinationRequest=="Risch") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityTwoMunicipalityThree"
+      } else if (this.citizenDestinationRequest=="Menzingen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityThree"
+      }
+    }
+    if (this.nodeName == "municipality2") {
+      if (this.citizenDestinationRequest=="Dübendorf") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityTwoMunicipalityFour"
+      } else if (this.citizenDestinationRequest=="Wallisellen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityTwoMunicipalityThree"
+      } else if (this.citizenDestinationRequest=="Menzingen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityTwo"
+      }
+    }
+    if (this.nodeName == "municipality1") {
+      if (this.citizenDestinationRequest=="Dübendorf") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityFour"
+      } else if (this.citizenDestinationRequest=="Wallisellen") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityThree"
+      } else if (this.citizenDestinationRequest=="Risch") {
+        this.selectedCitizenToMove.collection = "transitMunicipalityMunicipalityTwo"
+      }
+    }
+    this.selectedCitizenToMove.citizenKey = this.selectedCitizenToMove.vn;
+    console.log("this is the citizen to be moved ", this.selectedCitizenToMove);
+    this.submitted = true;
+    this.apiService.addCitizen(this.port, this.nodeName, this.selectedCitizenToMove).then(result => this.launchConfirmationModal(result));
+    this.close();
   }
 
   launchConfirmationModal(result:string){
@@ -62,7 +99,7 @@ export class MoveCitizenComponent implements OnInit {
   }
 
   save() {
-    this.dialogRef.close(this.moveCitizenRequest);
+    this.dialogRef.close(this.citizensAvailableToMove);
   }
 
 }

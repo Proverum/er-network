@@ -147,30 +147,6 @@ app.get('/api/municipality4/queryallcitizens', async function (req, res) {
   }
 });
 
-app.get('/api/municipality4/querytransit', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      const result = await contract.evaluateTransaction('getAllCitizens', req.body.collection);
-      const resultString = result.toString('utf8');
-      const resultJSON = JSON.parse(resultString);
-      console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-      res.status(200).json({response: resultJSON});
-
-  } catch (error) {
-      console.error(`Failed to evaluate transaction: ${error}`);
-      res.status(500).json({error: error});
-  }
-});
-
 app.get('/api/municipality4/queryallvoters', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
@@ -184,6 +160,30 @@ app.get('/api/municipality4/queryallvoters', async function (req, res) {
 
       // Evaluate the specified transaction.
       const result = await contract.evaluateTransaction('getAllVoters', 'collectionERMunicipalityFourESP');
+      const resultString = result.toString('utf8');
+      const resultJSON = JSON.parse(resultString);
+      console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+      res.status(200).json({response: resultJSON});
+
+  } catch (error) {
+      console.error(`Failed to evaluate transaction: ${error}`);
+      res.status(500).json({error: error});
+  }
+});
+
+app.get('/api/municipality4/querytransit/:collection_name', async function (req, res) {
+  try {
+      // Create a new gateway for connecting to our peer node.3
+      const gateway = await connectToGateway();
+
+      // Get the network (channel) our contract is deployed to.
+      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
+
+      // Get the contract from the network.
+      const contract = network.getContract('registercc');
+
+      // Evaluate the specified transaction.
+      const result = await contract.evaluateTransaction('getAllCitizens', req.params.collection_name);
       const resultString = result.toString('utf8');
       const resultJSON = JSON.parse(resultString);
       console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
@@ -343,34 +343,6 @@ app.post('/api/municipality4/generateER', async function (req, res) {
       console.error(`Failed to evaluate transaction: ${error}`);
       res.status(500).json({error: error});
   }
-})
-
-app.post('/api/municipality4/movecitizen', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      console.log('Submit move citizen transaction.');
-      const moveResult = await contract.evaluateTransaction('moveCitizen', req.body.collectionOrigin, req.body.collectionDestination, req.body.key);
-      const resultString = moveResult.toString();
-      const resultJSON = JSON.parse(resultString);
-      console.log(`Transaction has been evaluated, result is: ${persistResult.toString()}`);
-
-      console.log('Submit delete citizen transaction.');
-      const deletionResponse = await contract.submitTransaction('deleteCitizen', req.body.collectionOrigin, req.body.key);
-      res.status(200).json({response: "succesfully moved citizen"});
-      await gateway.disconnect();
-
-    } catch (error) {
-          console.error(`Failed to submit transaction: ${error}`);
-          res.status(500).json({error: error});
-      }
 })
 
 app.listen(8030);

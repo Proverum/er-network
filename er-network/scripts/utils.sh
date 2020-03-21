@@ -520,8 +520,7 @@ instantiatePublishChaincode() {
     peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNELTOINSTANTIATE -n ${CCName} -l "${LANGUAGE}" -v ${VERSION} \
       -c '{"Args":["er-network.publishcontract:instantiate"]}' \
       -P "OR('ConfederationMSP.member','CantonMSP.member', 'Canton2MSP.member', 'MunicipalityMSP.member','Municipality2MSP.member','Municipality3MSP.member','Municipality4MSP.member')" --tls $CORE_PEER_TLS_ENABLED \
-      --cafile ${ORDERER_CA} \
-      --collections-config $COLLECTIONCONFIGPUBLISH >&log.txt
+      --cafile ${ORDERER_CA} >&log.txt
     res=$?
     set +x
   fi

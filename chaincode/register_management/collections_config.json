@@ -5,7 +5,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":0,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('MunicipalityMSP.member')"
+       }
   },
   {
        "name": "collectionCitizenMunicipalityTwo",
@@ -13,7 +15,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":0,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality2MSP.member')"
+       }
   },
   {
        "name": "collectionCitizenMunicipalityThree",
@@ -21,7 +25,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":0,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality3MSP.member')"
+       }
   },
   {
        "name": "collectionCitizenMunicipalityFour",
@@ -29,7 +35,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":0,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality4MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipality",
@@ -37,7 +45,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('MunicipalityMSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityTwo",
@@ -45,7 +55,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality2MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityThree",
@@ -53,7 +65,9 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality3MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityFour",
@@ -61,86 +75,108 @@
        "requiredPeerCount": 0,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality4MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityESP",
        "policy": "OR('ESPMSP.member', 'MunicipalityMSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('ESPMSP.member', 'MunicipalityMSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityTwoESP",
        "policy": "OR('ESPMSP.member', 'Municipality2MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('ESPMSP.member', 'Municipality2MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityThreeESP",
        "policy": "OR('ESPMSP.member', 'Municipality3MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('ESPMSP.member', 'Municipality3MSP.member')"
+       }
   },
   {
        "name": "collectionERMunicipalityFourESP",
        "policy": "OR('ESPMSP.member', 'Municipality4MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
        "blockToLive":1000,
-       "memberOnlyRead": true
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('ESPMSP.member', 'Municipality4MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipalityMunicipality2",
+       "name": "transitMunicipalityMunicipalityTwo",
        "policy": "OR('MunicipalityMSP.member', 'Municipality2MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('MunicipalityMSP.member', 'Municipality2MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipalityMunicipality3",
+       "name": "transitMunicipalityMunicipalityThree",
        "policy": "OR('MunicipalityMSP.member', 'Municipality3MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('MunicipalityMSP.member', 'Municipality3MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipalityMunicipality4",
+       "name": "transitMunicipalityMunicipalityFour",
        "policy": "OR('MunicipalityMSP.member', 'Municipality4MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('MunicipalityMSP.member', 'Municipality4MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipality2Municipality3",
+       "name": "transitMunicipalityTwoMunicipalityThree",
        "policy": "OR('Municipality2MSP.member', 'Municipality3MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality2MSP.member', 'Municipality3MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipality2Municipality4",
+       "name": "transitMunicipalityTwoMunicipalityFour",
        "policy": "OR('Municipality2MSP.member', 'Municipality4MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality2MSP.member', 'Municipality4MSP.member')"
+       }
   },
   {
-       "name": "transitMunicipality3Municipality4",
+       "name": "transitMunicipalityThreeMunicipalityFour",
        "policy": "OR('Municipality3MSP.member', 'Municipality4MSP.member')",
-       "requiredPeerCount": 0,
+       "requiredPeerCount": 1,
        "maxPeerCount": 3,
-       "blockToLive":100,
-       "memberOnlyRead": true
+       "blockToLive":1000,
+       "endorsementPolicy": {
+         "signaturePolicy": "OR('Municipality3MSP.member', 'Municipality4MSP.member')"
+       }
   }
 ]

@@ -11,7 +11,7 @@ import { AddCitizenComponent } from './../add-citizen/add-citizen.component';
 import { DeleteCitizenComponent } from './../delete-citizen/delete-citizen.component';
 import { GenerateErComponent } from './../generate-er/generate-er.component';
 import { MoveCitizenComponent } from './../move-citizen/move-citizen.component';
-
+import { RelocationAcceptanceComponent } from './../relocation-acceptance/relocation-acceptance.component';
 import { ApiServiceService } from './../api-service.service';
 
 
@@ -26,6 +26,7 @@ export class NodeDashboardComponent implements OnInit {
   nodeName: string;
   instantiationCase: string;
   citizens: Citizen[] = [];
+  transitRequests: Citizen[] = [];
   voters: Voter[] = [];
   voterList: VoterList;
   hashes: Hash[] = [];
@@ -69,7 +70,7 @@ export class NodeDashboardComponent implements OnInit {
         break;
      }
      case 8050: {
-        this.nodeName = "municipality1"
+        this.nodeName = "municipality"
         this.instantiationCase = "Gemeinde Menzingen"
         break;
      }
@@ -99,6 +100,7 @@ export class NodeDashboardComponent implements OnInit {
     this.getAllCitizens();
     this.getAllVoters();
     this.getWorldState();
+    this.getTransitRequests();
   }
 
   getAllCitizens() {
@@ -106,6 +108,74 @@ export class NodeDashboardComponent implements OnInit {
     this.apiService.getAllCitizens(this.port, this.nodeName).then(
       citizens => this.citizens = citizens,
     );
+  }
+
+  getTransitRequests() {
+    console.log("this is the port sent into getAllCitizens", this.port);
+    //get all citizens from the transit collections
+    if (this.nodeName == "municipality") {
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityTwo").then(
+        citizens => {
+          console.log("citizens received from transitMunicipalityMunicipalityTwo", citizens);
+          this.transitRequests.concat(citizens);
+        }
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityThree").then(
+        citizens => {
+          console.log("citizens received from transitMunicipalityMunicipalityThree");
+          this.transitRequests.concat(citizens);
+        }
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityFour").then(
+        citizens => {
+          console.log("citizens received from transitMunicipalityMunicipalityFour");
+          this.transitRequests.concat(citizens);
+        }
+      );
+      //filer out the initiated request where the current reporting municipality is the municipality node itself
+      this.transitRequests = this.transitRequests.filter((citizen: Citizen) => citizen.reportingMunicipality !== "Menzingen");
+    }
+    if (this.nodeName == "municipality2") {
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityTwo").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityTwoMunicipalityThree").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityTwoMunicipalityFour").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.transitRequests = this.transitRequests.filter((citizen: Citizen) => citizen.reportingMunicipality !== "Risch");
+    }
+    if (this.nodeName == "municipality3") {
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityThree").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityTwoMunicipalityThree").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityThreeMunicipalityFour").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.transitRequests = this.transitRequests.filter((citizen: Citizen) => citizen.reportingMunicipality !== "Wallisellen");
+    }
+    if (this.nodeName == "municipality4") {
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityMunicipalityFour").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityTwoMunicipalityFour").then(
+        citizens => this.transitRequests.concat(citizens),
+      );
+      this.apiService.queryTransit(this.port, this.nodeName, "transitMunicipalityThreeMunicipalityFour").then(
+        citizens => {
+          console.log("citizens received from transitMunicipalityThreeMunicipalityFour", citizens);
+          this.transitRequests = this.transitRequests.concat(citizens);
+          console.log("transit Request after concat", this.transitRequests);
+        }
+      );
+      this.transitRequests = this.transitRequests.filter((citizen: Citizen) => citizen.reportingMunicipality !== "Dübendorf");
+    }
+
   }
 
   getAllVoters() {
@@ -184,9 +254,26 @@ export class NodeDashboardComponent implements OnInit {
     dialogConfig.data = {
           port: this.port,
           nodeName: this.nodeName,
-          citizens: this.citizens
+          citizens: this.citizens,
       };
     const dialogRef = this.dialog.open(MoveCitizenComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+        data => console.log("Dialog output:", data)
+    );
+  }
+
+  launchCitizenRelocationAcceptance(){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '60%';
+    dialogConfig.height = '85%';
+    dialogConfig.data = {
+          port: this.port,
+          nodeName: this.nodeName,
+          transitRequests: this.transitRequests,
+      };
+    const dialogRef = this.dialog.open(RelocationAcceptanceComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
         data => console.log("Dialog output:", data)

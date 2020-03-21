@@ -12,10 +12,10 @@ import {MatTableModule} from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { MatSliderModule } from '@angular/material/slider';
-
+import { MatSelectModule } from '@angular/material';
+import {MatBadgeModule, MatButtonModule, MatIconModule} from '@angular/material'
 import { AppComponent } from './app.component';
 import { NetworkDashboardComponent } from './network-dashboard/network-dashboard.component';
-import { MunicipalityInterfaceComponent } from './municipality-interface/municipality-interface.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { NodeDashboardComponent } from './node-dashboard/node-dashboard.component';
 import { GenerateErComponent } from './generate-er/generate-er.component';
@@ -26,6 +26,7 @@ import { AddCitizenComponent } from './add-citizen/add-citizen.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { DeleteCitizenComponent } from './delete-citizen/delete-citizen.component';
 import { MoveCitizenComponent } from './move-citizen/move-citizen.component';
+import { RelocationAcceptanceComponent } from './relocation-acceptance/relocation-acceptance.component';
 
 const routes: Routes = [
   { path: 'home', component: NetworkDashboardComponent},
@@ -34,6 +35,8 @@ const routes: Routes = [
   { path: 'unregister', component: DeleteCitizenComponent },
   { path: 'generate-er', component: GenerateErComponent },
   { path: 'confirmation', component: ConfirmationComponent },
+  { path: 'move', component: MoveCitizenComponent },
+  { path: 'accept', component: RelocationAcceptanceComponent },
   {path:  "", pathMatch:  "full",redirectTo:  "home"},
 ];
 
@@ -42,7 +45,6 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     NetworkDashboardComponent,
-    MunicipalityInterfaceComponent,
     TopBarComponent,
     NodeDashboardComponent,
     GenerateErComponent,
@@ -50,6 +52,7 @@ const routes: Routes = [
     ConfirmationComponent,
     DeleteCitizenComponent,
     MoveCitizenComponent,
+    RelocationAcceptanceComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,6 +66,7 @@ const routes: Routes = [
     FormsModule,
     MatExpansionModule,
     MatTableModule,
+    MatSelectModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule
   ],

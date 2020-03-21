@@ -13,7 +13,10 @@
       <mat-menu #citizenadmin="matMenu">
         <button mat-menu-item (click)="launchCitizenDeregistration()">Unregister</button>
         <button mat-menu-item (click)="launchCitizenRegistration()">Register</button>
-        <button mat-menu-item (click)="launchBuyData()">Move</button>
+        <button mat-menu-item (click)="launchCitizenRelocation()">Move Citizen</button>
+        <button mat-menu-item (click)="launchCitizenRelocationAcceptance()">
+           Relocation Requests
+         </button>
       </mat-menu>
 
       <button mat-button [matMenuTriggerFor]="votingadmin">Voting Administration</button>
@@ -23,6 +26,12 @@
         <button mat-menu-item>Verify Voter </button>
         <button mat-menu-item>Publish Result </button>
       </mat-menu>
+
+      <!-- <button mat-button [matMenuTriggerFor]="requestsadmin" *ngIf="this.transitRequests"> Requests Administration</button>
+
+      <mat-menu #requestsadmin="matMenu">
+        <button mat-menu-item (click)="launchERCreation()"> Citizen Relocation Requests </button>
+      </mat-menu> -->
 
 
     </ul>
@@ -40,7 +49,7 @@
         <mat-expansion-panel *ngFor="let citizen of citizens">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Citizenkey: {{citizen.key}}
+              Citizenkey: {{citizen.citizenKey}}
             </mat-panel-title>
             <mat-panel-description>
               Expand for Citizen Details
@@ -48,7 +57,7 @@
           </mat-expansion-panel-header>
           <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
           <div class="citizen-info" >
-            <span> Insurnance Number: {{ citizen.vn }}</span>
+            <span> Insurance Number: {{ citizen.vn }}</span>
           </div>
           <div class="citizen-info" >
             <span> Family Name: {{ citizen.officialName}}</span>
@@ -57,7 +66,7 @@
             <span> Name: {{ citizen.firstName}}</span>
           </div>
           <div class="citizen-info" >
-            <span> Geburtsdatum: {{ citizen.dateOfBirth}}</span>
+            <span> Birthdate: {{ citizen.dateOfBirth}}</span>
           </div>
           <div class="citizen-info" >
             <span> Nationality: {{ citizen.nationality }}</span>
@@ -74,7 +83,7 @@
         </mat-expansion-panel>
       </mat-accordion>
       <p>Voters</p>
-      <mat-accordion>
+      <mat-accordion *ngIf="voters">
         <mat-expansion-panel *ngFor="let voter of voters">
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -112,7 +121,7 @@
         </mat-expansion-panel>
       </mat-accordion>
       <p>Voter List</p>
-      <mat-accordion>
+      <mat-accordion *ngIf="voterList">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -132,6 +141,24 @@
           <div class="citizen-info" *ngFor="let voterinlist of voterList.voter">
             <span> Voterkey: {{ voterinlist.key }}</span>
           </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <p>Transit List</p>
+      <mat-accordion >
+        <mat-expansion-panel *ngFor="let transit of transitRequests">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Voterlistkey: {{transit.citizenKey}}
+            </mat-panel-title>
+            <mat-panel-description>
+              Expand for Voter List Details
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+          <div class="citizen-info" >
+            <span> Number of Voters: {{ transit.vn }}</span>
+          </div>
+
         </mat-expansion-panel>
       </mat-accordion>
     </div>

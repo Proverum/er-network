@@ -3,9 +3,9 @@ import { Citizen } from './citizen';
 import { Voter } from './voter';
 import { VoterList } from './voterList';
 import { Hash } from './hash';
+import { TransitQueryRequest } from './transitQueryRequest';
 import { Tx } from './tx';
 import { NewCitizenRequest } from './newCitizenRequest';
-import { MoveCitizenRequest } from './moveCitizenRequest';
 import { DeleteCitizenRequest } from './deleteCitizenRequest';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -58,6 +58,17 @@ export class ApiServiceService {
       );
   }
 
+  queryTransit(port: number, nodeName: string, transitStore: string): Promise<Citizen[]> {
+    let url = "http://localhost:"+port+"/api/"+nodeName+"/querytransit/"+transitStore;
+    console.log("getting all citizens at: ", url);
+    return this.http.get(url)
+      .toPromise()
+      .then(
+        //d res => console.log(res.response),
+        res => this.createCitizensArray(res) as Citizen[],
+      );
+  }
+
   createCitizensArray(input: any): Citizen[] {
     let citizens = new Array<Citizen>();
     console.log("input in create Citizens arrey ", input);
@@ -84,7 +95,7 @@ export class ApiServiceService {
 
   createVotersArray(input: any): [Voter[], VoterList] {
     let voters = new Array<Voter>();
-    let voterList = new VoterList();
+    let voterList: VoterList;
     console.log("input in create Voters arrey ", input);
     input.response.forEach((element: any) => {
       console.log(element);
@@ -92,11 +103,13 @@ export class ApiServiceService {
         let receivedVoter = new Voter().deserialize(element);
         console.log("deserialized voter ", receivedVoter);
         voters.push(receivedVoter);
-      } else{
+      } else if (element.Record.class == "voterlist") {
         let receivedVoterList = new VoterList().deserialize(element);
         console.log("deserialized voterList ", receivedVoterList);
         voterList = receivedVoterList;
         console.log(voterList);
+      } else {
+        console.log("received neither a voter nor a voterlist object");
       }
     });
     let result: [Voter[], VoterList] = [voters, voterList];
@@ -148,14 +161,14 @@ export class ApiServiceService {
         res => new Tx().deserialize(res).txResponse);
   }
 
-  moveCitizen(port: number, nodeName: string, moveRequest: moveCitizenRequest): Promise<string> {
-    let url = `http://localhost:${port}/api/${nodeName}/movecitizen`;
-    console.log("move citizen at url ", url);
-    return this.http.post(url, JSON.stringify(moveRequest), this.httpOptions)
-      .toPromise()
-      .then(
-        res => new Tx().deserialize(res).txResponse);
-  }
+  // moveCitizen(port: number, nodeName: string, moveRequest: MoveCitizenRequest): Promise<string> {
+  //   let url = `http://localhost:${port}/api/${nodeName}/movecitizen`;
+  //   console.log("move citizen at url ", url);
+  //   return this.http.post(url, JSON.stringify(moveRequest), this.httpOptions)
+  //     .toPromise()
+  //     .then(
+  //       res => new Tx().deserialize(res).txResponse);
+  // }
 
 
 }
