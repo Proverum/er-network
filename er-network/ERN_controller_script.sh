@@ -619,6 +619,22 @@ function initQuickSetup() {
   exit 1
   fi
 }
+
+function enrollUsers() {
+  docker exec cli scripts/enrollApplicationUsers.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE $NO_CHAINCODE
+  if [ $? -ne 0 ]; then
+  echo "ERROR !!!! enrollment failed"
+  exit 1
+  fi
+}
+
+function startExpressApps() {
+  docker exec cli scripts/startExpress.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE $NO_CHAINCODE
+  if [ $? -ne 0 ]; then
+  echo "ERROR !!!! express startup failed"
+  exit 1
+  fi
+}
 # Obtain the OS and Architecture string that will be used to select the correct
 # native binaries for your platform, e.g., darwin-amd64 or linux-amd64
 OS_ARCH=$(echo "$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
@@ -667,6 +683,10 @@ elif [ "$MODE" == "init" ]; then
   EXPMODE="running initialization"
 elif [ "$MODE" == "quickinit" ]; then
   EXPMODE="running quick initialization"
+elif [ "$MODE" == "enroll" ]; then
+  EXPMODE="running application enrollment processes"
+elif [ "$MODE" == "express" ]; then
+  EXPMODE="running express applications "
 elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
 else
@@ -739,6 +759,10 @@ elif [ "${MODE}" == "init" ]; then ## run er specific setup
   initSetup
 elif [ "${MODE}" == "quickinit" ]; then ## run er specific setup
   initQuickSetup
+elif [ "${MODE}" == "enroll" ]; then ## run er specific setup
+  enrollUsers
+elif [ "${MODE}" == "express" ]; then ## run er specific setup
+  startExpressApps
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
   replacePrivateKey

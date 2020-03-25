@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
-node ./../api/javascript/municipality/enrollAdmin.js
-node ./../api/javascript/municipality/affiliationManagement.js
-node ./../api/javascript/municipality/registerUser.js
+node ./../api/javascript/canton2/enrollAdmin.js
+node ./../api/javascript/canton2/affiliationManagement.js
+node ./../api/javascript/canton2/registerUser.js
+npm install --prefix ./../api/javascript/canton2

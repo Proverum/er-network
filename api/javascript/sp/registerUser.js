@@ -6,7 +6,7 @@
 
 const { FileSystemWallet, Gateway, X509WalletMixin } = require('fabric-network');
 const path = require('path');
-const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality2.json');
+const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-sp.json');
 
 async function main() {
     try {
@@ -17,9 +17,9 @@ async function main() {
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the user.
-        const userExists = await wallet.exists('clerk1');
+        const userExists = await wallet.exists('manager1');
         if (userExists) {
-            console.log('An identity for the user "clerk1" already exists in the wallet');
+            console.log('An identity for the user "manager1" already exists in the wallet');
             return;
         }
 
@@ -41,15 +41,15 @@ async function main() {
         console.log("this is the ca pulled via the gateway", ca);
 
         // Register the user, enroll the user, and import the new identity into the wallet.
-        const secret = await ca.register({ affiliation: 'municipality2.amtX', enrollmentID: 'clerk1', role: 'client' }, adminIdentity);
-        const enrollment = await ca.enroll({ enrollmentID: 'clerk1', enrollmentSecret: secret });
-        const userIdentity = X509WalletMixin.createIdentity('Municipality2MSP', enrollment.certificate, enrollment.key.toBytes());
+        const secret = await ca.register({ affiliation: 'sp.divisionX', enrollmentID: 'manager1', role: 'client' }, adminIdentity);
+        const enrollment = await ca.enroll({ enrollmentID: 'manager1', enrollmentSecret: secret });
+        const userIdentity = X509WalletMixin.createIdentity('SPMSP', enrollment.certificate, enrollment.key.toBytes());
         console.log("this is the newly enrolled user identity object", userIdentity);
-        await wallet.import('clerk1', userIdentity);
-        console.log('Successfully registered and enrolled admin user "clerk1" and imported it into the wallet');
+        await wallet.import('manager1', userIdentity);
+        console.log('Successfully registered and enrolled admin user "manager1" and imported it into the wallet tor the sp');
 
     } catch (error) {
-        console.error(`Failed to register user "clerk1": ${error}`);
+        console.error(`Failed to register user "manager1": ${error}`);
         process.exit(1);
     }
 }

@@ -26,7 +26,6 @@ volumes:
   peer0.sp.example.com:
   peer1.sp.example.com:
 
-
 networks:
   ern:
 

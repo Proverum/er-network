@@ -7,7 +7,7 @@ app.use(bodyParser.json());// Setting for Hyperledger Fabric
 app.use(cors());
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const fs = require('fs');
-const path = require('path');const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-municipality2.json');
+const path = require('path');const ccpPath = path.resolve(__dirname, '..', '..', '..', 'er-network', 'connection-canton.json');
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
 const ccp = JSON.parse(ccpJSON);
 
@@ -29,7 +29,7 @@ async function connectToGateway(){
   return gateway;
 }
 
-app.get('/api/municipality/querycitizen/:citizen_key', async function (req, res) {
+app.get('/api/canton/querycitizen/:citizen_key', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -51,7 +51,7 @@ app.get('/api/municipality/querycitizen/:citizen_key', async function (req, res)
   }
 });
 
-app.post('/api/municipality/addcitizen', async function (req, res) {
+app.post('/api/canton/addcitizen', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -79,7 +79,7 @@ app.post('/api/municipality/addcitizen', async function (req, res) {
       }
 });
 
-app.post('/api/municipality/publishresult', async function (req, res) {
+app.post('/api/canton/publishresult', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -101,7 +101,7 @@ app.post('/api/municipality/publishresult', async function (req, res) {
       }
 });
 
-app.delete('/api/municipality/deletecitizen/:citizen_key', async function (req, res) {
+app.delete('/api/canton/deletecitizen/:citizen_key', async function (req, res) {
   try {
       //gateway defines the peers used to access Fabric networks
       const gateway = await connectToGateway();
@@ -123,7 +123,7 @@ app.delete('/api/municipality/deletecitizen/:citizen_key', async function (req, 
 });
 
 
-app.get('/api/municipality/queryallcitizens', async function (req, res) {
+app.get('/api/canton/queryallcitizens', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -147,7 +147,7 @@ app.get('/api/municipality/queryallcitizens', async function (req, res) {
   }
 });
 
-app.get('/api/municipality/querytransit', async function (req, res) {
+app.get('/api/canton/querytransit', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -171,7 +171,7 @@ app.get('/api/municipality/querytransit', async function (req, res) {
   }
 });
 
-app.get('/api/municipality/queryallvoters', async function (req, res) {
+app.get('/api/canton/queryallvoters', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -195,7 +195,7 @@ app.get('/api/municipality/queryallvoters', async function (req, res) {
   }
 });
 
-app.get('/api/municipality/queryvoter/:voter_key', async function (req, res) {
+app.get('/api/canton/queryvoter/:voter_key', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -218,7 +218,7 @@ app.get('/api/municipality/queryvoter/:voter_key', async function (req, res) {
   }
 });
 
-app.get('/api/municipality/queryvoterlist/:voterlist_key', async function (req, res) {
+app.get('/api/canton/queryvoterlist/:voterlist_key', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node
       const gateway = await connectToGateway();
@@ -241,7 +241,7 @@ app.get('/api/municipality/queryvoterlist/:voterlist_key', async function (req, 
   }
 });
 
-app.get('/api/municipality/queryvoterhash/:voterhash_key', async function (req, res) {
+app.get('/api/canton/queryvoterhash/:voterhash_key', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -264,7 +264,7 @@ app.get('/api/municipality/queryvoterhash/:voterhash_key', async function (req, 
   }
 });
 
-app.get('/api/municipality/queryvoterlisthash/:voterlisthash_key', async function (req, res) {
+app.get('/api/canton/queryvoterlisthash/:voterlisthash_key', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -287,7 +287,7 @@ app.get('/api/municipality/queryvoterlisthash/:voterlisthash_key', async functio
   }
 });
 
-app.get('/api/municipality/worldstate/:channelname', async function (req, res) {
+app.get('/api/canton/worldstate/:channelname', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -312,7 +312,7 @@ app.get('/api/municipality/worldstate/:channelname', async function (req, res) {
   }
 })
 
-app.post('/api/municipality/generateER', async function (req, res) {
+app.post('/api/canton/generateER', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -345,7 +345,7 @@ app.post('/api/municipality/generateER', async function (req, res) {
   }
 })
 
-app.post('/api/municipality/movecitizen', async function (req, res) {
+app.post('/api/canton/movecitizen', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
@@ -373,4 +373,4 @@ app.post('/api/municipality/movecitizen', async function (req, res) {
       }
 })
 
-app.listen(8040);
+app.listen(8010);

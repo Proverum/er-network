@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
-node ./../api/javascript/municipality/enrollAdmin.js
-node ./../api/javascript/municipality/affiliationManagement.js
-node ./../api/javascript/municipality/registerUser.js
+node ./../api/javascript/esp/enrollAdmin.js
+node ./../api/javascript/esp/affiliationManagement.js
+node ./../api/javascript/esp/registerUser.js
+npm install --prefix ./../api/javascript/esp
