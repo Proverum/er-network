@@ -1,0 +1,72 @@
+<div class="container">
+  <form class="example-container"  #NewCitizenRequest="ngForm" id="verifyArtifactForm">
+    <h1>Verify the Shared ER data</h1>
+    <h2>Compare the hashes of the shared data against the published hashed on the external channel
+    </h2>
+    <p>Voters</p>
+    <mat-accordion *ngIf="voters">
+      <mat-expansion-panel *ngFor="let voter of voters">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Voterkey: {{voter.key}}
+          </mat-panel-title>
+          <mat-panel-description>
+            Expand for Voter Details
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+        <div class="citizen-info" >
+          <span> Insurnance Number: {{ voter.vn }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Family Name: {{ voter.officialName}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Name: {{ voter.firstName}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Birthdate: {{ voter.dateOfBirth}}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Language of Correspondence: {{ voter.languageOfCorrespondance }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Reporting Municipality: {{ voter.reportingMunicipality }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> City: {{ voter.city }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Type of Residence: {{ voter.typeOfResidenceType }}</span>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <p>Voter List</p>
+    <mat-accordion *ngIf="voterList">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Voterlistkey: {{voterList.key}}
+          </mat-panel-title>
+          <mat-panel-description>
+            Expand for Voter List Details
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
+        <div class="citizen-info" >
+          <span> Number of Voters: {{ voterList.numberOfVoters }}</span>
+        </div>
+        <div class="citizen-info" >
+          <span> Reporting Municipality: {{ voterList.reportingMunicipality}}</span>
+        </div>
+        <div class="citizen-info" *ngFor="let voterinlist of voterList.voter">
+          <span> Voterkey: {{ voterinlist.key }}</span>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </form>
+  <div class="button-container">
+    <button type="button" class="button" value="Register Citizen" (click)="verifyER()"><span>Verify</span></button>
+  </div>
+
+</div>

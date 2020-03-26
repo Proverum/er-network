@@ -2,3 +2,32 @@ img {
   width: 216px;
   height: 216px;
 }
+
+.sp {
+  float: left;
+}
+
+.esp {
+  float: right;
+}
+
+.bundblock {
+  margin: auto;
+  width: 216px;
+}
+
+.cantons {
+  margin: auto;
+  /* width of 2 images */
+  width: 432px;
+}
+
+.municipalities {
+  margin: auto;
+  /* width of 4 images */
+  width: 864px;
+}
+
+h2.public-top-bar , h2.private-top-bar {
+  color: white;
+}

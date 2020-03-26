@@ -79,27 +79,27 @@ app.post('/api/municipality2/addcitizen', async function (req, res) {
       }
 });
 
-app.post('/api/municipality2/publishresult', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-          // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
-      console.log("submittes values:");
-      console.log(req.body.vn, req.body.localPersonId, req.body.officialName, );
-      const registrationResponse = await contract.submitTransaction('publish result', req.body.vn, req.body.localPersonId, req.body.officialName);
-      res.status(200).json({response: req.body});
-      await gateway.disconnect();
-
-    } catch (error) {
-          console.error(`Failed to submit transaction: ${error}`);
-          res.status(500).json({error: error});
-      }
-});
+// app.post('/api/municipality2/publishresult', async function (req, res) {
+//   try {
+//       // Create a new gateway for connecting to our peer node.3
+//       const gateway = await connectToGateway();
+//
+//       // Get the network (channel) our contract is deployed to.
+//       const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
+//       // Get the contract from the network.
+//       const contract = network.getContract('registercc');
+//           // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
+//       console.log("submittes values:");
+//       console.log(req.body.vn, req.body.localPersonId, req.body.officialName, );
+//       const registrationResponse = await contract.submitTransaction('publish result', req.body.vn, req.body.localPersonId, req.body.officialName);
+//       res.status(200).json({response: req.body});
+//       await gateway.disconnect();
+//
+//     } catch (error) {
+//           console.error(`Failed to submit transaction: ${error}`);
+//           res.status(500).json({error: error});
+//       }
+// });
 
 app.delete('/api/municipality2/deletecitizen/:citizen_key', async function (req, res) {
   try {

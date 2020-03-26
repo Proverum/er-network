@@ -7,6 +7,7 @@ import { TransitQueryRequest } from './transitQueryRequest';
 import { Tx } from './tx';
 import { NewCitizenRequest } from './newCitizenRequest';
 import { DeleteCitizenRequest } from './deleteCitizenRequest';
+import { VerifyVoterRequest } from './verifyVoterRequest';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
@@ -159,6 +160,24 @@ export class ApiServiceService {
       .toPromise()
       .then(
         res => new Tx().deserialize(res).txResponse);
+  }
+
+  verifyER(port: number, nodeName: string): Promise<string> {
+    let getVotersUrl = `http://localhost:${port}/api/${nodeName}/verifyER`;
+    console.log("verify ER at url ", getVotersUrl);
+    return this.http.get(getVotersUrl)
+      .toPromise()
+      .then(
+        res => new Tx().deserialize(res).txResponse);
+  }
+
+  getVoterHash(port: number, nodeName: string, voterToVerify: VerifyVoterRequest): Promise<Hash> {
+    let getVoterHashUrl = `http://localhost:${port}/api/${nodeName}/queryvoterhash/${voterToVerify.hashKey}`;
+    console.log("verify voterhash at url ", getVoterHashUrl);
+    return this.http.get(getVoterHashUrl)
+      .toPromise()
+      .then(
+        res => new Hash().deserialize(res));
   }
 
   // moveCitizen(port: number, nodeName: string, moveRequest: MoveCitizenRequest): Promise<string> {

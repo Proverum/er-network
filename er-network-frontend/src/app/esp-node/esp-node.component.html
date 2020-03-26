@@ -8,22 +8,11 @@
   <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
 
-      <button mat-button [matMenuTriggerFor]="citizenadmin">Citizen Administration</button>
-
-      <mat-menu #citizenadmin="matMenu">
-        <button mat-menu-item (click)="launchCitizenDeregistration()">Unregister</button>
-        <button mat-menu-item (click)="launchCitizenRegistration()">Register</button>
-        <button mat-menu-item (click)="launchCitizenRelocation()">Move Citizen</button>
-        <button mat-menu-item (click)="launchCitizenRelocationAcceptance()">
-           Relocation Requests
-         </button>
-      </mat-menu>
-
       <button mat-button [matMenuTriggerFor]="votingadmin">Voting Administration</button>
 
       <mat-menu #votingadmin="matMenu">
-        <button mat-menu-item (click)="launchERCreation()"> Generate & Share Electoral Register </button>
-        <button mat-menu-item>Verify Voter </button>
+        <button *ngIf="this.instantiationCase == 'External Service Provider (Envelope/Voting Card Producer)'" mat-menu-item (click)="launchERVerification()"> Verify Voter Data </button>
+        <button *ngIf="this.instantiationCase == 'Swiss Post'" mat-menu-item (click)="launchArtifactVerification()"> Verify Artifact </button>
       </mat-menu>
 
       <!-- <button mat-button [matMenuTriggerFor]="requestsadmin" *ngIf="this.transitRequests"> Requests Administration</button>
@@ -31,7 +20,6 @@
       <mat-menu #requestsadmin="matMenu">
         <button mat-menu-item (click)="launchERCreation()"> Citizen Relocation Requests </button>
       </mat-menu> -->
-
 
     </ul>
   </div>
@@ -43,44 +31,6 @@
   <div class="row">
     <div class="col-6">
       <h1 class="private-top-bar">Private Data</h1>
-      <p>Citizens</p>
-      <mat-accordion>
-        <mat-expansion-panel *ngFor="let citizen of citizens">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Citizenkey: {{citizen.citizenKey}}
-            </mat-panel-title>
-            <mat-panel-description>
-              Expand for Citizen Details
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <!-- only showing some essential stuff for demo purposes. data model is actually more expansive -->
-          <div class="citizen-info" >
-            <span> Insurance Number: {{ citizen.vn }}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Family Name: {{ citizen.officialName}}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Name: {{ citizen.firstName}}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Birthdate: {{ citizen.dateOfBirth}}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Nationality: {{ citizen.nationality }}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Street: {{ citizen.street }}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> City: {{ citizen.city }}</span>
-          </div>
-          <div class="citizen-info" >
-            <span> Type of Residence: {{ citizen.typeOfResidenceType }}</span>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
       <p>Voters</p>
       <mat-accordion *ngIf="voters">
         <mat-expansion-panel *ngFor="let voter of voters">

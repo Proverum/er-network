@@ -29,147 +29,6 @@ async function connectToGateway(){
   return gateway;
 }
 
-app.get('/api/esp/querycitizen/:citizen_key', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      const result = await contract.evaluateTransaction('queryCitizen', 'collectionCitizenMunicipalityTwo', req.params.citizen_key);
-      const resultString = result.toString('utf8');
-      const resultJSON = JSON.parse(resultString);
-      console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-      res.status(200).json({response: resultJSON});
-
-  } catch (error) {
-      console.error(`Failed to evaluate transaction: ${error}`);
-      res.status(500).json({error: error});
-  }
-});
-
-app.post('/api/esp/addcitizen', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-          // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
-      console.log("submittes values:");
-      console.log(req.body.vn, req.body.localPersonId, req.body.officialName, req.body.firstName, req.body.dateOfBirth, req.body.placeOfBirth,
-        req.body.sex, req.body.religion, req.body.maritalStatus, req.body.nationality, req.body.originName, req.body.canton, req.body.residencePermit, req.body.reportingMunicipality,
-        req.body.typeOfResidenceType, req.body.arrivalDate, req.body.street, req.body.postOfficeBoxText, req.body.city, req.body.swissZipCode, req.body.typeOfHousehold,
-        req.body.collection, req.body.citizenKey);
-      const registrationResponse = await contract.submitTransaction('addCitizen', req.body.vn, req.body.localPersonId, req.body.officialName, req.body.firstName, req.body.dateOfBirth, req.body.placeOfBirth,
-        req.body.sex, req.body.religion, req.body.maritalStatus, req.body.nationality, req.body.originName, req.body.canton, req.body.residencePermit, req.body.reportingMunicipality,
-        req.body.typeOfResidenceType, req.body.arrivalDate, req.body.street, req.body.postOfficeBoxText, req.body.city, req.body.swissZipCode, req.body.typeOfHousehold,
-        req.body.collection, req.body.citizenKey);
-      res.status(200).json({response: req.body});
-      await gateway.disconnect();
-
-    } catch (error) {
-          console.error(`Failed to submit transaction: ${error}`);
-          res.status(500).json({error: error});
-      }
-});
-
-app.post('/api/esp/publishresult', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-          // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
-      console.log("submittes values:");
-      console.log(req.body.vn, req.body.localPersonId, req.body.officialName, );
-      const registrationResponse = await contract.submitTransaction('publish result', req.body.vn, req.body.localPersonId, req.body.officialName);
-      res.status(200).json({response: req.body});
-      await gateway.disconnect();
-
-    } catch (error) {
-          console.error(`Failed to submit transaction: ${error}`);
-          res.status(500).json({error: error});
-      }
-});
-
-app.delete('/api/esp/deletecitizen/:citizen_key', async function (req, res) {
-  try {
-      //gateway defines the peers used to access Fabric networks
-      const gateway = await connectToGateway();
-
-      // Access er network
-      const network = await gateway.getNetwork('erchannel');
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-      // delete citizen
-      console.log('Submit delete citizen transaction.');
-      const deletionResponse = await contract.submitTransaction('deleteCitizen', "collectionCitizenMunicipalityTwo", req.params.citizen_key);
-      res.status(200).json({response: "succesfully deleted citizen"});
-      await gateway.disconnect();
-
-    } catch (error) {
-      console.error(`Failed to submit transaction: ${error}`);
-      res.status(500).json({error: error});
-   }
-});
-
-
-app.get('/api/esp/queryallcitizens', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      const result = await contract.evaluateTransaction('getAllCitizens', 'collectionCitizenMunicipalityTwo');
-      const resultString = result.toString('utf8');
-      const resultJSON = JSON.parse(resultString);
-      console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-      res.status(200).json({response: resultJSON});
-
-  } catch (error) {
-      console.error(`Failed to evaluate transaction: ${error}`);
-      res.status(500).json({error: error});
-  }
-});
-
-app.get('/api/esp/querytransit', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      const result = await contract.evaluateTransaction('getAllCitizens', req.body.collection);
-      const resultString = result.toString('utf8');
-      const resultJSON = JSON.parse(resultString);
-      console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-      res.status(200).json({response: resultJSON});
-
-  } catch (error) {
-      console.error(`Failed to evaluate transaction: ${error}`);
-      res.status(500).json({error: error});
-  }
-});
 
 app.get('/api/esp/queryallvoters', async function (req, res) {
   try {
@@ -183,7 +42,7 @@ app.get('/api/esp/queryallvoters', async function (req, res) {
       const contract = network.getContract('registercc');
 
       // Evaluate the specified transaction.
-      const result = await contract.evaluateTransaction('getAllVoters', 'collectionERMunicipalityTwoESP');
+      const result = await contract.evaluateTransaction('getAllVoters', 'collectionERMunicipalityThreeESP');
       const resultString = result.toString('utf8');
       const resultJSON = JSON.parse(resultString);
       console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
@@ -312,64 +171,28 @@ app.get('/api/esp/worldstate/:channelname', async function (req, res) {
   }
 })
 
-app.post('/api/esp/generateER', async function (req, res) {
+
+app.get('/api/esp/verifyER', async function (req, res) {
   try {
       // Create a new gateway for connecting to our peer node.3
       const gateway = await connectToGateway();
       // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
+      const network = await gateway.getNetwork('erchannel');
 
       // Get the contract from the network.
       const contract = network.getContract('registercc');
 
       // Evaluate the specified transaction.
-      const queryResult = await contract.evaluateTransaction('generateERSnapshot', 'collectionCitizenMunicipalityTwo');
-      const resultString = queryResult.toString();
-      const resultJSON = JSON.parse(resultString);
-
-      console.log(queryResult);
-      console.log(resultString);
-      console.log(resultJSON);
-      console.log("querying successful now saving the data to private data store...");
-
-      const persistResult = await contract.submitTransaction('persistElectoralRegister', 'collectionERMunicipalityTwoESP', resultString);
-      const resultStringPersist = persistResult.toString();
-      const resultJSONPersist = JSON.parse(resultStringPersist);
-      console.log(`Transaction has been evaluated, result is: ${persistResult.toString()}`);
-      res.status(200).json({response: resultJSONPersist});
-      console.log("finished generating electoral register... check corresponding private data collection for content");
-
-  } catch (error) {
-      console.error(`Failed to evaluate transaction: ${error}`);
-      res.status(500).json({error: error});
-  }
-})
-
-app.post('/api/esp/movecitizen', async function (req, res) {
-  try {
-      // Create a new gateway for connecting to our peer node.3
-      const gateway = await connectToGateway();
-      // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('erchannel');    //daaaaa isch de fehler!
-
-      // Get the contract from the network.
-      const contract = network.getContract('registercc');
-
-      // Evaluate the specified transaction.
-      console.log('Submit move citizen transaction.');
-      const moveResult = await contract.evaluateTransaction('moveCitizen', req.body.collectionOrigin, req.body.collectionDestination, req.body.key);
+      console.log('Submit verify ER transaction.');
+      const moveResult = await contract.evaluateTransaction('verifyER', 'collectionERMunicipalityThreeESP',);
       const resultString = moveResult.toString();
       const resultJSON = JSON.parse(resultString);
       console.log(`Transaction has been evaluated, result is: ${persistResult.toString()}`);
+      res.status(200).json({response: resultJSON});
 
-      console.log('Submit delete citizen transaction.');
-      const deletionResponse = await contract.submitTransaction('deleteCitizen', req.body.collectionOrigin, req.body.key);
-      res.status(200).json({response: "succesfully moved citizen"});
-      await gateway.disconnect();
-
-    } catch (error) {
-          console.error(`Failed to submit transaction: ${error}`);
-          res.status(500).json({error: error});
+      } catch (error) {
+      console.error(`Failed to evaluate transaction: ${error}`);
+      res.status(500).json({error: error});
       }
 })
 

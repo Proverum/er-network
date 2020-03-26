@@ -27,13 +27,21 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { DeleteCitizenComponent } from './delete-citizen/delete-citizen.component';
 import { MoveCitizenComponent } from './move-citizen/move-citizen.component';
 import { RelocationAcceptanceComponent } from './relocation-acceptance/relocation-acceptance.component';
+import { EspNodeComponent } from './esp-node/esp-node.component';
+import { VerifyErComponent } from './verify-er/verify-er.component';
+import { VerifyArtifactComponent } from './verify-artifact/verify-artifact.component';
+
+
 
 const routes: Routes = [
   { path: 'home', component: NetworkDashboardComponent},
   { path: 'node-dashboard', component: NodeDashboardComponent },
+  { path: 'esp-node-dashboard', component: EspNodeComponent },
   { path: 'register', component: AddCitizenComponent },
   { path: 'unregister', component: DeleteCitizenComponent },
   { path: 'generate-er', component: GenerateErComponent },
+  { path: 'verify-er', component: VerifyErComponent },
+  { path: 'verify-artifact', component: VerifyArtifactComponent },
   { path: 'confirmation', component: ConfirmationComponent },
   { path: 'move', component: MoveCitizenComponent },
   { path: 'accept', component: RelocationAcceptanceComponent },
@@ -53,6 +61,9 @@ const routes: Routes = [
     DeleteCitizenComponent,
     MoveCitizenComponent,
     RelocationAcceptanceComponent,
+    EspNodeComponent,
+    VerifyErComponent,
+    VerifyArtifactComponent,
   ],
   imports: [
     BrowserModule,

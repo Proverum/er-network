@@ -51,12 +51,12 @@ export class NodeDashboardComponent implements OnInit {
      }
      case 8010: {
         this.nodeName = "canton"
-        this.instantiationCase = "Canton Zürich"
+        this.instantiationCase = "Kanton Zürich"
         break;
      }
      case 8020: {
         this.nodeName = "canton2"
-        this.instantiationCase = "Canton Zug"
+        this.instantiationCase = "Kanton Zug"
         break;
      }
      case 8030: {

@@ -6,6 +6,8 @@ import { MatDialogRef } from '@angular/material';
 import { MatDialogConfig} from "@angular/material";
 
 import { NodeDashboardComponent } from '../node-dashboard/node-dashboard.component';
+import { EspNodeComponent } from '../esp-node/esp-node.component';
+
 
 
 @Component({
@@ -30,6 +32,22 @@ export class NetworkDashboardComponent implements OnInit {
           port: nodePort
       };
     const dialogRef = this.dialog.open(NodeDashboardComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+        data => console.log("Dialog output:", data)
+    );
+  }
+
+  launchESPDashboard(nodePort: number){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '85%';
+    dialogConfig.height = '85%';
+    dialogConfig.data = {
+          port: nodePort
+      };
+    const dialogRef = this.dialog.open(EspNodeComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
         data => console.log("Dialog output:", data)

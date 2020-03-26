@@ -1,14 +1,6 @@
 # ER Network Demo
 
-This demo shows how a hyperledger fabric network could be used to simply and fortify security around the swiss postal voting process.
-
-## Installation
-
-To run this demo make sure you have the prerequisites installed as described by the hyperledger project
-https://hyperledger-fabric.readthedocs.io/en/release-1.4/prereqs.html
-
-Determine a location on your machine where you want to place the er-network repository and enter that directory in a terminal window.
-Finally clone the repo to that location.
+This demo shows how a Hyperledger Fabric network could be used to simply and fortify security around the Swiss postal voting process. Create a directory for the projects and pull the repo through:
 
 ```bash
 git clone git@gitlab.com:LuxsThor/er-network.git
@@ -17,6 +9,64 @@ or
 ```bash
 git clone https://gitlab.com/LuxsThor/er-network.git
 ```
+
+# Requirements
+This prototype has been developed on a Linux system.  It is likely that it will not run on Windows due to differing docker versions.  It is thus highly suggested to run the prototype on a Unix powered device.  Before running the demo, make sure you have the prerequisites installed as described by the Hyperledger documentation project in the following link:
+
+https://hyperledger-fabric.readthedocs.io/en/release-1.4/prereqs.html
+
+## Fabric Network Setup
+
+Change into the er-network subdirectory.
+
+```bash
+git clone https://gitlab.com/LuxsThor/er-network.git
+```
+make sure you have permissions set for docker:
+
+```bash
+sudo chmod 666 /var/run/docker.sock
+```
+
+Then execute the following command, which spins up the docker containers for the peers,CAs  and  CouchDBs  as  the  private  data  store  for  each  participant.   This  process  also creates the necessary cryptographic material and the channel artifacts (genesis block +anchor peer updates) for each participant../ERN_controller_script.sh up -a -s couchdb. Before continuing, confirm in the console output that all created containers are up and running.  If so we can run the quick setup scenario script (scripts/quick.sh) which will do the following:
+
+•Bootstrap the ordering service
+•Create the four channels (federal, erchannel(external), canton1 and canton 2)
+•Join the corresponding organizations to the channels
+•Install the chaincodes on the involved organizations peers (found in/chaincode/register_managementand/chaincode/result_publishing)
+•Instantiate the chaincodes (Activating and agreeing on their version and validity)
+•Have the municipalities initialize their private data stores with three mock citizens.
+
+To run the script enter the following command:
+
+```bash
+./ERN_controller_script.sh quickinit
+```
+## Application User Registration
+
+Before we can interact with the Fabric network we have to enroll the users for each application provided by the network participants.  In this case we are going to first enroll the  admin  as  specified  in  the  network  configurations/docker-compose-ca.yaml(admin:adminpw).  Once the admin is successfully registered it will have its corresponding keys issued by the CA in the wallet directory and can register other users as well.  We are registering an extra user named Clerk1/Manager1 for each organization in this scenario.Executing  the  following  script  will  enroll  the  admin  and  a  clerk1/manager1  profile  for each stakeholder which are later used to query and invoke chaincode methods.
+
+```bash
+./enrollApplicationUsers.sh
+```
+
+## Node Express applications
+
+The  following  script  starts  the  Express  applications  for  all  organizations  exposing  theREST endpoint to interfere with through the front end.
+
+## Front end
+
+To start the front end, change into the front end directory:
+
+```bash
+cd ../er-network-frontend
+```
+then start the front end through:
+
+```bash
+ng serve
+```
+you should now be able to access the home dashboard on:http://localhost:4200/
 
 ## Usage
 

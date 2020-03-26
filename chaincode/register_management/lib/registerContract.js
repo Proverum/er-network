@@ -460,6 +460,153 @@ class RegisterContract extends Contract {
     return result;
   }
 
+  async verifyER(ctx, collection){
+
+    //empty string start and end key to fetch all
+    const startKey = "";
+    const endKey = "";
+
+    const rangeOfVoters = await ctx.stub.getPrivateDataByRange(collection, startKey, endKey);
+
+    let reportingMunicipality;
+    let allResults = [];
+    let voterList = [];
+    // get all known voters from the private data store and compare it with the public hash
+    while (true) {
+        let res = await rangeOfVoters.iterator.next();
+
+        if (res.value && res.value.value.toString()) {
+            console.log(res.value.value.toString('utf8'));
+
+            const Key = res.value.key;
+            let Record;
+            try {
+                Record = await JSON.parse(res.value.value.toString('utf8'));
+                //check if it an individual voter or the whole list
+                if (Record.class == "voting-citizen") {
+                  let influencelist = Record.domainOfInfluenceInfo;
+                  let masterInfluenceList = [];
+                  for (var index in influencelist) {
+                    let influenceStringList = [];
+                    influenceStringList.push(influencelist[index].domainOfInfluence);
+                    influenceStringList.push(influencelist[index].domainOfInfluenceIdentification);
+                    influenceStringList.push(influencelist[index].domainOfInlfluenceName);
+                    masterInfluenceList = masterInfluenceList.concat(influenceStringList);
+                  }
+                  let vn = Record.personData.personIdentificationData.vn;
+                  let localPersonId = Record.personData.personIdentificationData.localPersonId;
+                  let officialName = Record.personData.personIdentificationData.officialName;
+                  let firstName = Record.personData.personIdentificationData.firstName;
+                  let sex = Record.personData.personIdentificationData.sex;
+                  let dateOfBirth = Record.personData.personIdentificationData.dateOfBirth;
+                  let languageOfCorrespondance = "deutsch";
+                  let municipality = Record.electoralAddress.reportingMunicipality;
+                  let arrivalDate = Record.electoralAddress.arrivalDate;
+                  let typeOfHousehold = Record.electoralAddress.dwellingAddress.typeOfHousehold;
+                  let dataLock = "false";
+                  let street = Record.electoralAddress.dwellingAddress.address.street;
+                  let postOfficeBoxText = Record.electoralAddress.dwellingAddress.address.postOfficeBoxText;
+                  let city = Record.electoralAddress.dwellingAddress.address.city;
+                  let swissZipCode = Record.electoralAddress.dwellingAddress.address.swissZipCode;
+                  let typeOfResidenceType = Record.electoralAddress.typeOfResidenceType;
+                  let voterToVerify = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
+                  typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList, key);
+                  // add the voter to list to later verify for completeness
+                  voterList.push(voterToVerify);
+                  reportingMunicipality = municipality;
+                  //the voter hash how it also should have been published
+                  const voterHash = new Hash(municipality, "voterHash", JSON.parse(JSON.stringify(voterToVerify)));
+                  let voterHashKey = voterHash.getKey();
+
+                  const publicVoterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the citizen from public ledger for the same key
+                  if (!publicVoterHashAsBytes || publicVoterHashAsBytes.length === 0) {
+                        throw new Error(`${voterHash.getKey()} does not exist. It seems it was not registered by the organizing municipality`);
+                  }
+
+                  const publicVoterHash = JSON.parse(publicVoterHashAsBytes.toString());
+                  //compare the hashes
+                  let matchingHash = voterHash.contentHash == publicVoterHash.contentHash;
+                  allResults.push({voterHashKey, matchingHash, voterHash, publicVoterHash});
+                }
+
+
+            } catch (err) {
+                console.log(err);
+                Record = res.value.value.toString('utf8');
+            }
+        }
+        if (res.done) {
+            console.log('end of data');
+            await rangeOfVoters.iterator.close();
+            const voterListToVerify = new VoterList(reportingMunicipality, voterList);
+            //again pass JSON rather then javascript object to hash for simiplified verification with the application return
+            const voterListHash = new Hash(reportingMunicipality, "voterListHash", JSON.parse(JSON.stringify(voterListToVerify)));
+            let voterListHashKey = voterListHash.getKey();
+
+            const publicVoterListHashAsBytes = await ctx.stub.getState(voterListHashKey);
+            if (!publicVoterListHashAsBytes || publicVoterListHashAsBytes.length === 0) {
+                  throw new Error(`${voterListHashKey} does not exist`);
+            }
+
+            const publicVoterListHash = JSON.parse(publicVoterListHashAsBytes.toString());
+
+            let matchingHash = voterListHash.contentHash == publicVoterListHash.contentHash;
+            allResults.push({voterListHashKey, matchingHash, voterListHash, publicVoterListHash});
+            return JSON.stringify(allResults);
+        }
+
+    }
+
+  }
+
+  //strange chaincode verification but not needed
+
+  // async verifyVoter(ctx, collection, voterKey){
+  //
+  //   const voterAsBytes = await ctx.stub.getPrivateData(collection, voterKey);
+  //   if (!voterAsBytes || voterAsBytes.length === 0) {
+  //         throw new Error(`${voterkey} does not exist`);
+  //   }
+  //
+  //   // again super ugly workaround cause of desarialization issues...
+  //   const VoterRecord = JSON.parse(citizenAsBytes.toString());
+  //   let vn = VoterRecord.personData.personIdentificationData.vn;
+  //   let localPersonId = VoterRecord.personData.personIdentificationData.localPersonId;
+  //   let officialName = VoterRecord.personData.personIdentificationData.officialName;
+  //   let firstName = VoterRecord.personData.personIdentificationData.firstName;
+  //   let sex = VoterRecord.personData.personIdentificationData.sex;
+  //   let dateOfBirth = VoterRecord.personData.personIdentificationData.dateOfBirth;
+  //   let languageOfCorrespondance = "deutsch";
+  //   let municipality = VoterRecord.personData.municipality;
+  //   let arrivalDate = VoterRecord.electoralAddress.arrivalDate;
+  //   let typeOfHousehold = VoterRecord.electoralAddress.dwellingAddress.typeOfHousehold;
+  //   let dataLock = "false";
+  //   let street = VoterRecord.electoralAddress.dwellingAddress.address.street;
+  //   let postOfficeBoxText = VoterRecord.electoralAddress.dwellingAddress.address.postOfficeBoxText;
+  //   let city = VoterRecord.electoralAddress.dwellingAddress.address.city;
+  //   let swissZipCode = VoterRecord.electoralAddress.dwellingAddress.address.swissZipCode;
+  //   let typeOfResidenceType = VoterRecord.electoralAddress.typeOfResidenceType;
+  //   let voter = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
+  //   typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList, key);
+  //   const voterHash = new Hash(municipality, "voterHash", JSON.parse(JSON.stringify(voter)));
+  //
+  //   let voterHashKey = "voterHash"+voter.personData.municipality+voter.key;
+  //
+  //   const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the car from chaincode state
+  //   if (!voterHashAsBytes || voterHashAsBytes.length === 0) {
+  //       throw new Error(`${voterHashKey} does not exist`);
+  //   }
+  //   const voterHashObject = JSON.parse(voterHashAsBytes.toString());
+  //   publicVoterHash = voterHashObject.contentHash;
+  //
+  //   if (publicVoterHash==voterHash) {
+  //       return JSON.stringify((true, voterHash, publicVoterHash))
+  //   } else {
+  //       return JSON.stringify((false, voterHash, publicVoterHash))
+  //   }
+  //
+  // }
+
   async queryWorldState(ctx) {
 
     //empty string start and end key to fetch all
@@ -551,52 +698,7 @@ class RegisterContract extends Contract {
   //   return voterListHashAsBytes.toString();
   // }
 
-  async verifyVoter(ctx, collection, voterKey){
-
-    const voterAsBytes = await ctx.stub.getPrivateData(collection, voterKey);
-    if (!voterAsBytes || voterAsBytes.length === 0) {
-          throw new Error(`${voterkey} does not exist`);
-    }
-
-    // again super ugly workaround cause of desarialization issues...
-    const VoterRecord = JSON.parse(citizenAsBytes.toString());
-    let vn = VoterRecord.personData.personIdentificationData.vn;
-    let localPersonId = VoterRecord.personData.personIdentificationData.localPersonId;
-    let officialName = VoterRecord.personData.personIdentificationData.officialName;
-    let firstName = VoterRecord.personData.personIdentificationData.firstName;
-    let sex = VoterRecord.personData.personIdentificationData.sex;
-    let dateOfBirth = VoterRecord.personData.personIdentificationData.dateOfBirth;
-    let languageOfCorrespondance = "deutsch";
-    let municipality = VoterRecord.personData.municipality;
-    let arrivalDate = VoterRecord.electoralAddress.arrivalDate;
-    let typeOfHousehold = VoterRecord.electoralAddress.dwellingAddress.typeOfHousehold;
-    let dataLock = "false";
-    let street = VoterRecord.electoralAddress.dwellingAddress.address.street;
-    let postOfficeBoxText = VoterRecord.electoralAddress.dwellingAddress.address.postOfficeBoxText;
-    let city = VoterRecord.electoralAddress.dwellingAddress.address.city;
-    let swissZipCode = VoterRecord.electoralAddress.dwellingAddress.address.swissZipCode;
-    let typeOfResidenceType = VoterRecord.electoralAddress.typeOfResidenceType;
-    let voter = new VotingCitizen(vn, localPersonId, officialName, firstName, sex, dateOfBirth, languageOfCorrespondance, municipality, dataLock, municipality,
-    typeOfResidenceType, arrivalDate, street, postOfficeBoxText, city, swissZipCode, typeOfHousehold, masterInfluenceList, key);
-    const voterHash = new Hash(municipality, "voterHash", JSON.parse(JSON.stringify(voter)));
-
-    let voterHashKey = "voterHash"+voter.personData.municipality+voter.key;
-
-    const voterHashAsBytes = await ctx.stub.getState(voterHashKey); // get the car from chaincode state
-    if (!voterHashAsBytes || voterHashAsBytes.length === 0) {
-        throw new Error(`${voterHashKey} does not exist`);
-    }
-    const voterHashObject = JSON.parse(voterHashAsBytes.toString());
-    publicVoterHash = voterHashObject.contentHash;
-
-    if (publicVoterHash==voterHash) {
-        return JSON.stringify((true, voterHash, publicVoterHash))
-    } else {
-        return JSON.stringify((false, voterHash, publicVoterHash))
-    }
-
-  }
-
+  // optional
   async shareER(ctx, collectionOrigin, collectionDestination) {
     const startKey = "";
     const endKey = "";
