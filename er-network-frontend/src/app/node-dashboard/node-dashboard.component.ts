@@ -30,7 +30,6 @@ export class NodeDashboardComponent implements OnInit {
   voters: Voter[] = [];
   voterList: VoterList;
   hashes: Hash[] = [];
-  cantonChannel: Hash[] = [];
   // also  results saved here
 
   constructor(private router: Router, private dialog: MatDialog, private apiService: ApiServiceService, private dialogRef: MatDialogRef<NodeDashboardComponent>, @Inject(MAT_DIALOG_DATA) data) {
