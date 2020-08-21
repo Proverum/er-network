@@ -1,3 +1,6 @@
+# Proverum - Private Environment Prototype Implementation
+The following prototype implements the private environment of the Proverum architecture, which is detailed here: 
+
 # ER Network Demo
 
 This demo shows how a Hyperledger Fabric network could be used to simply and fortify security around the Swiss postal voting process. Create a directory for the projects and pull the repo through:
